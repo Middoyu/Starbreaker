@@ -1,0 +1,114 @@
+[gd_scene load_steps=2 format=3 uid="uid://beugycn0fnbr0"]
+
+[sub_resource type="GDScript" id="GDScript_qlhod"]
+resource_name = "upgrade_hud"
+script/source = "extends Control
+
+@onready var upgrade_1: Button = $Upgrade1
+@onready var upgrade_2: Button = $Upgrade2
+@onready var upgrade_3: Button = $Upgrade3
+
+@onready var random_items = [\"DMG Upgrade\", \"SPD Upgrade\"]
+
+
+func _ready() -> void:
+	global.main_manager.pause(global.current_stage)
+	button_setup()
+	change_upgrade_button_text()
+
+func button_setup():
+	upgrade_1.connect(\"pressed\", action1)
+	upgrade_2.connect(\"pressed\", action2)
+	upgrade_3.connect(\"pressed\", action3)
+
+func change_upgrade_button_text():
+	for i in get_children():
+		if i is Button:
+			i.text = random_items.pick_random() as String
+
+func action1():
+	match_item(upgrade_1)
+	close_window()
+
+func action2():
+	match_item(upgrade_2)
+	close_window()
+
+func action3():
+	match_item(upgrade_3)
+	close_window()
+
+
+func match_item(button : Button):
+	var player = utility.get_player() as Player
+	match button.text:
+		\"DMG Upgrade\":
+			player.upgrade_list.append(DMG_Upgrade.new())
+		\"SPD Upgrade\":
+			player.upgrade_list.append(SPD_Upgrade.new())
+
+func close_window():
+	global.main_manager.unpause(global.current_stage)
+	queue_free()
+"
+
+[node name="Upgrade_UI" type="Control"]
+z_index = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_qlhod")
+
+[node name="Upgrade1" type="Button" parent="."]
+top_level = true
+layout_mode = 0
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 192.0
+offset_bottom = 320.0
+text = "upgrade1"
+metadata/_edit_use_anchors_ = true
+
+[node name="Upgrade2" type="Button" parent="."]
+top_level = true
+layout_mode = 0
+offset_left = 256.0
+offset_top = 64.0
+offset_right = 384.0
+offset_bottom = 320.0
+text = "upgrade2"
+metadata/_edit_use_anchors_ = true
+
+[node name="Upgrade3" type="Button" parent="."]
+top_level = true
+layout_mode = 0
+offset_left = 448.0
+offset_top = 64.0
+offset_right = 576.0
+offset_bottom = 320.0
+text = "upgrade3
+"
+metadata/_edit_use_anchors_ = true
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+z_as_relative = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.4)

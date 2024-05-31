@@ -1,0 +1,105 @@
+[gd_scene load_steps=12 format=3 uid="uid://dkvxr10sg8n2a"]
+
+[ext_resource type="AudioStream" uid="uid://ccg5a62soyu8i" path="res://Game Folder/game_assets/Stages/0 - ProtoZone/MUSIC/protozone_theme.wav" id="1_fr3tk"]
+[ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_qus8j"]
+[ext_resource type="PackedScene" uid="uid://dluss20quhs7j" path="res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn" id="2_u04bs"]
+[ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="3_4psp2"]
+[ext_resource type="PackedScene" uid="uid://c3thas2ivw5s8" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/skeleton_boss.tscn" id="3_o32kg"]
+[ext_resource type="PackedScene" uid="uid://ujg1l8k67orr" path="res://Game Folder/game_assets/Player/Crosshair/BASE/crosshair.tscn" id="4_wdv7a"]
+[ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="5_n4xl8"]
+
+[sub_resource type="GDScript" id="GDScript_6nudx"]
+resource_name = "protozone_script"
+script/source = "extends StageBase
+
+func stage_specifc_spawns():
+	randomize()
+	spawn_enemies(\"res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn\", Vector2(randi_range(0, 640), -10))
+	match enemy_spawn_count:
+		1:
+			pass
+"
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pd37p"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, -106.5, 0)
+emission_shape = 3
+emission_box_extents = Vector3(528, -113.5, 1)
+gravity = Vector3(0, 150, 0)
+radial_accel_min = 50.0
+radial_accel_max = 50.0
+color = Color(1, 1, 1, 0.00784314)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gp1op"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_58yg0"]
+
+[node name="ProtoZone" type="Node2D"]
+script = SubResource("GDScript_6nudx")
+music_WAV = ExtResource("1_fr3tk")
+
+[node name="LVL_MANAGER" parent="." instance=ExtResource("2_u04bs")]
+
+[node name="SkeletonBoss" parent="." instance=ExtResource("3_o32kg")]
+
+[node name="Motionlines" type="GPUParticles2D" parent="."]
+position = Vector2(320, -164)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_pd37p")
+lifetime = 10.0
+preprocess = 20.0
+fixed_fps = 60
+visibility_rect = Rect2(-348, -25, 686.5, 387)
+trail_enabled = true
+
+[node name="JuicyCamera_Component" parent="." instance=ExtResource("1_qus8j")]
+position = Vector2(320, 181)
+limit_left = -25
+limit_top = -45
+limit_right = 660
+limit_bottom = 380
+position_smoothing_speed = 109.5
+initial_zoom_value = 1.0
+
+[node name="Player" parent="." instance=ExtResource("3_4psp2")]
+material = SubResource("ShaderMaterial_gp1op")
+position = Vector2(320, 181)
+
+[node name="Collision" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CircleShape2D_58yg0")
+
+[node name="Crosshair" parent="." instance=ExtResource("4_wdv7a")]
+
+[node name="HUD" parent="." instance=ExtResource("5_n4xl8")]
+offset_left = 320.0
+offset_right = 320.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="charge_progressbar" parent="HUD" index="0"]
+offset_left = -104.0
+offset_top = 3.0
+offset_right = 104.0
+offset_bottom = 30.0
+rounded = true
+
+[node name="level_progressbar" parent="HUD" index="1"]
+visible = false
+
+[node name="lvl_progress" parent="HUD" index="2"]
+offset_left = 184.0
+offset_top = 16.0
+offset_right = 304.0
+offset_bottom = 40.0
+horizontal_alignment = 1
+
+[node name="Container" parent="HUD" index="3"]
+offset_left = -312.0
+offset_top = 8.0
+offset_right = -239.0
+offset_bottom = 58.0
+
+[node name="ScoreCount" parent="HUD/Container" index="1"]
+text = "1,000,000"
+
+[editable path="HUD"]

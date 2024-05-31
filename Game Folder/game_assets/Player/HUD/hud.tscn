@@ -1,0 +1,112 @@
+[gd_scene load_steps=2 format=3 uid="uid://5lh8eipbj0c6"]
+
+[sub_resource type="GDScript" id="GDScript_53qs6"]
+resource_name = "HUD_script"
+script/source = "extends Control
+@onready var charge_progressbar: ProgressBar = $charge_progressbar
+@onready var level_progressbar: ProgressBar = $level_progressbar
+@onready var label: Label = $lvl_progress
+@onready var score_text: Label = $Container/ScoreText
+@onready var score_count: Label = $Container/ScoreCount
+
+func _enter_tree() -> void:
+	global.player_gui = self
+
+func _ready() -> void:
+	hud_setup()
+
+func _process(delta: float) -> void:
+	label.text = str(level_progressbar.value) + \" / \" + str(global.lvl_manager.xp_until_lvlup)
+	score_update()
+	update_charge_display()
+
+func hud_setup(): # Sets up the Player HUD
+	top_level = true
+	await get_tree().create_timer(1.0).timeout
+	global.lvl_manager.connect(\"xp_gained\", update_level_display, 1)
+	global.lvl_manager.connect(\"level_up\", level_up_reaction, 0)
+
+#region Charge Section
+
+func update_charge_display(): # Updates the display to show how much charge you have.
+	charge_progressbar.value = utility.get_player().charge
+
+#endregion
+
+func score_update():
+	score_count.text = str(score_event.score)
+
+func update_level_display(amount):
+	print(global.lvl_manager.current_xp)
+	level_progressbar.value += amount
+
+func level_up_reaction():
+	global.main_manager.display_upgrade_UI()
+"
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = SubResource("GDScript_53qs6")
+
+[node name="charge_progressbar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -101.0
+offset_right = 101.0
+offset_bottom = 27.0
+grow_horizontal = 2
+size_flags_horizontal = 8
+mouse_filter = 1
+
+[node name="level_progressbar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.0
+offset_top = -13.0
+offset_right = 72.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="lvl_progress" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 530.0
+offset_top = -174.0
+offset_right = 645.0
+offset_bottom = -151.0
+grow_vertical = 2
+text = "10,000 / 10,000"
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScoreText" type="Label" parent="Container"]
+layout_mode = 2
+text = "SCORE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreCount" type="Label" parent="Container"]
+layout_mode = 2
+text = "SCORE
+"
+horizontal_alignment = 1
+vertical_alignment = 1

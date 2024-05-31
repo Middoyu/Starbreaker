@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://dbu0md0jtt1ov"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.gd" id="1_1rkj2"]
+[ext_resource type="Texture2D" uid="uid://csbofagkbecjv" path="res://Game Folder/game_assets/Player/Primary/Sprites/bullet_particles.png" id="2_f04td"]
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_6gkev"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tt2my"]
+radius = 4.0
+
+[node name="BaseBullet" type="CharacterBody2D"]
+script = ExtResource("1_1rkj2")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_f04td")
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("3_6gkev")
+parent = NodePath("..")
+team_affiliation = "PlayerTeam"
+damage = 1.0
+knockback_amount = 7000.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_tt2my")
+
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]

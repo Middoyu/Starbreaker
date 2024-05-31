@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://cr5lkcdqqb78g"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/camera_component/Camera/camera_base.gd" id="1_8n6dp"]
+
+[node name="JuicyCamera_Component" type="Camera2D"]
+limit_left = 0
+limit_top = 0
+limit_right = 1150
+limit_bottom = 645
+limit_smoothed = true
+position_smoothing_enabled = true
+editor_draw_limits = true
+script = ExtResource("1_8n6dp")
+initial_zoom_value = 4.0

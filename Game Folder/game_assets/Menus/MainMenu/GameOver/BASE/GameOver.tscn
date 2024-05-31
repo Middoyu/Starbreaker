@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://c26v2faggef5y"]
+
+[ext_resource type="AudioStream" uid="uid://cxtry2q0lddnj" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver_Mus.wav" id="1_qr5mx"]
+
+[sub_resource type="GDScript" id="GDScript_1qpdw"]
+resource_name = "gameover"
+script/source = "extends Node2D
+@onready var return_button: Button = $Control/Return_Button
+
+func _ready() -> void:
+	return_button.hide()
+	await get_tree().create_timer(2.5).timeout
+	return_button.show()
+
+
+func button_pressed() -> void:
+	global.main_manager.add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	queue_free()
+"
+
+[node name="GameOver" type="Node2D"]
+script = SubResource("GDScript_1qpdw")
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Text" type="Label" parent="Control"]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 192.0
+mouse_filter = 1
+theme_override_font_sizes/font_size = 86
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Return_Button" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 268.0
+offset_right = 408.0
+offset_bottom = 299.0
+text = "Return to Main Menu"
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_qr5mx")
+volume_db = -16.0
+autoplay = true
+
+[connection signal="pressed" from="Control/Return_Button" to="." method="button_pressed"]

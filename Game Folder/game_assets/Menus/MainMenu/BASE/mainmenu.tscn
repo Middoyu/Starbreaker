@@ -1,0 +1,102 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8cl1sli3qnjh"]
+
+[ext_resource type="AudioStream" uid="uid://c531nix6id5xh" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.wav" id="1_j4fed"]
+
+[sub_resource type="GDScript" id="GDScript_cf4c7"]
+resource_name = "mainmenu"
+script/source = "extends Node2D
+
+
+
+func play_pressed() -> void:
+	global.main_manager.add_level()
+	queue_free()
+"
+
+[sub_resource type="Gradient" id="Gradient_mu3cn"]
+interpolation_mode = 2
+interpolation_color_space = 2
+colors = PackedColorArray(0.027451, 0.0588235, 0.168627, 1, 0.105882, 0.101961, 0.333333, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nc3u1"]
+gradient = SubResource("Gradient_mu3cn")
+fill_from = Vector2(0.491453, 1)
+fill_to = Vector2(0.487179, 0.0042735)
+
+[node name="MainMenu" type="Node2D"]
+script = SubResource("GDScript_cf4c7")
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+ignore_rotation = false
+enabled = false
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_j4fed")
+volume_db = -16.0
+autoplay = true
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Starbreaker" type="Label" parent="Control"]
+top_level = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -384.0
+offset_top = -52.0
+offset_right = -192.0
+offset_bottom = -29.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+mouse_filter = 1
+text = "Starbreaker"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Container" type="VBoxContainer" parent="Control"]
+z_index = 5
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 216.0
+offset_right = 224.0
+offset_bottom = 317.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PLAY" type="Button" parent="Control/Container"]
+layout_mode = 2
+text = "Play"
+
+[node name="OPTIONS" type="Button" parent="Control/Container"]
+visible = false
+layout_mode = 2
+text = "Options"
+
+[node name="QUIT" type="Button" parent="Control/Container"]
+visible = false
+layout_mode = 2
+text = "Quit"
+
+[node name="Background" type="TextureRect" parent="Control"]
+z_index = -10
+z_as_relative = false
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_nc3u1")
+
+[connection signal="pressed" from="Control/Container/PLAY" to="." method="play_pressed"]

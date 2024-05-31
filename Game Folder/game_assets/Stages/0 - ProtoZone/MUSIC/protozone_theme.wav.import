@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://ccg5a62soyu8i"
+path="res://.godot/imported/protozone_theme.wav-885cc987b8ff71bb3e450c7e796ce3e7.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/0 - ProtoZone/MUSIC/protozone_theme.wav"
+dest_files=["res://.godot/imported/protozone_theme.wav-885cc987b8ff71bb3e450c7e796ce3e7.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

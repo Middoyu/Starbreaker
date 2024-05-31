@@ -1,0 +1,75 @@
+[gd_scene load_steps=13 format=3 uid="uid://c1ot3xsxkhbu1"]
+
+[ext_resource type="Script" path="res://Entities/Player/Main/PlayerEntity.gd" id="1_ij456"]
+[ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Entities/Player/Sprites/Player.png" id="2_ohauf"]
+[ext_resource type="Script" path="res://Entities/StateMachines/State Machine.gd" id="2_sp5oq"]
+[ext_resource type="Script" path="res://Entities/Player/States/Idle.gd" id="4_nps7d"]
+[ext_resource type="Script" path="res://CollisionModules/Scripts/hurtbox.gd" id="5_utcf8"]
+[ext_resource type="Script" path="res://Entities/Player/States/Primary.gd" id="5_wbbfi"]
+[ext_resource type="Script" path="res://Entities/Player/States/Secondary.gd" id="6_aibym"]
+[ext_resource type="Script" path="res://Entities/Player/States/Utility.gd" id="8_gd5dp"]
+[ext_resource type="Script" path="res://Entities/Player/States/Breaker.gd" id="9_xs1l2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aqtlc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ohauf")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v74ur"]
+radius = 1.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kaaxv"]
+size = Vector2(2, 2)
+
+[node name="Player" type="CharacterBody2D"]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_ij456")
+team = "Player"
+max_health = 3.0
+
+[node name="Texture" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_aqtlc")
+animation = &"idle"
+
+[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("5_utcf8")
+parent = NodePath("..")
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_v74ur")
+
+[node name="StateMachine_Parent" type="Node" parent="." node_paths=PackedStringArray("intial_state")]
+script = ExtResource("2_sp5oq")
+intial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine_Parent" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_nps7d")
+parent = NodePath("../..")
+
+[node name="Primary" type="Node" parent="StateMachine_Parent" node_paths=PackedStringArray("parent")]
+script = ExtResource("5_wbbfi")
+is_trishot_active = null
+parent = NodePath("../..")
+is_state_cancelable = null
+
+[node name="Secondary" type="Node" parent="StateMachine_Parent" node_paths=PackedStringArray("parent")]
+script = ExtResource("6_aibym")
+parent = NodePath("../..")
+
+[node name="Utility" type="Node" parent="StateMachine_Parent"]
+script = ExtResource("8_gd5dp")
+
+[node name="Breaker" type="Node" parent="StateMachine_Parent" node_paths=PackedStringArray("parent")]
+script = ExtResource("9_xs1l2")
+parent = NodePath("../..")
+
+[node name="Controller_Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_kaaxv")

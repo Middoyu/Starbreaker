@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://y4ga4anlwqmc"]
+
+[sub_resource type="GDScript" id="GDScript_essvl"]
+resource_name = "mainscene_manager"
+script/source = "extends Node
+const UPGRADE_UI = preload(\"res://Game Folder/game_assets/Player/HUD/UpgradeHUD/upgrade_ui.tscn\")
+const MAINMENU = preload(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+const GAMEOVER = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\")
+
+func _ready():
+	global.main_manager = self
+	add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+
+func add_level(path := \"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\"):
+	var i = load(path) as PackedScene
+	i = i.instantiate()
+	add_child(i)
+
+func gameover_sequence():
+	for i in get_children():
+		i.queue_free()
+	var go_menu = GAMEOVER.instantiate()
+	add_child(go_menu)
+
+func display_upgrade_UI():
+	var upgrade_ui_int = UPGRADE_UI.instantiate()
+	add_child(upgrade_ui_int)
+
+func pause(node : Node2D):
+	node.process_mode = Node.PROCESS_MODE_DISABLED
+
+func unpause(node : Node2D):
+	node.process_mode = Node.PROCESS_MODE_ALWAYS
+"
+
+[node name="MAIN_MANAGER" type="Node"]
+script = SubResource("GDScript_essvl")

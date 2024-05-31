@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://mgkl7coakobj"
+path="res://.godot/imported/charge_bite.mp3-1c35b9f04503242c7d588515963eb80d.mp3str"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/1 - Tres-2B/Enemies/Skeleton_Enemy/SFX/bite_attack/charge_bite.mp3"
+dest_files=["res://.godot/imported/charge_bite.mp3-1c35b9f04503242c7d588515963eb80d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

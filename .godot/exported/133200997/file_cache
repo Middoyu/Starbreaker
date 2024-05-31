@@ -1,0 +1,15 @@
+res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn::5c3d0859b7cb44a790ae419ae629d598::1718344651::res://.godot/exported/133200997/export-8e893b943b8c16ac4cfa880dca47612d-enemy.scn
+res://Game Folder/game_assets/Items/Base/upgradepickup_base.tscn::2b1495eee050fee76134336ece34bfd5::1717715011::res://.godot/exported/133200997/export-4fe96662b8bff5da51ed895b084c7c37-upgradepickup_base.scn
+res://Game Folder/game_assets/Items/Damage_UP/assets/dmgup_vfx.tscn::0f84307967364bc25a76716b754b0c94::1717715507::res://.godot/exported/133200997/export-dbfab6689fcb7c5a1779dffbe83d5dba-dmgup_vfx.scn
+res://Game Folder/game_assets/Items/Damage_UP/DMGup_pickup.tscn::e17a081a43a5cf6e8a1c4237cfbf7ac9::1717727561::res://.godot/exported/133200997/export-f2f894ada16dea0544f8019d3af82b31-DMGup_pickup.scn
+res://Game Folder/game_assets/Items/Speed_UP/SPDup_pickup.tscn::2c3e6447ba544f6ce6910a3abefad328::1717727585::res://.godot/exported/133200997/export-2ce5dc29e4355dd25b7627fdcaed4bd8-SPDup_pickup.scn
+res://Game Folder/game_assets/Player/Main/Player.tscn::66e1abbbddaaff005cbad9d124f414fa::1718394312::res://.godot/exported/133200997/export-9250f7da783b8a63d856334b320be4f2-Player.scn
+res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn::a9f37ef5e493cfc9ea88921131a1bf0f::1718315379::res://.godot/exported/133200997/export-00533fad17b8de758940b5b251116a78-testbullet.scn
+res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn::680b236d2992ce7af095bd566a8ec29c::1718394311::res://.godot/exported/133200997/export-d558e88414274408998a2a8cfde67c95-ProtoZone.scn
+res://Game Folder/game_assets/Stages/1 - Tres-2B/Enemies/Skeleton_Enemy/Projectiles/effects/se_shooting_effects.tscn::9dda661a17abcf8c53fada099f683f3f::1717331413::res://.godot/exported/133200997/export-83aa757c25f92d65721aa24a77544c2b-se_shooting_effects.scn
+res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.tscn::c0d550a2938e0b123877f0fa05051593::1717515030::res://.godot/exported/133200997/export-ef4648534b2daab5b15bb1d97feeb338-base_bullet.scn
+res://Game Folder/game_components/camera_component/Camera/camera_base.tscn::124108a3abb82065538150231050ec0f::1718119057::res://.godot/exported/133200997/export-af28709f90eb906dde55bd3b9cb60c2f-camera_base.scn
+res://Game Folder/game_components/collision_component/Databox/databox.tscn::8cd3b962abbbf0aeb1c6e63ab11ab7a9::1717332103::res://.godot/exported/133200997/export-3fcb4b6526b8bf5d18509ac74a4b999b-databox.scn
+res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn::a679325ca680380100cbe950c1beb7bf::1718318711::res://.godot/exported/133200997/export-17bbfbe7a73278659dfaa34f28bf32f8-stagemachine_parent.scn
+res://Game Folder/main_manager.tscn::a2fc5d1fb0d476c8e4761ed9dd1a1bd4::1718305070::res://.godot/exported/133200997/export-a923de29c32fc526babdf38e4695285f-main_manager.scn
+res://z_Export/default_bus_layout.tres::2cffd7d3a69866c3e3d88e8a7b113b08::1718393461::res://.godot/exported/133200997/export-f2a768dd227a2e3e1b59e34e2cb2d442-default_bus_layout.res

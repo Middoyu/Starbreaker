@@ -1,0 +1,97 @@
+[gd_scene load_steps=5 format=3 uid="uid://ujg1l8k67orr"]
+
+[ext_resource type="Texture2D" uid="uid://j5jeayb6ofdk" path="res://Game Folder/game_assets/Player/Crosshair/Sprites/crosshair.png" id="1_7mojs"]
+
+[sub_resource type="GDScript" id="GDScript_l2lhf"]
+resource_name = "crosshair"
+script/source = "extends Node2D
+@onready var is_controller_active : bool = false
+@export var spawning_position_offset : Vector2 = Vector2.ZERO
+@export var controller_crosshair_speed : float = 150.0
+
+func _enter_tree() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+
+func _ready() -> void:
+	global.crosshair = self
+	setup_crosshair()
+
+func _physics_process(delta: float) -> void:
+	move_crosshair(delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	switch_input_type(event)
+
+#region Setup
+func setup_crosshair():
+	# Spawns crosshair on the Player (if valid) with a offset to the intial position.
+	if is_instance_valid(utility.get_player()):
+		global_position = utility.get_player().global_position + spawning_position_offset 
+#endregion
+
+#region Movement
+func move_crosshair(delta):
+	match is_controller_active: # Switches movement type depending on this variable determined in the Input Switching region.
+		true:
+			follow_rstick(delta)
+		false:
+			follow_mouse(delta)
+
+func follow_mouse(delta): # Makes the crosshair follow the mouse.
+	global_position = get_global_mouse_position()
+
+func follow_rstick(delta): # Makes the crosshair follow the right analog stick.
+	var direction = Input.get_vector(\"rstick_left\", 'rstick_right', \"rstick_up\", \"rstick_down\")
+	global_position += direction * controller_crosshair_speed * delta
+#endregion
+
+#region Input Switching
+func switch_input_type(event): # Switches the input type ON/OFF after pressing ENTER or START.
+	if event.is_action_pressed(\"ui_accept\"):
+		match is_controller_active:
+			true:
+				is_controller_active = false
+			false:
+				is_controller_active = true
+
+#endregion
+
+func _exit_tree() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+"
+
+[sub_resource type="Animation" id="Animation_oc45y"]
+resource_name = "scale-pulse"
+length = 1.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1.03526, 1),
+"update": 0,
+"values": [Vector2(0.9, 0.9), Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mf7yy"]
+_data = {
+"scale-pulse": SubResource("Animation_oc45y")
+}
+
+[node name="Crosshair" type="Node2D"]
+script = SubResource("GDScript_l2lhf")
+spawning_position_offset = Vector2(0, -121)
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("1_7mojs")
+
+[node name="Scale_ANIM" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_mf7yy")
+}
+autoplay = "scale-pulse"

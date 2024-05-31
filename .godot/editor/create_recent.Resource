@@ -1,0 +1,4 @@
+printupgrade
+Base_Projectile_Upgrade
+Resource
+HitboxData

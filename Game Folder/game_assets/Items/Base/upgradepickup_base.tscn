@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://8a3ap8up6tov"]
+
+[ext_resource type="Script" path="res://Game Folder/game_assets/Items/Base/upgradepickup_base.gd" id="1_fx2g5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j5hjs"]
+
+[node name="UpgradePickup" type="Area2D"]
+script = ExtResource("1_fx2g5")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j5hjs")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
