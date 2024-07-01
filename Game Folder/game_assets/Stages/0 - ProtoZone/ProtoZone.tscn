@@ -13,11 +13,12 @@ resource_name = "protozone_script"
 script/source = "extends StageBase
 
 func stage_specifc_spawns():
-	randomize()
-	spawn_enemies(\"res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn\", Vector2(randi_range(0, 640), -10))
-	match enemy_spawn_count:
-		1:
-			pass
+	if is_boss_active == false:
+		randomize()
+		spawn_enemies(\"res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn\", Vector2(randi_range(0, 640), -10))
+		match enemy_spawn_count:
+			1:
+				pass
 "
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pd37p"]

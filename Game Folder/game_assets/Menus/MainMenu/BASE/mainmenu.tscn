@@ -5,12 +5,19 @@
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
 resource_name = "mainmenu"
 script/source = "extends Node2D
+@onready var main_menu = $MainMenu
+@onready var options_menu = $Options
 
 
 
 func play_pressed() -> void:
 	global.main_manager.add_level()
 	queue_free()
+
+
+func options_pressed():
+	options_menu.show()
+	main_menu.hide()
 "
 
 [sub_resource type="Gradient" id="Gradient_mu3cn"]
@@ -36,21 +43,21 @@ stream = ExtResource("1_j4fed")
 volume_db = -16.0
 autoplay = true
 
-[node name="Control" type="Control" parent="."]
+[node name="MainMenu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
 
-[node name="Starbreaker" type="Label" parent="Control"]
+[node name="Starbreaker" type="Label" parent="MainMenu"]
 top_level = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
+anchors_preset = -1
+anchor_top = 0.356
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -384.0
-offset_top = -52.0
-offset_right = -192.0
+offset_top = -0.160004
+offset_right = -160.0
 offset_bottom = -29.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -61,42 +68,50 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Container" type="VBoxContainer" parent="Control"]
+[node name="Container" type="VBoxContainer" parent="MainMenu"]
 z_index = 5
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
+anchors_preset = 2
 anchor_top = 1.0
-anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 216.0
-offset_right = 224.0
-offset_bottom = 317.0
-grow_horizontal = 2
+offset_left = 17.0
+offset_top = -136.0
+offset_right = 152.0
+offset_bottom = -105.0
 grow_vertical = 0
 
-[node name="PLAY" type="Button" parent="Control/Container"]
+[node name="PLAY" type="Button" parent="MainMenu/Container"]
 layout_mode = 2
 text = "Play"
 
-[node name="OPTIONS" type="Button" parent="Control/Container"]
+[node name="OPTIONS" type="Button" parent="MainMenu/Container"]
 visible = false
 layout_mode = 2
 text = "Options"
 
-[node name="QUIT" type="Button" parent="Control/Container"]
+[node name="QUIT" type="Button" parent="MainMenu/Container"]
 visible = false
 layout_mode = 2
 text = "Quit"
 
-[node name="Background" type="TextureRect" parent="Control"]
+[node name="Background" type="TextureRect" parent="MainMenu"]
 z_index = -10
 z_as_relative = false
-layout_mode = 0
-offset_right = 640.0
-offset_bottom = 360.0
+layout_mode = 1
+offset_left = -144.0
+offset_top = -96.0
+offset_right = 784.0
+offset_bottom = 456.0
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_nc3u1")
 
-[connection signal="pressed" from="Control/Container/PLAY" to="." method="play_pressed"]
+[node name="Options" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="MainMenu/Container/PLAY" to="." method="play_pressed"]
+[connection signal="pressed" from="MainMenu/Container/OPTIONS" to="." method="options_pressed"]

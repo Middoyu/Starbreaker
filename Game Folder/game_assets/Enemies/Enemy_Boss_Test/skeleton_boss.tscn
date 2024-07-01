@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://c3thas2ivw5s8"]
+[gd_scene load_steps=15 format=3 uid="uid://c3thas2ivw5s8"]
 
 [ext_resource type="AudioStream" uid="uid://c60icxoniqdpt" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Music/Starbreaker_VsTimothy.wav" id="1_mvp6u"]
 [ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/boss.png" id="2_yuykx"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
+[ext_resource type="PackedScene" uid="uid://c1k2ssyjaj5h3" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Bullets/bullet.tscn" id="5_4cjuf"]
 
 [sub_resource type="GDScript" id="GDScript_y0eke"]
 resource_name = "timothyboss"
@@ -12,16 +13,30 @@ script/source = "extends Boss
 @onready var hurtbox: Databox = $Sprite/Hurtbox
 @onready var hitbox: Databox = $Sprite/Hitbox
 
+@onready var hand_r = $HAND_R
+@onready var hand_l = $HAND_L
+
 func wait(time, function):
 	var timer = get_tree().create_timer(time)
 	timer.connect(\"timeout\", function)
 
 func _ready() -> void:
-	queue_free()
+	white_flash()
+	setup_healthbar()
+	get_parent().is_boss_active = true
+	
+	for i in get_children():
+		if i == Enemy:
+			var enemy = i as Enemy
+			enemy.spawn_charge_orb(5)
+			enemy.queue_free()
+	
 	hurtbox.is_disabled = true
 	hitbox.is_disabled = true
+	
 	var starting_movement_tween = create_tween().set_parallel(true)
 	starting_movement_tween.tween_property(self, \"position:y\", 58, 9.63).from(408).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	starting_movement_tween.tween_property(self, \"global_rotation_degrees\", 360, 4.815).from(0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
 	wait(9.63, switch_to_idle)
 
 func switch_to_idle():
@@ -29,6 +44,22 @@ func switch_to_idle():
 	hurtbox.is_disabled = false
 	hitbox.is_disabled = false
 
+func white_flash():
+	var white_flash_tween = create_tween()
+	white_flash_tween.tween_property($IntroEffects/Flash, \"modulate\", Color.TRANSPARENT, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	white_flash_tween.tween_callback($IntroEffects.queue_free)
+
+@onready var progress_bar = $ProgressBar
+
+func _process(delta):
+	update_healthbar()
+
+func setup_healthbar():
+	progress_bar.max_value = hurtbox.max_health
+	progress_bar.position = Vector2(-48, 300)
+
+func update_healthbar():
+	progress_bar.value = hurtbox.health
 
 func on_parent_hit(colliding_hitbox):
 	spawn_charge_orb(1)
@@ -53,17 +84,168 @@ script/source = "extends State
 
 "
 
-[sub_resource type="GDScript" id="GDScript_qqqpf"]
-resource_name = "idle_state"
+[sub_resource type="GDScript" id="GDScript_mnaxk"]
+resource_name = "return_to_idle"
 script/source = "extends State
 
 func enter():
-	pass
+	var default_pos_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween.tween_property(parent, \"position:x\", 320, 1.5)
+	default_pos_tween.tween_property(parent, \"position:y\", 58, 1.5)
+	await default_pos_tween.finished
+	var default_pos_tween_ = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 56, 0.5)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -56, 0.5)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:y\", parent.position.y + 30, 0.5)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:y\", parent.position.y + 30, 0.5)
+	await default_pos_tween_.finished
+	parent.hand_r.reparent(parent)
+	parent.hand_l.reparent(parent)
+	Transistioned.emit(self, \"idle\")
+"
+
+[sub_resource type="GDScript" id="GDScript_qqqpf"]
+resource_name = "idle_state"
+script/source = "extends State
+@onready var idle_anim = $idle_anim
+
+func enter():
+	idle_anim.stop()
+	idle_anim.play(\"idle\")
+	wait(randf_range(2.5, 5.0), switch_state)
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time)
+	timer.connect(\"timeout\", function)
+
+func switch_state():
+	idle_anim.stop()
+	var attack_list = [\"swipe\", \"chase\"]
+	match attack_list.pick_random():
+		\"swipe\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"chase\")
+		\"chase\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"chase\")
+		\"charge\":
+			pass
+"
+
+[sub_resource type="Animation" id="Animation_l363u"]
+resource_name = "idle"
+loop_mode = 1
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(320, 58), Vector2(320, 61)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8fi0c"]
+_data = {
+"idle": SubResource("Animation_l363u")
+}
+
+[sub_resource type="GDScript" id="GDScript_ix1sk"]
+resource_name = "swipe_attack"
+script/source = "extends State
+var hardmode_mvt_speed_accel = 12.5
+var normal_mvt_speed_accel = 10.8
+
+var bullet_pos = 1
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@onready var cooldown_timer : Timer = Timer.new()
+
+var movement_speed = 0.0
+
+func enter():
+	movement_speed = 0
+	move_hands()
+	wait(10.0, return_to_idle)
+	cooldown_timer.start(1.0)
+
+func _ready() -> void:
+	cooldown_timer.one_shot = false
+	cooldown_timer.wait_time = 1.0
+	add_child(cooldown_timer)
+	cooldown_timer.connect(\"timeout\", shoot)
+
+func switch_bullet_pos(projectile_instance):
+	match(bullet_pos):
+		1:
+			projectile_instance.global_position = parent.hand_l.global_position
+			bullet_pos = 2
+		2:
+			projectile_instance.global_position = parent.hand_r.global_position
+			bullet_pos = 1
+
+func spawn_projectile(projectile_path):
+	var proj_int = projectile_path.instantiate()
+	switch_bullet_pos(proj_int)
+	global.current_stage.add_child(proj_int)
+	proj_int.parent = parent
+
+func shoot():
+	spawn_projectile(bullet)
+
+func move_hands():
+	parent.hand_r.reparent(global.current_stage)
+	parent.hand_l.reparent(global.current_stage)
+	var hand_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	hand_tween.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 280, 0.5)
+	hand_tween.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -280, 0.5)
+	hand_tween.chain().tween_property(parent.hand_r, \"global_position:y\", parent.position.y + -10, 0.5)
+	hand_tween.chain().tween_property(parent.hand_l, \"global_position:y\", parent.position.y + -10, 0.5)
+
+func physics_update(_delta):
+	movement_speed += normal_mvt_speed_accel * _delta
+	parent.velocity = parent.get_player_vector() * movement_speed
+	parent.move_and_slide()
+
+
+func return_to_idle():
+	cooldown_timer.stop()
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time)
+	timer.connect(\"timeout\", function)
 "
 
 [node name="SkeletonBoss" type="CharacterBody2D"]
-position = Vector2(320, 407.655)
+position = Vector2(320, 58)
 script = SubResource("GDScript_y0eke")
+
+[node name="HAND_R" type="Node2D" parent="."]
+position = Vector2(56, 30)
+
+[node name="Polygon2D" type="Polygon2D" parent="HAND_R"]
+polygon = PackedVector2Array(-16, -18, -16, 14, 2.18115, 14, 16, 14, 16, -18)
+
+[node name="HAND_L" type="Node2D" parent="."]
+position = Vector2(-56, 30)
+
+[node name="Polygon2D" type="Polygon2D" parent="HAND_L"]
+polygon = PackedVector2Array(-16, -18, -16, 14, 16, 14, 16, -18)
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -201.0
+offset_right = -13.0
+offset_bottom = -159.0
+grow_vertical = 0
+show_percentage = false
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_mvp6u")
@@ -111,8 +293,39 @@ script = SubResource("GDScript_2v21p")
 parent = NodePath("../..")
 is_state_cancelable = false
 
+[node name="return_to_idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_mnaxk")
+parent = NodePath("../..")
+
 [node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
 script = SubResource("GDScript_qqqpf")
 parent = NodePath("../..")
+
+[node name="idle_anim" type="AnimationPlayer" parent="StateMachine/idle"]
+root_node = NodePath("../../..")
+libraries = {
+"": SubResource("AnimationLibrary_8fi0c")
+}
+playback_default_blend_time = 1.5
+
+[node name="chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_ix1sk")
+bullet = ExtResource("5_4cjuf")
+parent = NodePath("../..")
+
+[node name="IntroEffects" type="Node" parent="."]
+
+[node name="Flash" type="ColorRect" parent="IntroEffects"]
+visible = false
+top_level = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -68.0
+offset_top = -60.0
+offset_right = 68.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [connection signal="PlayerTeamHurtbox_entered" from="Sprite/Hitbox" to="." method="pteam_hurtbox_entered"]

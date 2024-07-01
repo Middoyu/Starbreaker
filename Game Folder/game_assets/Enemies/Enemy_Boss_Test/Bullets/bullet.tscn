@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1k2ssyjaj5h3"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_cqbc3"]
+
+[sub_resource type="GDScript" id="GDScript_yh1ki"]
+resource_name = "skele_boss_bullet"
+script/source = "extends Projectile
+@onready var direction = get_player_vector()
+
+func _physics_process(delta):
+	velocity = direction * 150
+	rotate(8.0)
+	move_and_slide()
+
+func get_player_vector() -> Vector2:
+	var player_direction_vector = (utility.get_player().global_position - self.global_position).normalized()
+	return player_direction_vector
+
+
+func hurtbox_entered(area):
+	area.take_damage($hitbox)
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_63gjn"]
+size = Vector2(16, 16)
+
+[node name="bosse_bullet" type="CharacterBody2D"]
+script = SubResource("GDScript_yh1ki")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_cqbc3")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+damage = 5.0
+knockback_amount = 3000.0
+knockback_stun_duration = 0.3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
+shape = SubResource("RectangleShape2D_63gjn")
+
+[connection signal="PlayerTeamHurtbox_entered" from="hitbox" to="." method="hurtbox_entered"]

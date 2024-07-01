@@ -1,0 +1,230 @@
+[gd_scene load_steps=11 format=3 uid="uid://c3thas2ivw5s8"]
+
+[ext_resource type="AudioStream" uid="uid://c60icxoniqdpt" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Music/Starbreaker_VsTimothy.wav" id="1_mvp6u"]
+[ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/boss.png" id="2_yuykx"]
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
+
+[sub_resource type="GDScript" id="GDScript_y0eke"]
+resource_name = "timothyboss"
+script/source = "extends Boss
+@onready var state_machine = $StateMachine
+@onready var hurtbox: Databox = $Sprite/Hurtbox
+@onready var hitbox: Databox = $Sprite/Hitbox
+
+@onready var hand_r = $HAND_R
+@onready var hand_l = $HAND_L
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time)
+	timer.connect(\"timeout\", function)
+
+func _ready() -> void:
+	white_flash()
+	setup_healthbar()
+	get_parent().is_boss_active = true
+	
+	for i in get_children():
+		if i == Enemy:
+			var enemy = i as Enemy
+			enemy.spawn_charge_orb(5)
+			enemy.queue_free()
+	
+	hurtbox.is_disabled = true
+	hitbox.is_disabled = true
+	
+	var starting_movement_tween = create_tween().set_parallel(true)
+	starting_movement_tween.tween_property(self, \"position:y\", 58, 9.63).from(408).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	starting_movement_tween.tween_property(self, \"global_rotation_degrees\", 360, 4.815).from(0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	wait(9.63, switch_to_idle)
+
+func switch_to_idle():
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, $StateMachine/idle.name)
+	hurtbox.is_disabled = false
+	hitbox.is_disabled = false
+
+func white_flash():
+	var white_flash_tween = create_tween()
+	white_flash_tween.tween_property($IntroEffects/Flash, \"modulate\", Color.TRANSPARENT, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	white_flash_tween.tween_callback($IntroEffects.queue_free)
+
+@onready var progress_bar = $ProgressBar
+
+func _process(delta):
+	update_healthbar()
+
+func setup_healthbar():
+	progress_bar.max_value = hurtbox.max_health
+	progress_bar.position = Vector2(-48, 300)
+
+func update_healthbar():
+	progress_bar.value = hurtbox.health
+
+func on_parent_hit(colliding_hitbox):
+	spawn_charge_orb(1)
+	spawn_xp_orb(1)
+
+func on_parent_death(colliding_hitbox):
+	queue_free()
+
+func pteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jd5nt"]
+radius = 17.5285
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rs8xx"]
+radius = 15.5081
+
+[sub_resource type="GDScript" id="GDScript_2v21p"]
+resource_name = "intro_state"
+script/source = "extends State
+
+"
+
+[sub_resource type="GDScript" id="GDScript_qqqpf"]
+resource_name = "idle_state"
+script/source = "extends State
+
+func enter():
+	var i = randf_range(2.5, 5.0)
+	idle_move_x()
+	idle_move_y()
+	wait(i - 0.2, go_to_default)
+	wait(i, switch_state)
+
+func idle_move_y():
+	var idle_y_tween = create_tween().set_loops()
+	idle_y_tween.tween_property(parent, \"position:y\", parent.position.y - 3, 0.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	idle_y_tween.tween_property(parent, \"position:y\", parent.position.y + 3, 0.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	idle_y_tween.chain().kill()
+
+func idle_move_x():
+	var i = randf_range(-1.5, 1.5)
+	var idle_x_tween = create_tween().set_loops()
+	idle_x_tween.tween_property(parent, \"position:x\", parent.position.x + i, 0.5)
+	idle_x_tween.chain().kill()
+
+func go_to_default():
+	var default_position_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_position_tween.tween_property(parent, \"position:y\", 58, 0.2).from_current()
+	default_position_tween.tween_property(parent, \"position:x\", 320, 0.2).from_current()
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time)
+	timer.connect(\"timeout\", function)
+
+func switch_state():
+	for i in get_children():
+		pass
+	var attack_list = [\"swipe\", \"chase\"]
+	match attack_list.pick_random():
+		\"swipe\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"attack\")
+		\"chase\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"attack\")
+"
+
+[sub_resource type="GDScript" id="GDScript_ix1sk"]
+resource_name = "swipe_attack"
+script/source = "extends State
+
+func enter():
+	pass
+
+func physics_update(_delta):
+	parent.velocity = parent.get_player_vector() * 50
+	parent.move_and_slide()
+"
+
+[node name="SkeletonBoss" type="CharacterBody2D"]
+position = Vector2(320, 407.655)
+script = SubResource("GDScript_y0eke")
+
+[node name="HAND_R" type="Node2D" parent="."]
+
+[node name="HAND_L" type="Node2D" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -201.0
+offset_right = -13.0
+offset_bottom = -159.0
+grow_vertical = 0
+show_percentage = false
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_mvp6u")
+volume_db = -18.0
+autoplay = true
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("2_yuykx")
+hframes = 4
+frame = 1
+
+[node name="Hurtbox" type="Area2D" parent="Sprite" node_paths=PackedStringArray("parent")]
+position = Vector2(0, -5.5)
+script = ExtResource("3_wh82c")
+parent = NodePath("../..")
+team_affiliation = "EnemyTeam"
+databox_type = "Hurtbox"
+max_health = 10000
+recieves_knockback = false
+is_knockback_forced_upwards = false
+armor_multiplier = 0.0
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite/Hurtbox"]
+shape = SubResource("CircleShape2D_jd5nt")
+
+[node name="Hitbox" type="Area2D" parent="Sprite" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_wh82c")
+parent = NodePath("../..")
+team_affiliation = "EnemyTeam"
+damage = 10.0
+knockback_amount = 6000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite/Hitbox"]
+position = Vector2(0, -5.5)
+shape = SubResource("CircleShape2D_rs8xx")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("4_fgkdi")]
+parent = NodePath("..")
+intial_state = NodePath("intro")
+
+[node name="intro" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_2v21p")
+parent = NodePath("../..")
+is_state_cancelable = false
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_qqqpf")
+parent = NodePath("../..")
+
+[node name="attack" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_ix1sk")
+parent = NodePath("../..")
+
+[node name="IntroEffects" type="Node" parent="."]
+
+[node name="Flash" type="ColorRect" parent="IntroEffects"]
+top_level = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -68.0
+offset_top = -60.0
+offset_right = 68.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="PlayerTeamHurtbox_entered" from="Sprite/Hitbox" to="." method="pteam_hurtbox_entered"]

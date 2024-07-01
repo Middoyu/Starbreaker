@@ -1185,9 +1185,7 @@ script = SubResource("GDScript_0bcgs")
 script = ExtResource("4_42uin")
 parent = NodePath("../..")
 team_affiliation = "PlayerTeam"
-damage = 65.0
-knockback_amount = 6850.0
-knockback_stun_duration = 0.5
+damage = 5.0
 
 [node name="Collision" type="CollisionShape2D" parent="Utility/Utility_Hitbox"]
 shape = SubResource("CircleShape2D_mcrtv")

@@ -1,7 +1,14 @@
 res://z_Export/default_bus_layout.tres
 res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/skeleton_boss.tscn
-res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn
-res://Game Folder/game_assets/Player/Secondary/Missile/missile_proj.tscn
 res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn
 res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
 res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Bullets/bullet.tscn
+res://Game Folder/game_components/collision_component/Databox/databox.gd
+res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn
+res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
+res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn
+res://Game Folder/game_assets/Player/HUD/hud.tscn
+res://Game Folder/game_assets/Player/Secondary/Missile/missile_proj.tscn
+res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn
+res://Game Folder/game_assets/Player/HUD/UpgradeHUD/upgrade_ui.tscn

@@ -14,6 +14,10 @@ class_name StageBase
 @export var enemy_spawnrate := 1.5
 @onready var enemy_spawn_count := 0
 
+# Boss Variables
+var is_boss_active = false
+
+
 func _ready() -> void:
 	global.current_stage = self
 	mainloop_setup()

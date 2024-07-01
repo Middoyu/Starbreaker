@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 
 func update_score_per_sec():
 	if is_instance_valid(global.current_stage):
-		score_event.update_score(1)
+		score_event.update_score(4)
 "
 
 [node name="LVL_MANAGER" type="Node"]
