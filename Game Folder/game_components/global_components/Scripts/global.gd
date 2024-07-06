@@ -11,6 +11,9 @@ var main_manager = null
 var current_stage = null
 var current_stage_score := 0
 
+var music_player = null
+
+
 var lvl_manager = null
 
 

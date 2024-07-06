@@ -33,7 +33,7 @@ score_event="*res://Game Folder/game_components/global_components/Scripts/score.
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=4
+window/size/mode=2
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 

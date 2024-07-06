@@ -56,6 +56,8 @@ func input_detection(delta):
 			secondary.shoot()
 		if Input.is_action_just_pressed("movement_util"):
 			util.teleport_action()
+		if Input.is_action_just_pressed("ctrl"):
+			global.main_manager.display_upgrade_UI()
 
 func movement_handler():
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()

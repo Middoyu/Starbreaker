@@ -56,4 +56,5 @@ func music_setup():
 		music_player.stream = music_WAV
 		music_player.volume_db = -14
 		music_player.reparent(global.main_manager)
+		global.music_player = music_player
 		music_player.play()

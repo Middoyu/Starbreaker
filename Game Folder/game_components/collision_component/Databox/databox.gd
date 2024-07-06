@@ -20,7 +20,7 @@ signal is_taking_knockback(duration : float)
 @export_category("Databox Data")
 @export_subgroup("Global Data")
 @export_enum("Hurtbox", "Hitbox") var databox_type = "Hitbox"
-@onready var is_disabled := false
+@export var is_disabled := false
 
 @export_subgroup("Hitbox Data")
 var hitbox_data := HitboxData.new() as HitboxData
@@ -65,11 +65,15 @@ func change_debug_color(color): ## Changes the debug color of the databox collis
 		if child is CollisionShape2D:
 			child.debug_color = color
 			child.debug_color.a = 0.1
+		if child is CollisionPolygon2D:
+			pass
 
 ## Checks the disable mode for the databox. Appropriately changing the state depending on the is_disabled value.
 func check_disable_mode_process():
 	for child in get_children():
 		if child is CollisionShape2D:
+			child.disabled = is_disabled
+		if child is CollisionPolygon2D:
 			child.disabled = is_disabled
 
 

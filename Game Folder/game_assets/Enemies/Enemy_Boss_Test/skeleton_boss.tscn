@@ -1,6 +1,5 @@
-[gd_scene load_steps=15 format=3 uid="uid://c3thas2ivw5s8"]
+[gd_scene load_steps=17 format=3 uid="uid://c3thas2ivw5s8"]
 
-[ext_resource type="AudioStream" uid="uid://c60icxoniqdpt" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Music/Starbreaker_VsTimothy.wav" id="1_mvp6u"]
 [ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/boss.png" id="2_yuykx"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
@@ -16,11 +15,22 @@ script/source = "extends Boss
 @onready var hand_r = $HAND_R
 @onready var hand_l = $HAND_L
 
+
+const STARBREAKER_VS_TIMOTHY = preload(\"res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Music/Starbreaker_VsTimothy.wav\")
+
 func wait(time, function):
-	var timer = get_tree().create_timer(time)
+	var timer = get_tree().create_timer(time, false)
 	timer.connect(\"timeout\", function)
 
+
+func music():
+	await get_tree().create_timer(0.01).timeout
+	var music_player = global.music_player as AudioStreamPlayer
+	music_player.stream = STARBREAKER_VS_TIMOTHY
+	music_player.play()
+
 func _ready() -> void:
+	music()
 	white_flash()
 	setup_healthbar()
 	get_parent().is_boss_active = true
@@ -66,7 +76,9 @@ func on_parent_hit(colliding_hitbox):
 	spawn_xp_orb(1)
 
 func on_parent_death(colliding_hitbox):
-	queue_free()
+	if state_machine.current_state.has_method(\"reset_tweens\") == true:
+		state_machine.current_state.reset_tweens()
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, $StateMachine/death.name)
 
 func pteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
@@ -115,21 +127,22 @@ func enter():
 	wait(randf_range(2.5, 5.0), switch_state)
 
 func wait(time, function):
-	var timer = get_tree().create_timer(time)
+	var timer = get_tree().create_timer(time, false)
 	timer.connect(\"timeout\", function)
 
 func switch_state():
 	idle_anim.stop()
-	var attack_list = [\"swipe\", \"chase\"]
+	var attack_list = [\"lazer\", \"chase\", \"charge\"]
 	match attack_list.pick_random():
-		\"swipe\":
+		\"lazer\":
 			print(\"attacking...\")
-			Transistioned.emit(self, \"chase\")
+			Transistioned.emit(self, \"lazer\")
 		\"chase\":
 			print(\"attacking...\")
 			Transistioned.emit(self, \"chase\")
 		\"charge\":
-			pass
+			print(\"attacking...\")
+			Transistioned.emit(self, \"charge\")
 "
 
 [sub_resource type="Animation" id="Animation_l363u"]
@@ -216,8 +229,265 @@ func return_to_idle():
 	Transistioned.emit(self, \"return_to_idle\")
 
 func wait(time, function):
-	var timer = get_tree().create_timer(time)
+	var timer = get_tree().create_timer(time, false)
 	timer.connect(\"timeout\", function)
+"
+
+[sub_resource type="GDScript" id="GDScript_tm7w4"]
+resource_name = "charge_attack"
+script/source = "extends State
+
+
+var bullet_pos = 1
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@onready var cooldown_timer : Timer = Timer.new()
+
+@onready var current_pos = 0
+@onready var pos1: Marker2D = $pos1
+@onready var pos2: Marker2D = $pos2
+@onready var pos3: Marker2D = $pos3
+@onready var pos4: Marker2D = $pos4
+@onready var hand_pos: Timer = $Hand_pos
+@onready var rush_indicator: Polygon2D = $Rush_Indicator
+@onready var charge_cooldown_timer: Timer = $Charge_Cooldown_Timer
+@onready var loop_amount = 0
+var head_motion_dir = Vector2.DOWN
+var is_charging = false
+
+var right_hand_tween : Tween
+var left_hand_tween : Tween
+
+func enter():
+	loop_amount = 0
+	current_pos = 0
+	head_motion_dir = Vector2.DOWN
+	rush_indicator.show()
+	move_head_start()
+	move_hands_start()
+	charge_cooldown_timer.start()
+	cooldown_timer.start()
+
+func _ready() -> void:
+	cooldown_timer.one_shot = false
+	cooldown_timer.wait_time = 0.7
+	add_child(cooldown_timer)
+	cooldown_timer.connect(\"timeout\", shoot)
+
+func physics_update(_delta):
+	rush_indicator.global_position.x = parent.global_position.x
+	if charge_cooldown_timer.time_left >= 1.0:
+		parent.global_position.x = global.player.global_position.x
+
+
+func switch_bullet_pos(projectile_instance):
+	match(bullet_pos):
+		1:
+			projectile_instance.global_position = parent.hand_l.global_position
+			bullet_pos = 2
+		2:
+			projectile_instance.global_position = parent.hand_r.global_position
+			bullet_pos = 1
+
+func spawn_projectile(projectile_path):
+	var proj_int = projectile_path.instantiate()
+	switch_bullet_pos(proj_int)
+	global.current_stage.add_child(proj_int)
+	proj_int.parent = parent
+
+func shoot():
+	spawn_projectile(bullet)
+
+func move_head_start():
+	var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	head_tween.tween_property(parent, \"position:y\", -250, 0.5)
+
+func move_hands_start():
+	parent.hand_r.reparent(global.current_stage)
+	parent.hand_l.reparent(global.current_stage)
+	
+	var hand_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	
+	
+	hand_tween.tween_property(parent.hand_r, \"global_position:x\", pos3.global_position.x, 0.3)
+	hand_tween.tween_property(parent.hand_r, \"global_position:y\", pos3.global_position.y, 0.3)
+	hand_tween.tween_property(parent.hand_l, \"global_position:x\", pos1.global_position.x, 0.3)
+	hand_tween.tween_property(parent.hand_l, \"global_position:y\", pos1.global_position.y, 0.3)
+	await hand_tween.finished
+	_on_hand_pos_timeout()
+
+func move_left_hand(pos):
+	var l_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+	l_tween.tween_property(parent.hand_l, \"global_position:x\", pos.global_position.x, 5.0)
+	l_tween.tween_property(parent.hand_l, \"global_position:y\", pos.global_position.y, 5.0)
+	left_hand_tween = l_tween
+
+func move_right_hand(pos):
+	var r_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+	r_tween.tween_property(parent.hand_r, \"global_position:x\", pos.global_position.x, 5.0)
+	r_tween.tween_property(parent.hand_r, \"global_position:y\", pos.global_position.y, 5.0)
+	right_hand_tween = r_tween
+
+func return_to_idle():
+	reset_tweens()
+	rush_indicator.hide()
+	charge_cooldown_timer.stop()
+	hand_pos.stop()
+	cooldown_timer.stop()
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+
+func reset_tweens():
+	if right_hand_tween:
+		right_hand_tween.kill()
+		right_hand_tween = null
+	if left_hand_tween:
+		left_hand_tween.kill()
+		left_hand_tween = null
+
+
+func _on_hand_pos_timeout() -> void:
+	current_pos += 1
+	current_pos = wrap(current_pos, 1, 5)
+	print(current_pos)
+	match current_pos:
+		1:
+			move_left_hand(pos2)
+			move_right_hand(pos4)
+			hand_pos.start()
+		2:
+			move_left_hand(pos3)
+			move_right_hand(pos1)
+			hand_pos.start()
+		3:
+			move_left_hand(pos4)
+			move_right_hand(pos2)
+			hand_pos.start()
+		4:
+			move_left_hand(pos1)
+			move_right_hand(pos3)
+			hand_pos.start()
+
+
+func _on_charge_cooldown_timer_timeout() -> void:
+	var dir = 0.0
+	match head_motion_dir:
+		Vector2.DOWN:
+			dir = 448
+			head_motion_dir = Vector2.UP
+		Vector2.UP:
+			dir = -250
+			head_motion_dir = Vector2.DOWN
+	loop_amount += 1
+	if loop_amount == 5:
+		return_to_idle()
+	else:
+		var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+		head_tween.tween_property(parent, \"position:y\", dir, 0.7)
+		await head_tween.finished
+		charge_cooldown_timer.start()
+"
+
+[sub_resource type="GDScript" id="GDScript_7cdxf"]
+resource_name = "lazer"
+script/source = "extends State
+
+var loops = 0
+var max_loops = 3
+var is_spinning = false
+
+@onready var lazer: Polygon2D = $lazer
+@onready var hitbox: Databox = $lazer/Hitbox
+@onready var warning: Polygon2D = $lazer/warning
+@onready var spin_duration: Timer = $spin_duration
+
+var global_head_tween = null
+
+func _ready() -> void:
+	lazer.hide()
+	hitbox.hide()
+	warning.hide()
+	spin_duration.connect(\"timeout\", trigger_loop)
+
+func enter():
+	lazer.reparent(parent)
+	loops = 0
+	move_head_to_center()
+
+func physics_update(_delta):
+	if is_spinning == true:
+		lazer.show()
+		hitbox.is_disabled = false
+	if is_spinning == false:
+		lazer.hide()
+		hitbox.hide()
+		warning.hide()
+		hitbox.is_disabled = true
+
+func move_head_to_center():
+	var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	head_tween.tween_property(parent, \"position:y\", 160, 0.5)
+	wait(0.7,  spin_head)
+	global_head_tween = head_tween
+
+func spin_head():
+	is_spinning = true
+	var head_tween = create_tween()
+	head_tween.tween_property(parent, \"rotation_degrees\", 360, 8.0).from(0)
+	global_head_tween = head_tween
+	spin_duration.start(8.0)
+
+func trigger_loop():
+	loops += 1
+	if loops == max_loops:
+		return_to_idle()
+	else:
+		spin_head()
+
+func reset_tweens():
+	if global_head_tween:
+		global_head_tween.kill()
+		global_head_tween = null
+
+func return_to_idle():
+	is_spinning = false
+	lazer.hide()
+	hitbox.hide()
+	warning.hide()
+	hitbox.is_disabled = true
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+
+
+func pteam_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+"
+
+[sub_resource type="GDScript" id="GDScript_m4i04"]
+resource_name = "death"
+script/source = "extends State
+
+func enter():
+	var default_pos_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween.tween_property(parent, \"position:x\", 320, 0.3)
+	default_pos_tween.tween_property(parent, \"position:y\", 58, 0.3)
+	await default_pos_tween.finished
+	var default_pos_tween_ = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 56, 0.3)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -56, 0.3)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:y\", parent.position.y + 30, 0.3)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:y\", parent.position.y + 30, 0.3)
+	await default_pos_tween_.finished
+	parent.hand_r.reparent(parent)
+	parent.hand_l.reparent(parent)
+	parent.queue_free()
 "
 
 [node name="SkeletonBoss" type="CharacterBody2D"]
@@ -247,11 +517,6 @@ offset_bottom = -159.0
 grow_vertical = 0
 show_percentage = false
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_mvp6u")
-volume_db = -18.0
-autoplay = true
-
 [node name="Sprite" type="Sprite2D" parent="."]
 scale = Vector2(2, 2)
 texture = ExtResource("2_yuykx")
@@ -264,7 +529,7 @@ script = ExtResource("3_wh82c")
 parent = NodePath("../..")
 team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
-max_health = 10000
+max_health = 25000
 recieves_knockback = false
 is_knockback_forced_upwards = false
 armor_multiplier = 0.0
@@ -313,6 +578,65 @@ script = SubResource("GDScript_ix1sk")
 bullet = ExtResource("5_4cjuf")
 parent = NodePath("../..")
 
+[node name="charge" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_tm7w4")
+bullet = ExtResource("5_4cjuf")
+parent = NodePath("../..")
+
+[node name="Charge_Cooldown_Timer" type="Timer" parent="StateMachine/charge"]
+wait_time = 5.3
+one_shot = true
+
+[node name="Hand_pos" type="Timer" parent="StateMachine/charge"]
+wait_time = 5.3
+
+[node name="pos1" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(16, 16)
+
+[node name="pos2" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(624, 16)
+
+[node name="pos3" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(624, 344)
+
+[node name="pos4" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(16, 344)
+
+[node name="Rush_Indicator" type="Polygon2D" parent="StateMachine/charge"]
+visible = false
+color = Color(1, 0, 0, 0.0392157)
+polygon = PackedVector2Array(-64, 0, 64, 0, 64, 384, -64, 384)
+
+[node name="lazer" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_7cdxf")
+parent = NodePath("../..")
+
+[node name="spin_duration" type="Timer" parent="StateMachine/lazer"]
+
+[node name="lazer" type="Polygon2D" parent="StateMachine/lazer"]
+position = Vector2(320, 72)
+polygon = PackedVector2Array(-24, 56, 0, 0, 24, 56, 40, 448, -40, 448)
+
+[node name="warning" type="Polygon2D" parent="StateMachine/lazer/lazer"]
+color = Color(1, 0, 0, 0.0392157)
+polygon = PackedVector2Array(-24, 56, 0, 0, 24, 56, 40, 448, -40, 448)
+
+[node name="Hitbox" type="Area2D" parent="StateMachine/lazer/lazer" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_wh82c")
+parent = NodePath("../../../..")
+team_affiliation = "EnemyTeam"
+is_disabled = true
+damage = 25.0
+knockback_amount = 3000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionPolygon2D" parent="StateMachine/lazer/lazer/Hitbox"]
+polygon = PackedVector2Array(0, 0, -24, 56, -40, 448, 40, 448, 24, 56)
+
+[node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_m4i04")
+parent = NodePath("../..")
+
 [node name="IntroEffects" type="Node" parent="."]
 
 [node name="Flash" type="ColorRect" parent="IntroEffects"]
@@ -329,3 +653,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [connection signal="PlayerTeamHurtbox_entered" from="Sprite/Hitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="timeout" from="StateMachine/charge/Charge_Cooldown_Timer" to="StateMachine/charge" method="_on_charge_cooldown_timer_timeout"]
+[connection signal="timeout" from="StateMachine/charge/Hand_pos" to="StateMachine/charge" method="_on_hand_pos_timeout"]
+[connection signal="PlayerTeamHurtbox_entered" from="StateMachine/lazer/lazer/Hitbox" to="StateMachine/lazer" method="pteam_entered"]
