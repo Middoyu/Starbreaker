@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3 uid="uid://dirgrcxdvamfo"]
+
+[sub_resource type="Gradient" id="Gradient_ws68p"]
+colors = PackedColorArray(0, 1, 1, 1, 0, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_p8i1m"]
+gradient = SubResource("Gradient_ws68p")
+
+[sub_resource type="Curve" id="Curve_new2t"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_yf0j4"]
+curve = SubResource("Curve_new2t")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_te72b"]
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_min = 112.15
+initial_velocity_max = 112.15
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_curve = SubResource("CurveTexture_yf0j4")
+scale_over_velocity_min = 41.8
+scale_over_velocity_max = 1000.0
+color_ramp = SubResource("GradientTexture1D_p8i1m")
+turbulence_noise_strength = 0.1
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 0.0
+collision_use_scale = true
+
+[sub_resource type="GDScript" id="GDScript_0krfx"]
+script/source = "extends GPUParticles2D
+
+
+
+func _on_finished() -> void:
+	queue_free()
+"
+
+[node name="Particles" type="GPUParticles2D"]
+emitting = false
+amount = 15
+process_material = SubResource("ParticleProcessMaterial_te72b")
+lifetime = 0.2
+one_shot = true
+preprocess = 0.08
+explosiveness = 1.0
+randomness = 1.0
+fixed_fps = 60
+trail_enabled = true
+trail_lifetime = 0.1
+script = SubResource("GDScript_0krfx")
+
+[connection signal="finished" from="." to="." method="_on_finished"]

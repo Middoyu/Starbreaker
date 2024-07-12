@@ -1,15 +1,13 @@
-res://z_Export/default_bus_layout.tres
 res://Game Folder/game_assets/Player/Crosshair/BASE/crosshair.tscn
 res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/hit_flash.gdshader
-res://Game Folder/game_components/entity_components/State Machine/state_base.gd
+res://Game Folder/game_assets/Player/Crosshair/BASE/lock_in.gd
+res://Game Folder/game_assets/Player/Crosshair/BASE/lock_out.gd
+res://Game Folder/game_assets/Player/Crosshair/BASE/Idle.gd
 res://Game Folder/main_manager.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_components/global_components/Scripts/utils.gd
 res://Game Folder/game_assets/Player/HUD/hud.tscn
 res://Game Folder/game_assets/Player/HUD/UpgradeHUD/upgrade_ui.tscn
-res://Game Folder/game_assets/Player/Crosshair/BASE/Idle.gd
-res://Game Folder/game_assets/Player/Crosshair/BASE/lock_in.gd
-res://Game Folder/game_components/collision_component/Databox/databox.gd
 res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
+res://Game Folder/game_assets/Player/Crosshair/Sprites/particles.tscn
 res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn
-res://Game Folder/game_components/global_components/Scripts/events.gd
-res://Game Folder/game_assets/Player/Main/Player.gd
-res://Game Folder/game_assets/Player/Main/Player.tscn

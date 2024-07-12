@@ -2,6 +2,8 @@ extends State
 
 func physics_update(delta):
 	move_crosshair(delta)
+	parent.crosshair_lock.monitorable = true
+	parent.crosshair_lock.monitoring = true
 
 func _unhandled_input(event: InputEvent) -> void:
 	switch_input_type(event)
@@ -34,8 +36,6 @@ func switch_input_type(event): # Switches the input type ON/OFF after pressing E
 #endregion
 
 func area_entered(area: Area2D) -> void:
-	parent.crosshair_lock.monitorable = false
-	parent.crosshair_lock.monitoring = false
 	if area is Databox:
 		if area.can_be_locked_in == true:
 			match area.team_affiliation:
