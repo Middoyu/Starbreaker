@@ -7,6 +7,7 @@ var camera = null
 
 var main_manager = null
 
+var boss_healthbar = null
 
 var current_stage = null
 var current_stage_score := 0

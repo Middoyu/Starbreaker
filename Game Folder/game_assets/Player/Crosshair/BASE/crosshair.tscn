@@ -1,13 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://ujg1l8k67orr"]
+[gd_scene load_steps=13 format=3 uid="uid://ujg1l8k67orr"]
 
-[ext_resource type="Texture2D" uid="uid://j5jeayb6ofdk" path="res://Game Folder/game_assets/Player/Crosshair/Sprites/crosshair.png" id="1_7mojs"]
+[ext_resource type="Texture2D" uid="uid://bmqfxlqihuoep" path="res://Game Folder/game_assets/Player/Crosshair/BASE/Sprites/aeaea2.png" id="1_dcuap"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_qeljx"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Player/Crosshair/BASE/Idle.gd" id="3_ppdw7"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Player/Crosshair/BASE/lock_in.gd" id="4_0w17g"]
 
 [sub_resource type="GDScript" id="GDScript_l2lhf"]
 resource_name = "crosshair"
 script/source = "extends Node2D
+@onready var lockin_size := 1.5
+@onready var current_target = null
 @onready var is_controller_active : bool = false
 @export var spawning_position_offset : Vector2 = Vector2.ZERO
 @export var controller_crosshair_speed : float = 150.0
+@onready var adaptable_animation: AnimationPlayer = $Adaptable_Animation
+@onready var animation: AnimationPlayer = $Animation
+@onready var collision: CollisionShape2D = $Crosshair_Lock/Collision
+@onready var crosshair_lock: Area2D = $Crosshair_Lock
 
 func _enter_tree() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
@@ -16,82 +25,179 @@ func _ready() -> void:
 	global.crosshair = self
 	setup_crosshair()
 
-func _physics_process(delta: float) -> void:
-	move_crosshair(delta)
-
-func _unhandled_input(event: InputEvent) -> void:
-	switch_input_type(event)
-
 #region Setup
 func setup_crosshair():
 	# Spawns crosshair on the Player (if valid) with a offset to the intial position.
 	if is_instance_valid(utility.get_player()):
-		global_position = utility.get_player().global_position + spawning_position_offset 
-#endregion
-
-#region Movement
-func move_crosshair(delta):
-	match is_controller_active: # Switches movement type depending on this variable determined in the Input Switching region.
-		true:
-			follow_rstick(delta)
-		false:
-			follow_mouse(delta)
-
-func follow_mouse(delta): # Makes the crosshair follow the mouse.
-	global_position = get_global_mouse_position()
-
-func follow_rstick(delta): # Makes the crosshair follow the right analog stick.
-	var direction = Input.get_vector(\"rstick_left\", 'rstick_right', \"rstick_up\", \"rstick_down\")
-	global_position += direction * controller_crosshair_speed * delta
-#endregion
-
-#region Input Switching
-func switch_input_type(event): # Switches the input type ON/OFF after pressing ENTER or START.
-	if event.is_action_pressed(\"ui_accept\"):
-		match is_controller_active:
-			true:
-				is_controller_active = false
-			false:
-				is_controller_active = true
-
+		global_position = utility.get_player().global_position + spawning_position_offset
 #endregion
 
 func _exit_tree() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 "
 
-[sub_resource type="Animation" id="Animation_oc45y"]
-resource_name = "scale-pulse"
-length = 1.5
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_05msv"]
+
+[sub_resource type="Animation" id="Animation_76ppk"]
+resource_name = "Adapt_Size"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [null],
+"method": &"adapting_scale"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_g5vc7"]
+_data = {
+"Adapt_Size": SubResource("Animation_76ppk")
+}
+
+[sub_resource type="Animation" id="Animation_8h88y"]
+resource_name = "Idle"
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:scale")
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_m4s5q"]
+resource_name = "Lock In"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_npwac"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5),
-"transitions": PackedFloat32Array(1, 1, 1.03526, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0.9, 0.9), Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_mf7yy"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1shga"]
 _data = {
-"scale-pulse": SubResource("Animation_oc45y")
+"Idle": SubResource("Animation_8h88y"),
+"Lock In": SubResource("Animation_m4s5q"),
+"RESET": SubResource("Animation_npwac")
 }
 
 [node name="Crosshair" type="Node2D"]
+z_index = 4096
 script = SubResource("GDScript_l2lhf")
 spawning_position_offset = Vector2(0, -121)
 
-[node name="Sprite" type="Sprite2D" parent="."]
-scale = Vector2(0.8, 0.8)
-texture = ExtResource("1_7mojs")
+[node name="Left_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
 
-[node name="Scale_ANIM" type="AnimationPlayer" parent="."]
+[node name="Right_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_h = true
+
+[node name="L_Lower_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_v = true
+
+[node name="R_Lower_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_h = true
+flip_v = true
+
+[node name="Crosshair_Lock" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Crosshair_Lock"]
+shape = SubResource("RectangleShape2D_05msv")
+
+[node name="Adaptable_Animation" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_mf7yy")
+"": SubResource("AnimationLibrary_g5vc7")
 }
-autoplay = "scale-pulse"
+
+[node name="Animation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1shga")
+}
+playback_default_blend_time = 1.0
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("2_qeljx")]
+parent = NodePath("..")
+intial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_ppdw7")
+parent = NodePath("../..")
+
+[node name="lock_in" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_0w17g")
+parent = NodePath("../..")
+
+[connection signal="area_entered" from="Crosshair_Lock" to="StateMachine/idle" method="area_entered"]
+[connection signal="animation_finished" from="Animation" to="." method="animation_finished"]

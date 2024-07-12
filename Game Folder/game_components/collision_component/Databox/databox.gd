@@ -38,6 +38,11 @@ var hitbox_data := HitboxData.new() as HitboxData
 @onready var knockback_direction := Vector2.ZERO
 @onready var latest_knockback_amount := 0.0
 
+@export_category("Crosshair Data")
+@export var lockin_size = 1.0
+@export var can_be_locked_in = false
+var is_locked_in = false
+
 #region Godot Functions
 func _ready() -> void:
 	connect("area_entered", area_entered, 1)
@@ -113,6 +118,8 @@ func area_entered(area: Area2D) -> void:
 #endregion
 
 func take_damage(colliding_hitbox : Databox):
+	if is_locked_in:
+		colliding_hitbox.damage *= 1.5
 	health = clamp(health - colliding_hitbox.damage, 0, max_health)
 	calculate_knockback(colliding_hitbox)
 	if !parent.has_method("on_parent_hit"):

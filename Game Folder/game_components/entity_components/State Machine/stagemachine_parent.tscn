@@ -5,7 +5,7 @@ resource_name = "statemachineparent"
 script/source = "extends Node
 class_name StateMachine_Parent
 
-@export var parent : Entity
+@export var parent : Node2D
 
 @export var intial_state : State
 @export var hit_state : State

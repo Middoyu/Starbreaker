@@ -1,10 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://dkvxr10sg8n2a"]
+[gd_scene load_steps=11 format=3 uid="uid://dkvxr10sg8n2a"]
 
 [ext_resource type="AudioStream" uid="uid://ccg5a62soyu8i" path="res://Game Folder/game_assets/Stages/0 - ProtoZone/MUSIC/protozone_theme.wav" id="1_fr3tk"]
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_qus8j"]
 [ext_resource type="PackedScene" uid="uid://dluss20quhs7j" path="res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn" id="2_u04bs"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="3_4psp2"]
-[ext_resource type="PackedScene" uid="uid://c3thas2ivw5s8" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/skeleton_boss.tscn" id="3_o32kg"]
 [ext_resource type="PackedScene" uid="uid://ujg1l8k67orr" path="res://Game Folder/game_assets/Player/Crosshair/BASE/crosshair.tscn" id="4_wdv7a"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="5_n4xl8"]
 
@@ -40,8 +39,6 @@ script = SubResource("GDScript_6nudx")
 music_WAV = ExtResource("1_fr3tk")
 
 [node name="LVL_MANAGER" parent="." instance=ExtResource("2_u04bs")]
-
-[node name="SkeletonBoss" parent="." instance=ExtResource("3_o32kg")]
 
 [node name="Motionlines" type="GPUParticles2D" parent="."]
 position = Vector2(320, -164)

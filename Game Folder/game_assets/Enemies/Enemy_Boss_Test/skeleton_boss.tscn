@@ -1,27 +1,34 @@
-[gd_scene load_steps=17 format=3 uid="uid://c3thas2ivw5s8"]
+[gd_scene load_steps=24 format=3 uid="uid://c3thas2ivw5s8"]
 
+[ext_resource type="Shader" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/hit_flash.gdshader" id="1_7mki6"]
 [ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/boss.png" id="2_yuykx"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
 [ext_resource type="PackedScene" uid="uid://c1k2ssyjaj5h3" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Bullets/bullet.tscn" id="5_4cjuf"]
+[ext_resource type="AudioStream" uid="uid://d22yvm0lw4705" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sound Effects/boss_hitsfx.wav" id="6_xnjup"]
+[ext_resource type="PackedScene" uid="uid://b0ry6k1p5wtwk" path="res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Effects/hit_particles.tscn" id="7_bfvni"]
 
 [sub_resource type="GDScript" id="GDScript_y0eke"]
 resource_name = "timothyboss"
 script/source = "extends Boss
+@onready var healthbar = $Healthbar
+
 @onready var state_machine = $StateMachine
 @onready var hurtbox: Databox = $Sprite/Hurtbox
 @onready var hitbox: Databox = $Sprite/Hitbox
-
 @onready var hand_r = $HAND_R
 @onready var hand_l = $HAND_L
+@onready var hit_flash: AnimationPlayer = $\"Hit Flash\"
+@onready var head: Sprite2D = $Sprite
 
 
+
+const hit_particles = preload(\"res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Effects/hit_particles.tscn\")
 const STARBREAKER_VS_TIMOTHY = preload(\"res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Music/Starbreaker_VsTimothy.wav\")
 
 func wait(time, function):
 	var timer = get_tree().create_timer(time, false)
 	timer.connect(\"timeout\", function)
-
 
 func music():
 	await get_tree().create_timer(0.01).timeout
@@ -30,9 +37,9 @@ func music():
 	music_player.play()
 
 func _ready() -> void:
+	setup_healthbar()
 	music()
 	white_flash()
-	setup_healthbar()
 	get_parent().is_boss_active = true
 	
 	for i in get_children():
@@ -59,21 +66,56 @@ func white_flash():
 	white_flash_tween.tween_property($IntroEffects/Flash, \"modulate\", Color.TRANSPARENT, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
 	white_flash_tween.tween_callback($IntroEffects.queue_free)
 
-@onready var progress_bar = $ProgressBar
-
 func _process(delta):
 	update_healthbar()
 
+#region Healthbar Display
 func setup_healthbar():
-	progress_bar.max_value = hurtbox.max_health
-	progress_bar.position = Vector2(-48, 300)
+	# Set up bosses healthbar as a global variable.
+	global.boss_healthbar = healthbar
+	# Delay to allow for current stage children setup.
+	await get_tree().create_timer(0.1).timeout
+	# Reparents the healthbar to deattach it to the transform.
+	healthbar.reparent(global.current_stage)
+	# Updates the position and max health values.
+	global.boss_healthbar.global_position = Vector2(128, 312)
+	global.boss_healthbar.max_value = hurtbox.health
 
 func update_healthbar():
-	progress_bar.value = hurtbox.health
+	# If the healthbar is active on the scene tree, the value is updated.
+	if is_instance_valid(global.boss_healthbar):
+		global.boss_healthbar.value = hurtbox.health
+#endregion
 
-func on_parent_hit(colliding_hitbox):
+#region Hit Effects
+
+func hit_effects(colliding_hitbox):
+	spawn_hit_particles(colliding_hitbox)
+	play_hit_SFX()
+	flash()
+
+func flash():
+	hit_flash.stop()
+	hit_flash.play(\"hit_flash\")
+
+func play_hit_SFX():
+	$\"Hit Sound Effect\".play()
+
+func spawn_hit_particles(colliding_hitbox):
+	var i = hit_particles.instantiate()
+	i.global_position = head.global_position
+	global.current_stage.add_child(i)
+	i.emitting = true
+
+#endregion
+
+func orb_spawning():
 	spawn_charge_orb(1)
 	spawn_xp_orb(1)
+
+func on_parent_hit(colliding_hitbox):
+	hit_effects(colliding_hitbox)
+	orb_spawning()
 
 func on_parent_death(colliding_hitbox):
 	if state_machine.current_state.has_method(\"reset_tweens\") == true:
@@ -83,6 +125,10 @@ func on_parent_death(colliding_hitbox):
 func pteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
 "
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mabln"]
+shader = ExtResource("1_7mki6")
+shader_parameter/solid_color = Color(1, 1, 1, 0)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jd5nt"]
 radius = 17.5285
@@ -490,6 +536,34 @@ func enter():
 	parent.queue_free()
 "
 
+[sub_resource type="Animation" id="Animation_xkxwo"]
+resource_name = "hit_flash"
+length = 0.1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/solid_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.819608), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_scih6"]
+_data = {
+"hit_flash": SubResource("Animation_xkxwo")
+}
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_20m5l"]
+random_pitch = 1.2
+streams_count = 1
+stream_0/stream = ExtResource("6_xnjup")
+stream_0/weight = 1.0
+
 [node name="SkeletonBoss" type="CharacterBody2D"]
 position = Vector2(320, 58)
 script = SubResource("GDScript_y0eke")
@@ -506,18 +580,23 @@ position = Vector2(-56, 30)
 [node name="Polygon2D" type="Polygon2D" parent="HAND_L"]
 polygon = PackedVector2Array(-16, -18, -16, 14, 16, 14, 16, -18)
 
-[node name="ProgressBar" type="ProgressBar" parent="."]
-anchors_preset = 2
+[node name="Healthbar" type="ProgressBar" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -138.0
-offset_top = -201.0
-offset_right = -13.0
-offset_bottom = -159.0
+offset_left = -192.0
+offset_top = 254.0
+offset_right = 192.0
+offset_bottom = 262.0
+grow_horizontal = 2
 grow_vertical = 0
+value = 100.0
 show_percentage = false
 
 [node name="Sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_mabln")
 scale = Vector2(2, 2)
 texture = ExtResource("2_yuykx")
 hframes = 4
@@ -614,6 +693,7 @@ parent = NodePath("../..")
 [node name="spin_duration" type="Timer" parent="StateMachine/lazer"]
 
 [node name="lazer" type="Polygon2D" parent="StateMachine/lazer"]
+visible = false
 position = Vector2(320, 72)
 polygon = PackedVector2Array(-24, 56, 0, 0, 24, 56, 40, 448, -40, 448)
 
@@ -651,6 +731,18 @@ offset_right = 68.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Hit Flash" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_scih6")
+}
+
+[node name="Hit Sound Effect" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_20m5l")
+volume_db = -12.0
+mix_target = 2
+
+[node name="Hit Particles" parent="." instance=ExtResource("7_bfvni")]
 
 [connection signal="PlayerTeamHurtbox_entered" from="Sprite/Hitbox" to="." method="pteam_hurtbox_entered"]
 [connection signal="timeout" from="StateMachine/charge/Charge_Cooldown_Timer" to="StateMachine/charge" method="_on_charge_cooldown_timer_timeout"]

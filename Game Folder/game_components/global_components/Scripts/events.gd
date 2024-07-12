@@ -10,8 +10,8 @@ signal player_death
 
 #region Enemy Action/Reaction Signals
 
-signal enemy_damaged
-signal enemy_killed
+signal enemy_damaged(enemy)
+signal enemy_killed(enemy)
 
 #endregion
 

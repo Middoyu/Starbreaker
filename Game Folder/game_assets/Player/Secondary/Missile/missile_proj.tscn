@@ -86,7 +86,7 @@ func eteam_hurtbox_entered(area: Databox) -> void:
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k43y"]
-size = Vector2(23, 8)
+size = Vector2(6, 6)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ry8yt"]
 radius = 20.0
@@ -110,7 +110,7 @@ knockback_amount = -10.0
 knockback_stun_duration = 0.9
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2(11.5, 0)
+position = Vector2(23, 0)
 shape = SubResource("RectangleShape2D_0k43y")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

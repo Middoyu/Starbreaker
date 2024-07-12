@@ -14,6 +14,7 @@ func _ready():
 func add_level(path := \"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\"):
 	var i = load(path) as PackedScene
 	i = i.instantiate()
+	global.current_stage = i
 	add_child(i)
 
 func gameover_sequence():

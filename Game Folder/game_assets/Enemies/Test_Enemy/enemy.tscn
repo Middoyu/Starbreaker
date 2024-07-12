@@ -18,12 +18,14 @@ func _physics_process(_delta: float) -> void:
 
 #region Interaction Handlers
 func on_parent_hit(colliding_hitbox : Databox) -> void:
+	events.enemy_damaged.emit(self)
 	utility.display_damage(colliding_hitbox.damage, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 	spawn_xp_orb(1)
 	spawn_charge_orb(1)
 
 func on_parent_death(colliding_hitbox : Databox) -> void:
+	events.enemy_killed.emit(self)
 	utility.display_damage(colliding_hitbox.damage, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	sprite.rotation -= global_position.angle_to_point(global.player.global_position)
@@ -953,6 +955,8 @@ script = ExtResource("2_7osdy")
 parent = NodePath("..")
 team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
+lockin_size = 1.1
+can_be_locked_in = true
 
 [node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("CircleShape2D_3n1ei")
