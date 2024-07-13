@@ -17,16 +17,16 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 #region Interaction Handlers
-func on_parent_hit(colliding_hitbox : Databox) -> void:
+func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
 	events.enemy_damaged.emit(self)
-	utility.display_damage(colliding_hitbox.damage, self)
+	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 	spawn_xp_orb(1)
 	spawn_charge_orb(1)
 
-func on_parent_death(colliding_hitbox : Databox) -> void:
+func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
 	events.enemy_killed.emit(self)
-	utility.display_damage(colliding_hitbox.damage, self)
+	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	sprite.rotation -= global_position.angle_to_point(global.player.global_position)
 	spawn_xp_orb(3)

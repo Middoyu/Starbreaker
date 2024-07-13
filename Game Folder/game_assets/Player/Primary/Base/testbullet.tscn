@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://ln88vbvxsas4"]
+[gd_scene load_steps=7 format=3 uid="uid://ln88vbvxsas4"]
 
 [ext_resource type="Texture2D" uid="uid://cnm0sw6ir0dyf" path="res://Game Folder/game_assets/Player/Primary/Sprites/bullet.png" id="1_g772v"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_y312u"]
-[ext_resource type="AudioStream" uid="uid://bifwdm4rlsqwt" path="res://Game Folder/game_assets/Player/Primary/Audio/sp_hit.wav" id="3_qf26a"]
 
 [sub_resource type="GDScript" id="GDScript_4ywsl"]
 resource_name = "testbullet"
@@ -10,13 +9,12 @@ script/source = "extends Projectile
 
 func _on_hitbox_enemy_team_hurtbox_entered(area: Databox) -> void:
 	area.take_damage($Hitbox)
-	$hit_SFX.play()
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Primary/Audio/sp_hit.wav\", -14)
 	queue_free()
 
 func _physics_process(delta: float) -> void:
 	simple_move(delta)
 	$Sprite.rotate(15)
-
 
 func timer_timeout() -> void:
 	$Hitbox.damage -= 1
@@ -24,11 +22,6 @@ func timer_timeout() -> void:
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c4qqr"]
 radius = 5.0
-
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_srmvy"]
-streams_count = 1
-stream_0/stream = ExtResource("3_qf26a")
-stream_0/weight = 1.0
 
 [sub_resource type="Animation" id="Animation_se65j"]
 resource_name = "spawn-anim"
@@ -72,11 +65,6 @@ knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_c4qqr")
-
-[node name="hit_SFX" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStreamRandomizer_srmvy")
-volume_db = -16.0
-mix_target = 2
 
 [node name="Spawn_anim" type="AnimationPlayer" parent="."]
 libraries = {

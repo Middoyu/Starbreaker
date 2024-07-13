@@ -1,4 +1,4 @@
-[gd_scene load_steps=154 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=157 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
@@ -1071,13 +1071,25 @@ func spawn_projectile(projectile_path):
 	proj_int.parent = get_parent()
 	upgrade_projectile(proj_int)
 
-
 func shoot():
 	if global.player.charge >= 50.0:
 		for i in missile_amount:
 			spawn_projectile(MISSILE_PROJ)
 			global.player.charge = -50 / missile_amount
 
+"
+
+[sub_resource type="GDScript" id="GDScript_esx5f"]
+resource_name = "Offense_Defense_Utility"
+script/source = "extends WeaponBase
+var is_active = false
+
+func _physics_process(delta: float) -> void:
+	if is_active:
+		action()
+
+func action():
+	pass
 "
 
 [sub_resource type="GDScript" id="GDScript_0bcgs"]
@@ -1142,6 +1154,52 @@ func enemy_team_hitbox_entered(area: Databox) -> void:
 [sub_resource type="CircleShape2D" id="CircleShape2D_mcrtv"]
 radius = 25.0
 
+[sub_resource type="GDScript" id="GDScript_haiii"]
+resource_name = "Breaker"
+script/source = "extends WeaponBase
+@onready var lazer_databox: Databox = $BreakerLazer/LazerDatabox
+@onready var display: ColorRect = $BreakerLazer/Display
+@onready var tickrate: Timer = $BreakerLazer/Tickrate
+@onready var breaker_lazer: Node2D = $BreakerLazer
+@onready var is_active = false
+@export var charge_threshold : int = 75
+@export var charge_drain_amount = -5.0
+
+func _ready() -> void:
+	display.hide()
+
+func _physics_process(delta: float) -> void:
+	breaker_lazer.global_position = player.global_position
+
+func action():
+	if global.player.charge >= charge_threshold:
+		is_active = true
+		tickrate_timeout()
+		display.show()
+
+func tickrate_timeout() -> void:
+	player.charge = charge_drain_amount
+	match lazer_databox.is_disabled:
+		false:
+			lazer_databox.is_disabled = true
+			tickrate.start(0.08)
+		true:
+			lazer_databox.is_disabled = false
+			tickrate.start(0.08)
+	if is_zero_approx(global.player.charge):
+		tickrate.stop()
+		is_active = false
+		display.hide()
+		lazer_databox.is_disabled = true
+
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(lazer_databox)
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2icmy"]
+size = Vector2(20, 646)
+
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
@@ -1178,16 +1236,49 @@ mix_target = 2
 script = SubResource("GDScript_ld5h1")
 player = NodePath("..")
 
-[node name="Utility" type="Node" parent="."]
+[node name="ODUtility" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = SubResource("GDScript_esx5f")
+player = NodePath("..")
+
+[node name="MovementUtility" type="Node" parent="."]
 script = SubResource("GDScript_0bcgs")
 
-[node name="Utility_Hitbox" type="Area2D" parent="Utility" node_paths=PackedStringArray("parent")]
+[node name="Utility_Hitbox" type="Area2D" parent="MovementUtility" node_paths=PackedStringArray("parent")]
 script = ExtResource("4_42uin")
 parent = NodePath("../..")
 team_affiliation = "PlayerTeam"
 damage = 5.0
 
-[node name="Collision" type="CollisionShape2D" parent="Utility/Utility_Hitbox"]
+[node name="Collision" type="CollisionShape2D" parent="MovementUtility/Utility_Hitbox"]
 shape = SubResource("CircleShape2D_mcrtv")
 
-[connection signal="EnemyTeamHitbox_entered" from="Utility/Utility_Hitbox" to="Utility" method="enemy_team_hitbox_entered"]
+[node name="Breaker" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = SubResource("GDScript_haiii")
+player = NodePath("..")
+
+[node name="BreakerLazer" type="Node2D" parent="Breaker"]
+
+[node name="Display" type="ColorRect" parent="Breaker/BreakerLazer"]
+offset_left = -9.0
+offset_top = -654.0
+offset_right = 9.0
+offset_bottom = -8.0
+
+[node name="LazerDatabox" type="Area2D" parent="Breaker/BreakerLazer" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_42uin")
+parent = NodePath("../../..")
+team_affiliation = "PlayerTeam"
+is_disabled = true
+damage = 25.0
+knockback_amount = 3000.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="Breaker/BreakerLazer/LazerDatabox"]
+position = Vector2(0, -331)
+shape = SubResource("RectangleShape2D_2icmy")
+
+[node name="Tickrate" type="Timer" parent="Breaker/BreakerLazer"]
+
+[connection signal="EnemyTeamHitbox_entered" from="MovementUtility/Utility_Hitbox" to="MovementUtility" method="enemy_team_hitbox_entered"]
+[connection signal="EnemyTeamHurtbox_entered" from="Breaker/BreakerLazer/LazerDatabox" to="Breaker" method="eteam_hurtbox_entered"]
+[connection signal="timeout" from="Breaker/BreakerLazer/Tickrate" to="Breaker" method="tickrate_timeout"]

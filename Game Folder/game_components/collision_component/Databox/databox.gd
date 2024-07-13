@@ -118,18 +118,19 @@ func area_entered(area: Area2D) -> void:
 #endregion
 
 func take_damage(colliding_hitbox : Databox):
+	var damage_taken = colliding_hitbox.damage
 	if is_locked_in:
-		colliding_hitbox.damage *= 1.5
-	health = clamp(health - colliding_hitbox.damage, 0, max_health)
+		damage_taken *= 1.5
+	health = clamp(health - damage_taken, 0, max_health)
 	calculate_knockback(colliding_hitbox)
 	if !parent.has_method("on_parent_hit"):
 		push_error(str(parent.name) + " didn't have a method called on_parent_hit")
 	if !parent.has_method("on_parent_death"):
 		push_error(str(parent.name) + " didn't have a method called on_parent_death")
 	if health <= 0:
-		parent.call("on_parent_death", colliding_hitbox)
+		parent.call("on_parent_death", colliding_hitbox, damage_taken)
 	else:
-		parent.call("on_parent_hit", colliding_hitbox)
+		parent.call("on_parent_hit", colliding_hitbox, damage_taken)
 #region Knockback Reactions
 # Higher knockback amounts and lower stun duration results in a snappier knockback effect.
 # Lower knockback amounts and higher stun durations are good a long knockback effect.

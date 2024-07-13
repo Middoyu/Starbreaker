@@ -31,7 +31,9 @@ class_name Player
 #region Weapons Variables
 @onready var primary = $Primary
 @onready var secondary = $Secondary
-@onready var util = $Utility
+@onready var od_utility = $ODUtility
+@onready var movement_utility = $MovementUtility
+@onready var breaker: Node = $Breaker
 #endregion
 
 func _ready() -> void:
@@ -55,7 +57,11 @@ func input_detection(delta):
 		if Input.is_action_just_pressed("secondary"):
 			secondary.shoot()
 		if Input.is_action_just_pressed("movement_util"):
-			util.teleport_action()
+			movement_utility.teleport_action()
+		if Input.is_action_pressed("utility"):
+			od_utility.is_active = true
+		if Input.is_action_just_pressed("breaker"):
+			breaker.action()
 
 func movement_handler():
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
@@ -63,11 +69,11 @@ func movement_handler():
 	move_and_slide()
 #endregion
 #region Interaction Handlers
-func on_parent_hit(colliding_hitbox) -> void:
+func on_parent_hit(colliding_hitbox, damage_taken) -> void:
 	player_sprite.play("hit")
 	invincibility_timer.start(1.0)
 
-func on_parent_death(colliding_hitbox) -> void:
+func on_parent_death(colliding_hitbox, damage_taken) -> void:
 	player_sprite.play("death")
 	handle_death()
 	await player_sprite.animation_finished
