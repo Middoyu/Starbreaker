@@ -1,10 +1,6 @@
-res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn
-res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/hit_flash.gdshader
 res://Game Folder/main_manager.tscn
-res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Effects/hit_particles.tscn
-res://Game Folder/game_assets/Player/Main/Player.tscn
-res://Game Folder/game_assets/Player/Main/Player.gd
-res://Game Folder/game_components/collision_component/Databox/databox.gd
-res://Game Folder/game_assets/Player/Crosshair/BASE/crosshair.tscn
-res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn
-res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/skeleton_boss.tscn
+res://Game Folder/game_assets/Enemies/Enemy_Boss_Test/Sprites/hit_flash.gdshader
+res://Game Folder/game_assets/Enemies/Lil Guy/Base/LilGuy.tscn
+res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
+res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn
+res://Game Folder/game_assets/Menus/Themes/THEME.tres

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://ciupcitcc4blx"
+path="res://.godot/imported/tutorial_starbreaker.wav-940a917766384bac94b7d2856ee21bed.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Enemies/Lil Guy/Music/tutorial_starbreaker.wav"
+dest_files=["res://.godot/imported/tutorial_starbreaker.wav-940a917766384bac94b7d2856ee21bed.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=true
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

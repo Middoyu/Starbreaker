@@ -1,6 +1,8 @@
 extends Node2D
 class_name StageBase
 
+const LVL_MANAGER = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn")
+
 # Music variables
 @export var music_WAV : AudioStreamWAV
 @onready var music_player = AudioStreamPlayer.new()
@@ -19,6 +21,8 @@ var is_boss_active = false
 
 
 func _ready() -> void:
+	var i = LVL_MANAGER
+	i.instantiate()
 	global.current_stage = self
 	mainloop_setup()
 	music_setup()

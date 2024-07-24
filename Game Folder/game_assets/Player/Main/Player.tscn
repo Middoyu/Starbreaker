@@ -1207,7 +1207,7 @@ script = ExtResource("1_5vafy")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_5bb6v")
 sprite_frames = SubResource("SpriteFrames_wirgs")
-animation = &"death"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="PlayerHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]

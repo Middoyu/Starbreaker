@@ -36,6 +36,9 @@ func _process(delta: float) -> void:
 func update_score_per_sec():
 	if is_instance_valid(global.current_stage):
 		score_event.update_score(4)
+
+func _exit_tree() -> void:
+	global.lvl_manager = null
 "
 
 [node name="LVL_MANAGER" type="Node"]
