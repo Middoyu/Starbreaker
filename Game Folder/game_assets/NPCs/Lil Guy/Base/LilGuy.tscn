@@ -1,0 +1,202 @@
+[gd_scene load_steps=15 format=3 uid="uid://oiy27n4n4kr7"]
+
+[ext_resource type="Texture2D" uid="uid://c5ecg2tyq2x43" path="res://Game Folder/game_assets/NPCs/Lil Guy/Sprites/Lil Guy.png" id="1_dwf44"]
+[ext_resource type="AudioStream" uid="uid://k1hr05gvycvx" path="res://Game Folder/game_assets/NPCs/Lil Guy/Music/audio_lilguy_talk.wav" id="2_dguqf"]
+[ext_resource type="FontFile" uid="uid://cohq7acthuyhd" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf" id="2_k4k30"]
+[ext_resource type="AudioStream" uid="uid://c27lbkt2sfyc6" path="res://Game Folder/game_assets/NPCs/Lil Guy/Music/starbreaker_lilguy_theme.wav" id="4_7sv45"]
+[ext_resource type="Texture2D" uid="uid://b52qkf01xivrm" path="res://Game Folder/game_assets/NPCs/Lil Guy/Sprites/textbox.png" id="5_fttqa"]
+
+[sub_resource type="GDScript" id="GDScript_iy3v5"]
+resource_name = "lilguy"
+script/source = "extends CharacterBody2D
+@onready var dialogue: RichTextLabel = $Dialogue
+@onready var talk: AudioStreamPlayer = $Talk
+@onready var can_progress = false
+@onready var prev_visible_characters = 0
+@onready var dialogue_value = -1
+@onready var music: AudioStreamPlayer = $Music
+@onready var sprite: AnimatedSprite2D = $Sprite
+
+func _physics_process(delta: float) -> void:
+	dialogue.visible_ratio = move_toward(dialogue.visible_ratio, 1, 0.55 * delta)
+	if dialogue.visible_ratio >= 1.0:
+		dialogue_finished()
+	if can_progress == true and Input.is_action_just_pressed(\"primary\"):
+		dialogue_value += 1
+		progress_dialogue()
+	if dialogue.visible_ratio <= 1.0:
+		talking_sfx()
+
+func new_dialogue(text : String):
+	dialogue_playing()
+	dialogue.text = text
+	dialogue.visible_ratio = 0
+
+
+func dialogue_playing():
+	sprite.play(\"talk\")
+	can_progress = false
+
+func dialogue_finished():
+	sprite.play(\"idle\")
+	can_progress = true
+
+
+func talking_sfx():
+	if not is_same(dialogue.visible_characters, prev_visible_characters):
+		talk.play()
+		prev_visible_characters = dialogue.visible_characters
+
+
+func pause_music(is_paused):
+	match is_paused:
+		false:
+			music.play()
+		true:
+			music.stop()
+
+func progress_dialogue():
+	match dialogue_value:
+		0:
+			new_dialogue(\"Yo! This is example text for the tutorial!\")
+		1:
+			new_dialogue(\"Who are you?\")
+		2:
+			new_dialogue(\"...\")
+			pause_music(true)
+		3:
+			new_dialogue(\"..?\")
+		4:
+			new_dialogue(\"It doesn't matter then.\")
+			pause_music(false)
+		5:
+			new_dialogue(\"Why the fuck are you here?\")
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j3qv2"]
+atlas = ExtResource("1_dwf44")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f4uoq"]
+atlas = ExtResource("1_dwf44")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di6yy"]
+atlas = ExtResource("1_dwf44")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3ljlq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j3qv2")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f4uoq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di6yy")
+}],
+"loop": true,
+"name": &"talk",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_rcj73"]
+resource_name = "BOB"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:offset")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -2)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ka6bd"]
+_data = {
+"BOB": SubResource("Animation_rcj73")
+}
+
+[sub_resource type="Theme" id="Theme_r4fwe"]
+default_font = ExtResource("2_k4k30")
+default_font_size = 20
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_1pchx"]
+random_pitch = 1.1
+streams_count = 1
+stream_0/stream = ExtResource("2_dguqf")
+stream_0/weight = 1.0
+
+[node name="LilGuy" type="CharacterBody2D"]
+position = Vector2(320, 128)
+motion_mode = 1
+script = SubResource("GDScript_iy3v5")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_3ljlq")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.383752
+
+[node name="PersonalCamera" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="BobbingAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ka6bd")
+}
+autoplay = "BOB"
+
+[node name="Dialogue" type="RichTextLabel" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = 16.0
+offset_right = 80.0
+offset_bottom = 69.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(62, 12)
+mouse_filter = 1
+theme = SubResource("Theme_r4fwe")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.0392157)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/bold_font = ExtResource("2_k4k30")
+theme_override_font_sizes/normal_font_size = 11
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+tab_size = 10
+threaded = true
+visible_characters_behavior = 1
+text_direction = 1
+
+[node name="Talk" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_1pchx")
+volume_db = -15.0
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_7sv45")
+volume_db = -16.0
+autoplay = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -13
+position = Vector2(0, 8)
+texture = ExtResource("5_fttqa")

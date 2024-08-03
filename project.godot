@@ -39,6 +39,11 @@ window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
 window/vsync/vsync_mode=2
 
+[editor]
+
+movie_writer/mjpeg_quality=1.0
+movie_writer/fps=240
+
 [editor_plugins]
 
 enabled=PackedStringArray()
@@ -50,6 +55,7 @@ folder_colors={
 "res://Game Folder/game_assets/Items/": "orange",
 "res://Game Folder/game_assets/Menus/": "yellow",
 "res://Game Folder/game_assets/Menus/Themes/": "purple",
+"res://Game Folder/game_assets/NPCs/": "gray",
 "res://Game Folder/game_assets/Player/": "blue",
 "res://Game Folder/game_assets/Stages/": "green",
 "res://z_Export/": "gray"

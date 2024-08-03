@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dkvxr10sg8n2a"]
+[gd_scene load_steps=11 format=3 uid="uid://dkvxr10sg8n2a"]
 
-[ext_resource type="AudioStream" uid="uid://ciupcitcc4blx" path="res://Game Folder/game_assets/Enemies/Lil Guy/Music/tutorial_starbreaker.wav" id="1_n3ajg"]
+[ext_resource type="AudioStream" uid="uid://ccg5a62soyu8i" path="res://Game Folder/game_assets/Stages/0 - ProtoZone/MUSIC/protozone_theme.wav" id="1_dwpjp"]
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_qus8j"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="3_4psp2"]
-[ext_resource type="PackedScene" uid="uid://ujg1l8k67orr" path="res://Game Folder/game_assets/Player/Crosshair/BASE/crosshair.tscn" id="4_wdv7a"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="5_n4xl8"]
 
 [sub_resource type="GDScript" id="GDScript_6nudx"]
@@ -28,9 +27,76 @@ color = Color(1, 1, 1, 0.00784314)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_58yg0"]
 
+[sub_resource type="Animation" id="Animation_arp5v"]
+resource_name = "protozone_animation"
+length = 200.0
+loop_mode = 1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn", Vector2(320, -16)],
+"method": &"spawn_enemies"
+}]
+}
+tracks/1/type = "audio"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Audio")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("1_dwpjp")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/1/use_blend = true
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn", Vector2(64, -16)],
+"method": &"spawn_enemies"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn", Vector2(256, 128)],
+"method": &"spawn_enemies"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t1kql"]
+_data = {
+"protozone_animation": SubResource("Animation_arp5v")
+}
+
 [node name="ProtoZone" type="Node2D"]
 script = SubResource("GDScript_6nudx")
-music_WAV = ExtResource("1_n3ajg")
+enemy_spawnrate = 2.0
 
 [node name="Motionlines" type="GPUParticles2D" parent="."]
 position = Vector2(320, -164)
@@ -53,11 +119,10 @@ initial_zoom_value = 1.0
 
 [node name="Player" parent="." instance=ExtResource("3_4psp2")]
 material = SubResource("ShaderMaterial_gp1op")
+position = Vector2(320, 181)
 
-[node name="Collision" type="CollisionShape2D" parent="Player"]
+[node name="Collision2" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CircleShape2D_58yg0")
-
-[node name="Crosshair" parent="." instance=ExtResource("4_wdv7a")]
 
 [node name="HUD" parent="." instance=ExtResource("5_n4xl8")]
 offset_left = 320.0
@@ -87,5 +152,13 @@ offset_bottom = 58.0
 
 [node name="ScoreCount" parent="HUD/Container" index="1"]
 text = "1,000,000"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_t1kql")
+}
+autoplay = "protozone_animation"
+
+[node name="Audio" type="AudioStreamPlayer" parent="."]
 
 [editable path="HUD"]

@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
 [ext_resource type="AudioStream" uid="uid://bxrhsgdwv711w" path="res://Game Folder/game_assets/Player/Primary/Audio/sp_firing.wav" id="5_f5jtw"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
+radius = 8.0
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5bb6v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6t3n1"]
@@ -1079,19 +1082,6 @@ func shoot():
 
 "
 
-[sub_resource type="GDScript" id="GDScript_esx5f"]
-resource_name = "Offense_Defense_Utility"
-script/source = "extends WeaponBase
-var is_active = false
-
-func _physics_process(delta: float) -> void:
-	if is_active:
-		action()
-
-func action():
-	pass
-"
-
 [sub_resource type="GDScript" id="GDScript_0bcgs"]
 resource_name = "player_util"
 script/source = "extends Node
@@ -1204,6 +1194,10 @@ size = Vector2(20, 646)
 motion_mode = 1
 script = ExtResource("1_5vafy")
 
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CircleShape2D_23pmm")
+
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_5bb6v")
 sprite_frames = SubResource("SpriteFrames_wirgs")
@@ -1236,20 +1230,16 @@ mix_target = 2
 script = SubResource("GDScript_ld5h1")
 player = NodePath("..")
 
-[node name="ODUtility" type="Node" parent="." node_paths=PackedStringArray("player")]
-script = SubResource("GDScript_esx5f")
-player = NodePath("..")
-
-[node name="MovementUtility" type="Node" parent="."]
+[node name="Utility" type="Node" parent="."]
 script = SubResource("GDScript_0bcgs")
 
-[node name="Utility_Hitbox" type="Area2D" parent="MovementUtility" node_paths=PackedStringArray("parent")]
+[node name="Utility_Hitbox" type="Area2D" parent="Utility" node_paths=PackedStringArray("parent")]
 script = ExtResource("4_42uin")
 parent = NodePath("../..")
 team_affiliation = "PlayerTeam"
 damage = 5.0
 
-[node name="Collision" type="CollisionShape2D" parent="MovementUtility/Utility_Hitbox"]
+[node name="Collision" type="CollisionShape2D" parent="Utility/Utility_Hitbox"]
 shape = SubResource("CircleShape2D_mcrtv")
 
 [node name="Breaker" type="Node" parent="." node_paths=PackedStringArray("player")]
@@ -1279,6 +1269,6 @@ shape = SubResource("RectangleShape2D_2icmy")
 
 [node name="Tickrate" type="Timer" parent="Breaker/BreakerLazer"]
 
-[connection signal="EnemyTeamHitbox_entered" from="MovementUtility/Utility_Hitbox" to="MovementUtility" method="enemy_team_hitbox_entered"]
+[connection signal="EnemyTeamHitbox_entered" from="Utility/Utility_Hitbox" to="Utility" method="enemy_team_hitbox_entered"]
 [connection signal="EnemyTeamHurtbox_entered" from="Breaker/BreakerLazer/LazerDatabox" to="Breaker" method="eteam_hurtbox_entered"]
 [connection signal="timeout" from="Breaker/BreakerLazer/Tickrate" to="Breaker" method="tickrate_timeout"]

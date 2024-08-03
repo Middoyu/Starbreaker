@@ -1,7 +1,7 @@
 extends Area2D
 class_name Databox
-signal on_parent_hit
-signal on_parent_death
+signal on_parent_hit(colliding_hitbox, damage_taken)
+signal on_parent_death(colliding_hitbox, damage_taken)
 
 signal PlayerTeamHurtbox_entered(area : Databox)
 signal NeutralTeamHurtbox_entered(area : Databox)

@@ -1,0 +1,127 @@
+[gd_scene load_steps=11 format=3 uid="uid://bmehsjqlfnqij"]
+
+[ext_resource type="PackedScene" uid="uid://vf8atn3god1g" path="res://Game Folder/game_components/bullet_pattern_gen/bpm.tscn" id="2_340sr"]
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_4xhks"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_mtath"]
+[ext_resource type="PackedScene" uid="uid://cpyhh3wvmfubr" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn" id="3_uiu6o"]
+[ext_resource type="Script" path="res://Game Folder/game_components/entity_components/State Machine/state_base.gd" id="4_dbwnw"]
+
+[sub_resource type="GDScript" id="GDScript_4qk1k"]
+script/source = "extends Enemy
+@onready var spr: Polygon2D = $spr
+@onready var spr_outline: Polygon2D = $spr_outline
+@onready var sprite_2d: Sprite2D = $Sprite2D
+@export var spawn_amount = 3
+const BULLET_TRISHOOTER = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn\")
+@onready var state_machine = $StateMachine
+
+func spin_spr():
+	spr.rotate(3.0)
+	spr_outline.rotate(3.0)
+
+func _physics_process(delta: float) -> void:
+	spin_spr()
+
+
+func on_parent_hit(colliding_hitbox, damage_taken) -> void:
+	events.enemy_damaged.emit(self)
+	utility.display_damage(damage_taken, self)
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
+
+func on_parent_death(colliding_hitbox, damage_taken) -> void:
+	events.enemy_killed.emit(self)
+	utility.display_damage(damage_taken, self)
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_h8hjc"]
+radius = 20.025
+
+[sub_resource type="GDScript" id="GDScript_cnuky"]
+script/source = "extends State
+
+func physics_update(_delta):
+	if is_instance_valid(global.player):
+		if parent.global_position.distance_to(global.player.global_position) > 85:
+			parent.velocity = parent.global_position.direction_to(global.player.global_position) * 1550 * _delta
+		elif parent.global_position.distance_to(global.player.global_position) < 80:
+			parent.velocity = parent.global_position.direction_to(global.player.global_position) * -1550 * _delta
+		else: parent.velocity = Vector2.ZERO
+		parent.move_and_slide()
+"
+
+[sub_resource type="GDScript" id="GDScript_10drs"]
+script/source = "extends State
+
+func enter():
+	await get_tree().create_timer(0.3).timeout
+	Transistioned.emit(self, \"move\")
+"
+
+[sub_resource type="GDScript" id="GDScript_fsgqf"]
+script/source = "extends State
+
+func enter():
+	parent.queue_free()
+"
+
+[node name="Trishooter" type="CharacterBody2D"]
+position = Vector2(160, 40)
+script = SubResource("GDScript_4qk1k")
+
+[node name="spr" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(16, 0, 16, 8, 8, 16, 0, 16, -8, 16, -16, 8, -16, 0, -16, -8, -8, -16, 0, -16, 8, -16, 16, -8)
+
+[node name="spr_outline" type="Polygon2D" parent="."]
+z_index = -1
+scale = Vector2(1.08525, 1.09683)
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(16, 0, 16, 8, 8, 16, 0, 16, -8, 16, -16, 8, -16, 0, -16, -8, -8, -16, 0, -16, 8, -16, 16, -8)
+
+[node name="shoot_cooldown" type="Timer" parent="."]
+process_callback = 0
+wait_time = 1.5
+one_shot = true
+autostart = true
+
+[node name="Bullet Pattern Generator" parent="." instance=ExtResource("2_340sr")]
+bulletpath = ExtResource("3_uiu6o")
+firerate = 3.0
+rotation_speed = 25
+bullet_points = 3
+
+[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("3_4xhks")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+databox_type = "Hurtbox"
+max_health = 175
+is_knockback_forced_upwards = false
+armor_multiplier = 0.6
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_h8hjc")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("3_mtath")]
+parent = NodePath("..")
+intial_state = NodePath("move")
+hit_state = NodePath("hit")
+death_state = NodePath("death")
+
+[node name="spawn" type="Node" parent="StateMachine"]
+script = ExtResource("4_dbwnw")
+
+[node name="move" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_cnuky")
+parent = NodePath("../..")
+
+[node name="hit" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_10drs")
+
+[node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_fsgqf")
+parent = NodePath("../..")
+
+[connection signal="timeout" from="shoot_cooldown" to="." method="timeout"]
+[connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
+[connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]

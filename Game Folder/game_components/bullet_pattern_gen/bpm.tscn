@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://vf8atn3god1g"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/bullet_pattern_gen/bpm.gd" id="1_kq383"]
+
+[node name="Bpm" type="Node2D"]
+script = ExtResource("1_kq383")

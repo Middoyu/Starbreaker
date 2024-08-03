@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://d22yvm0lw4705"
+path="res://.godot/imported/boss_hitsfx.wav-c2995c016e282cb63e44a0f6d5d39a4f.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sound Effects/boss_hitsfx.wav"
+dest_files=["res://.godot/imported/boss_hitsfx.wav-c2995c016e282cb63e44a0f6d5d39a4f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

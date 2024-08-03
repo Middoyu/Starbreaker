@@ -1,0 +1,122 @@
+[gd_scene load_steps=10 format=3 uid="uid://2kuv342uj1hh"]
+
+[ext_resource type="Texture2D" uid="uid://csbttbf2vsd1e" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/defaultlz.png" id="1_a4fsf"]
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_vt4o6"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_kxo5a"]
+[ext_resource type="Script" path="res://Game Folder/game_components/entity_components/State Machine/state_base.gd" id="4_fyjq5"]
+
+[sub_resource type="GDScript" id="GDScript_iesie"]
+script/source = "extends Enemy
+@onready var hitbox: Databox = $Hitbox
+@onready var collision: CollisionShape2D = $Hitbox/Collision
+@onready var lzr_spr: Polygon2D = $Hitbox/lzr_Spr
+
+
+func pteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+
+
+#region Interaction Handlers
+func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
+	events.enemy_damaged.emit(self)
+	utility.display_damage(damage_taken, self)
+	queue_free()
+
+func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
+	events.enemy_killed.emit(self)
+	utility.display_damage(damage_taken, self)
+	queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5yjmg"]
+size = Vector2(20.9017, 161.556)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dauox"]
+
+[sub_resource type="GDScript" id="GDScript_lnf8h"]
+resource_name = "spawn"
+script/source = "extends State
+
+func enter():
+	await get_tree().create_timer(1.5).timeout
+	Transistioned.emit(self, \"firing\")
+"
+
+[sub_resource type="GDScript" id="GDScript_t821x"]
+script/source = "extends State
+
+func physics_update(_delta):
+	parent.lzr_spr.show()
+	parent.hitbox.is_disabled = false
+	parent.rotate(0.2 * _delta)
+	
+"
+
+[node name="LzrEnemy" type="CharacterBody2D"]
+script = SubResource("GDScript_iesie")
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("2_vt4o6")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+is_disabled = true
+damage = 55.0
+knockback_amount = 7555.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, 352)
+scale = Vector2(1.14823, 4.25859)
+shape = SubResource("RectangleShape2D_5yjmg")
+
+[node name="lzr_Spr" type="Polygon2D" parent="Hitbox"]
+visible = false
+polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
+
+[node name="spr" type="Sprite2D" parent="."]
+texture = ExtResource("1_a4fsf")
+hframes = 2
+
+[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("2_vt4o6")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+databox_type = "Hurtbox"
+max_health = 1
+recieves_knockback = false
+is_knockback_forced_upwards = false
+armor_multiplier = 0.0
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+scale = Vector2(0.609313, -0.738951)
+shape = SubResource("CircleShape2D_dauox")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("3_kxo5a")]
+parent = NodePath("..")
+intial_state = NodePath("spawn")
+
+[node name="spawn" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_lnf8h")
+parent = NodePath("../..")
+
+[node name="charging" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_fyjq5")
+parent = NodePath("../..")
+
+[node name="firing" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_t821x")
+parent = NodePath("../..")
+
+[node name="hit" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_fyjq5")
+parent = NodePath("../..")
+is_state_cancelable = false
+
+[node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_fyjq5")
+parent = NodePath("../..")
+is_state_cancelable = false
+
+[connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
+[connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]

@@ -1,0 +1,168 @@
+[gd_scene load_steps=10 format=3 uid="uid://dlwsq3a3sdfbw"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_74had"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_e1ni0"]
+[ext_resource type="Script" path="res://Game Folder/game_components/entity_components/State Machine/state_base.gd" id="3_aj0u4"]
+
+[sub_resource type="GDScript" id="GDScript_f8mmj"]
+script/source = "extends Enemy
+@onready var state_machine = $StateMachine
+
+func on_parent_death(colliding_hitbox: Variant, damage_taken: Variant) -> void:
+	events.enemy_killed.emit(self)
+	utility.display_damage(damage_taken, self)
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
+
+
+func on_parent_hit(colliding_hitbox: Variant, damage_taken: Variant) -> void:
+	events.enemy_damaged.emit(self)
+	utility.display_damage(damage_taken, self)
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bodvi"]
+radius = 6.0
+height = 32.0
+
+[sub_resource type="GDScript" id="GDScript_t3grr"]
+script/source = "extends State
+
+@onready var movement = 8250
+@onready var maximum_movement_interval = 2
+@onready var movement_interval = maximum_movement_interval
+@onready var movement_timer: Timer = $movement_timer
+@onready var shape: Polygon2D = $\"../../Sprite\"
+
+func enter():
+	movement_interval = maximum_movement_interval
+	shape.show()
+	move()
+	movement_timer.start()
+
+func physics_update(_delta):
+	parent.look_at(global.player.global_position)
+	parent.velocity = parent.transform.y * _delta * movement
+	if parent.global_position.distance_to(global.player.global_position) > 151.765:
+		movement_timer.stop()
+		Transistioned.emit(self, \"dash\")
+	parent.move_and_slide()
+
+func move():
+	parent.global_position = global.player.global_position + Vector2(45.8824 * movement_interval, 0).rotated(randf_range(0, 2 * PI))
+	parent.look_at(global.player.global_position)
+
+func timeout() -> void:
+	movement = -movement
+	if movement_interval == 0:
+		movement_timer.stop()
+		Transistioned.emit(self, \"dash\")
+	else:
+		move()
+		movement_interval -= 1
+		movement_timer.start()
+"
+
+[sub_resource type="GDScript" id="GDScript_rgu2l"]
+script/source = "extends State
+@onready var target
+@onready var speed = 19375
+
+func enter():
+	target = parent.global_position.direction_to(global.player.global_position)
+
+func physics_update(_delta):
+	parent.velocity = target * _delta * speed
+	parent.move_and_slide()
+
+
+func screen_exited() -> void:
+	Transistioned.emit(self, \"move\")
+"
+
+[sub_resource type="GDScript" id="GDScript_m4vxm"]
+script/source = "extends State
+
+func enter():
+	await get_tree().create_timer(0.3).timeout
+	Transistioned.emit(self, \"move\")
+"
+
+[sub_resource type="GDScript" id="GDScript_gigvf"]
+script/source = "extends State
+
+func enter():
+	parent.queue_free()
+"
+
+[node name="TheFaider" type="CharacterBody2D"]
+motion_mode = 1
+script = SubResource("GDScript_f8mmj")
+
+[node name="Sprite" type="Polygon2D" parent="."]
+visible = false
+rotation = -1.5708
+polygon = PackedVector2Array(0, 8, -8, 8, -16, 0, -1.48473, 0, 16, 0, 8, 8)
+
+[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_74had")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+databox_type = "Hurtbox"
+max_health = 75
+armor_multiplier = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(2, 0)
+shape = SubResource("CapsuleShape2D_bodvi")
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_74had")
+parent = NodePath("..")
+team_affiliation = "EnemyTeam"
+damage = 35.0
+knockback_amount = 7000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(2, 0)
+shape = SubResource("CapsuleShape2D_bodvi")
+
+[node name="OnScreenNotif" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(2, -0.5)
+scale = Vector2(1.2, 1.75)
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("2_e1ni0")]
+parent = NodePath("..")
+intial_state = NodePath("move")
+hit_state = NodePath("hit")
+death_state = NodePath("death")
+
+[node name="spawn" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_aj0u4")
+parent = NodePath("../..")
+
+[node name="move" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_t3grr")
+parent = NodePath("../..")
+
+[node name="movement_timer" type="Timer" parent="StateMachine/move"]
+process_callback = 0
+wait_time = 1.5
+one_shot = true
+
+[node name="dash" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_rgu2l")
+parent = NodePath("../..")
+
+[node name="hit" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_m4vxm")
+parent = NodePath("../..")
+
+[node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_gigvf")
+parent = NodePath("../..")
+
+[connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
+[connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
+[connection signal="screen_exited" from="OnScreenNotif" to="StateMachine/dash" method="screen_exited"]
+[connection signal="timeout" from="StateMachine/move/movement_timer" to="StateMachine/move" method="timeout"]

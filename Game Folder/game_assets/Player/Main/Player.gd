@@ -31,8 +31,7 @@ class_name Player
 #region Weapons Variables
 @onready var primary = $Primary
 @onready var secondary = $Secondary
-@onready var od_utility = $ODUtility
-@onready var movement_utility = $MovementUtility
+@onready var od_utility: Node = $Utility
 @onready var breaker: Node = $Breaker
 #endregion
 
@@ -56,10 +55,8 @@ func input_detection(delta):
 			primary.shoot()
 		if Input.is_action_just_pressed("secondary"):
 			secondary.shoot()
-		if Input.is_action_just_pressed("movement_util"):
-			movement_utility.teleport_action()
 		if Input.is_action_pressed("utility"):
-			od_utility.is_active = true
+			od_utility.action()
 		if Input.is_action_just_pressed("breaker"):
 			breaker.action()
 

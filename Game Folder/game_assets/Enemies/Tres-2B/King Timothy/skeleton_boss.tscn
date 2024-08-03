@@ -1,0 +1,750 @@
+[gd_scene load_steps=24 format=3 uid="uid://c3thas2ivw5s8"]
+
+[ext_resource type="Shader" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader" id="1_7mki6"]
+[ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/boss.png" id="2_yuykx"]
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
+[ext_resource type="PackedScene" uid="uid://c1k2ssyjaj5h3" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Bullets/bullet.tscn" id="5_4cjuf"]
+[ext_resource type="AudioStream" uid="uid://d22yvm0lw4705" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sound Effects/boss_hitsfx.wav" id="6_xnjup"]
+[ext_resource type="PackedScene" uid="uid://b0ry6k1p5wtwk" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Effects/hit_particles.tscn" id="7_bfvni"]
+
+[sub_resource type="GDScript" id="GDScript_y0eke"]
+resource_name = "timothyboss"
+script/source = "extends Boss
+@onready var healthbar = $Healthbar
+
+@onready var state_machine = $StateMachine
+@onready var hurtbox: Databox = $Sprite/Hurtbox
+@onready var hitbox: Databox = $Sprite/Hitbox
+@onready var hand_r = $HAND_R
+@onready var hand_l = $HAND_L
+@onready var hit_flash: AnimationPlayer = $\"Hit Flash\"
+@onready var head: Sprite2D = $Sprite
+
+
+
+const hit_particles = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Effects/hit_particles.tscn\")
+const STARBREAKER_VS_TIMOTHY = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Music/Starbreaker_VsTimothy.wav\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+func music():
+	await get_tree().create_timer(0.01).timeout
+	var music_player = global.music_player as AudioStreamPlayer
+	music_player.stream = STARBREAKER_VS_TIMOTHY
+	music_player.play()
+
+func _ready() -> void:
+	setup_healthbar()
+	music()
+	white_flash()
+	get_parent().is_boss_active = true
+	
+	for i in get_children():
+		if i == Enemy:
+			var enemy = i as Enemy
+			enemy.spawn_charge_orb(5)
+			enemy.queue_free()
+	
+	hurtbox.is_disabled = true
+	hitbox.is_disabled = true
+	
+	var starting_movement_tween = create_tween().set_parallel(true)
+	starting_movement_tween.tween_property(self, \"position:y\", 58, 9.63).from(408).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	starting_movement_tween.tween_property(self, \"global_rotation_degrees\", 360, 4.815).from(0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	wait(9.63, switch_to_idle)
+
+func switch_to_idle():
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, $StateMachine/idle.name)
+	hurtbox.is_disabled = false
+	hitbox.is_disabled = false
+
+func white_flash():
+	var white_flash_tween = create_tween()
+	white_flash_tween.tween_property($IntroEffects/Flash, \"modulate\", Color.TRANSPARENT, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	white_flash_tween.tween_callback($IntroEffects.queue_free)
+
+func _process(delta):
+	update_healthbar()
+
+#region Healthbar Display
+func setup_healthbar():
+	# Set up bosses healthbar as a global variable.
+	global.boss_healthbar = healthbar
+	# Delay to allow for current stage children setup.
+	await get_tree().create_timer(0.1).timeout
+	# Reparents the healthbar to deattach it to the transform.
+	healthbar.reparent(global.current_stage)
+	# Updates the position and max health values.
+	global.boss_healthbar.global_position = Vector2(128, 312)
+	global.boss_healthbar.max_value = hurtbox.health
+
+func update_healthbar():
+	# If the healthbar is active on the scene tree, the value is updated.
+	if is_instance_valid(global.boss_healthbar):
+		global.boss_healthbar.value = hurtbox.health
+#endregion
+
+#region Hit Effects
+
+func hit_effects(colliding_hitbox):
+	spawn_hit_particles(colliding_hitbox)
+	play_hit_SFX()
+	flash()
+
+func flash():
+	hit_flash.stop()
+	hit_flash.play(\"hit_flash\")
+
+func play_hit_SFX():
+	$\"Hit Sound Effect\".play()
+
+func spawn_hit_particles(colliding_hitbox):
+	var i = hit_particles.instantiate()
+	i.global_position = head.global_position
+	global.current_stage.add_child(i)
+	i.emitting = true
+
+#endregion
+
+func orb_spawning():
+	spawn_charge_orb(1)
+	spawn_xp_orb(1)
+
+func on_parent_hit(colliding_hitbox):
+	hit_effects(colliding_hitbox)
+	orb_spawning()
+
+func on_parent_death(colliding_hitbox):
+	if state_machine.current_state.has_method(\"reset_tweens\") == true:
+		state_machine.current_state.reset_tweens()
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, $StateMachine/death.name)
+
+func pteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mabln"]
+shader = ExtResource("1_7mki6")
+shader_parameter/solid_color = Color(1, 1, 1, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jd5nt"]
+radius = 17.5285
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rs8xx"]
+radius = 15.5081
+
+[sub_resource type="GDScript" id="GDScript_2v21p"]
+resource_name = "intro_state"
+script/source = "extends State
+
+"
+
+[sub_resource type="GDScript" id="GDScript_mnaxk"]
+resource_name = "return_to_idle"
+script/source = "extends State
+
+func enter():
+	var default_pos_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween.tween_property(parent, \"position:x\", 320, 1.5)
+	default_pos_tween.tween_property(parent, \"position:y\", 58, 1.5)
+	await default_pos_tween.finished
+	var default_pos_tween_ = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 56, 0.5)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -56, 0.5)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:y\", parent.position.y + 30, 0.5)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:y\", parent.position.y + 30, 0.5)
+	await default_pos_tween_.finished
+	parent.hand_r.reparent(parent)
+	parent.hand_l.reparent(parent)
+	Transistioned.emit(self, \"idle\")
+"
+
+[sub_resource type="GDScript" id="GDScript_qqqpf"]
+resource_name = "idle_state"
+script/source = "extends State
+@onready var idle_anim = $idle_anim
+
+func enter():
+	idle_anim.stop()
+	idle_anim.play(\"idle\")
+	wait(randf_range(2.5, 5.0), switch_state)
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+func switch_state():
+	idle_anim.stop()
+	var attack_list = [\"lazer\", \"chase\", \"charge\"]
+	match attack_list.pick_random():
+		\"lazer\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"lazer\")
+		\"chase\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"chase\")
+		\"charge\":
+			print(\"attacking...\")
+			Transistioned.emit(self, \"charge\")
+"
+
+[sub_resource type="Animation" id="Animation_l363u"]
+resource_name = "idle"
+loop_mode = 1
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(320, 58), Vector2(320, 61)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8fi0c"]
+_data = {
+"idle": SubResource("Animation_l363u")
+}
+
+[sub_resource type="GDScript" id="GDScript_ix1sk"]
+resource_name = "swipe_attack"
+script/source = "extends State
+var hardmode_mvt_speed_accel = 12.5
+var normal_mvt_speed_accel = 10.8
+
+var bullet_pos = 1
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@onready var cooldown_timer : Timer = Timer.new()
+
+var movement_speed = 0.0
+
+func enter():
+	movement_speed = 0
+	move_hands()
+	wait(10.0, return_to_idle)
+	cooldown_timer.start(1.0)
+
+func _ready() -> void:
+	cooldown_timer.one_shot = false
+	cooldown_timer.wait_time = 1.0
+	add_child(cooldown_timer)
+	cooldown_timer.connect(\"timeout\", shoot)
+
+func switch_bullet_pos(projectile_instance):
+	match(bullet_pos):
+		1:
+			projectile_instance.global_position = parent.hand_l.global_position
+			bullet_pos = 2
+		2:
+			projectile_instance.global_position = parent.hand_r.global_position
+			bullet_pos = 1
+
+func spawn_projectile(projectile_path):
+	var proj_int = projectile_path.instantiate()
+	switch_bullet_pos(proj_int)
+	global.current_stage.add_child(proj_int)
+	proj_int.parent = parent
+
+func shoot():
+	spawn_projectile(bullet)
+
+func move_hands():
+	parent.hand_r.reparent(global.current_stage)
+	parent.hand_l.reparent(global.current_stage)
+	var hand_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	hand_tween.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 280, 0.5)
+	hand_tween.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -280, 0.5)
+	hand_tween.chain().tween_property(parent.hand_r, \"global_position:y\", parent.position.y + -10, 0.5)
+	hand_tween.chain().tween_property(parent.hand_l, \"global_position:y\", parent.position.y + -10, 0.5)
+
+func physics_update(_delta):
+	movement_speed += normal_mvt_speed_accel * _delta
+	parent.velocity = parent.get_player_vector() * movement_speed
+	parent.move_and_slide()
+
+
+func return_to_idle():
+	cooldown_timer.stop()
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+"
+
+[sub_resource type="GDScript" id="GDScript_tm7w4"]
+resource_name = "charge_attack"
+script/source = "extends State
+
+
+var bullet_pos = 1
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@onready var cooldown_timer : Timer = Timer.new()
+
+@onready var current_pos = 0
+@onready var pos1: Marker2D = $pos1
+@onready var pos2: Marker2D = $pos2
+@onready var pos3: Marker2D = $pos3
+@onready var pos4: Marker2D = $pos4
+@onready var hand_pos: Timer = $Hand_pos
+@onready var rush_indicator: Polygon2D = $Rush_Indicator
+@onready var charge_cooldown_timer: Timer = $Charge_Cooldown_Timer
+@onready var loop_amount = 0
+var head_motion_dir = Vector2.DOWN
+var is_charging = false
+
+var right_hand_tween : Tween
+var left_hand_tween : Tween
+
+func enter():
+	loop_amount = 0
+	current_pos = 0
+	head_motion_dir = Vector2.DOWN
+	rush_indicator.show()
+	move_head_start()
+	move_hands_start()
+	charge_cooldown_timer.start()
+	cooldown_timer.start()
+
+func _ready() -> void:
+	cooldown_timer.one_shot = false
+	cooldown_timer.wait_time = 0.7
+	add_child(cooldown_timer)
+	cooldown_timer.connect(\"timeout\", shoot)
+
+func physics_update(_delta):
+	rush_indicator.global_position.x = parent.global_position.x
+	if charge_cooldown_timer.time_left >= 1.0:
+		parent.global_position.x = global.player.global_position.x
+
+
+func switch_bullet_pos(projectile_instance):
+	match(bullet_pos):
+		1:
+			projectile_instance.global_position = parent.hand_l.global_position
+			bullet_pos = 2
+		2:
+			projectile_instance.global_position = parent.hand_r.global_position
+			bullet_pos = 1
+
+func spawn_projectile(projectile_path):
+	var proj_int = projectile_path.instantiate()
+	switch_bullet_pos(proj_int)
+	global.current_stage.add_child(proj_int)
+	proj_int.parent = parent
+
+func shoot():
+	spawn_projectile(bullet)
+
+func move_head_start():
+	var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	head_tween.tween_property(parent, \"position:y\", -250, 0.5)
+
+func move_hands_start():
+	parent.hand_r.reparent(global.current_stage)
+	parent.hand_l.reparent(global.current_stage)
+	
+	var hand_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	
+	
+	hand_tween.tween_property(parent.hand_r, \"global_position:x\", pos3.global_position.x, 0.3)
+	hand_tween.tween_property(parent.hand_r, \"global_position:y\", pos3.global_position.y, 0.3)
+	hand_tween.tween_property(parent.hand_l, \"global_position:x\", pos1.global_position.x, 0.3)
+	hand_tween.tween_property(parent.hand_l, \"global_position:y\", pos1.global_position.y, 0.3)
+	await hand_tween.finished
+	_on_hand_pos_timeout()
+
+func move_left_hand(pos):
+	var l_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+	l_tween.tween_property(parent.hand_l, \"global_position:x\", pos.global_position.x, 5.0)
+	l_tween.tween_property(parent.hand_l, \"global_position:y\", pos.global_position.y, 5.0)
+	left_hand_tween = l_tween
+
+func move_right_hand(pos):
+	var r_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+	r_tween.tween_property(parent.hand_r, \"global_position:x\", pos.global_position.x, 5.0)
+	r_tween.tween_property(parent.hand_r, \"global_position:y\", pos.global_position.y, 5.0)
+	right_hand_tween = r_tween
+
+func return_to_idle():
+	reset_tweens()
+	rush_indicator.hide()
+	charge_cooldown_timer.stop()
+	hand_pos.stop()
+	cooldown_timer.stop()
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+
+func reset_tweens():
+	if right_hand_tween:
+		right_hand_tween.kill()
+		right_hand_tween = null
+	if left_hand_tween:
+		left_hand_tween.kill()
+		left_hand_tween = null
+
+
+func _on_hand_pos_timeout() -> void:
+	current_pos += 1
+	current_pos = wrap(current_pos, 1, 5)
+	print(current_pos)
+	match current_pos:
+		1:
+			move_left_hand(pos2)
+			move_right_hand(pos4)
+			hand_pos.start()
+		2:
+			move_left_hand(pos3)
+			move_right_hand(pos1)
+			hand_pos.start()
+		3:
+			move_left_hand(pos4)
+			move_right_hand(pos2)
+			hand_pos.start()
+		4:
+			move_left_hand(pos1)
+			move_right_hand(pos3)
+			hand_pos.start()
+
+
+func _on_charge_cooldown_timer_timeout() -> void:
+	var dir = 0.0
+	match head_motion_dir:
+		Vector2.DOWN:
+			dir = 448
+			head_motion_dir = Vector2.UP
+		Vector2.UP:
+			dir = -250
+			head_motion_dir = Vector2.DOWN
+	loop_amount += 1
+	if loop_amount == 5:
+		return_to_idle()
+	else:
+		var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+		head_tween.tween_property(parent, \"position:y\", dir, 0.7)
+		await head_tween.finished
+		charge_cooldown_timer.start()
+"
+
+[sub_resource type="GDScript" id="GDScript_7cdxf"]
+resource_name = "lazer"
+script/source = "extends State
+
+var loops = 0
+var max_loops = 3
+var is_spinning = false
+
+@onready var lazer: Polygon2D = $lazer
+@onready var hitbox: Databox = $lazer/Hitbox
+@onready var warning: Polygon2D = $lazer/warning
+@onready var spin_duration: Timer = $spin_duration
+
+var global_head_tween = null
+
+func _ready() -> void:
+	lazer.hide()
+	hitbox.hide()
+	warning.hide()
+	spin_duration.connect(\"timeout\", trigger_loop)
+
+func enter():
+	lazer.reparent(parent)
+	loops = 0
+	move_head_to_center()
+
+func physics_update(_delta):
+	if is_spinning == true:
+		lazer.show()
+		hitbox.is_disabled = false
+	if is_spinning == false:
+		lazer.hide()
+		hitbox.hide()
+		warning.hide()
+		hitbox.is_disabled = true
+
+func move_head_to_center():
+	var head_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	head_tween.tween_property(parent, \"position:y\", 160, 0.5)
+	wait(0.7,  spin_head)
+	global_head_tween = head_tween
+
+func spin_head():
+	is_spinning = true
+	var head_tween = create_tween()
+	head_tween.tween_property(parent, \"rotation_degrees\", 360, 8.0).from(0)
+	global_head_tween = head_tween
+	spin_duration.start(8.0)
+
+func trigger_loop():
+	loops += 1
+	if loops == max_loops:
+		return_to_idle()
+	else:
+		spin_head()
+
+func reset_tweens():
+	if global_head_tween:
+		global_head_tween.kill()
+		global_head_tween = null
+
+func return_to_idle():
+	is_spinning = false
+	lazer.hide()
+	hitbox.hide()
+	warning.hide()
+	hitbox.is_disabled = true
+	Transistioned.emit(self, \"return_to_idle\")
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+
+
+func pteam_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+"
+
+[sub_resource type="GDScript" id="GDScript_m4i04"]
+resource_name = "death"
+script/source = "extends State
+
+func enter():
+	var default_pos_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween.tween_property(parent, \"position:x\", 320, 0.3)
+	default_pos_tween.tween_property(parent, \"position:y\", 58, 0.3)
+	await default_pos_tween.finished
+	var default_pos_tween_ = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK).set_parallel(true)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:x\", parent.position.x + 56, 0.3)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:x\", parent.position.x + -56, 0.3)
+	default_pos_tween_.tween_property(parent.hand_r, \"global_position:y\", parent.position.y + 30, 0.3)
+	default_pos_tween_.tween_property(parent.hand_l, \"global_position:y\", parent.position.y + 30, 0.3)
+	await default_pos_tween_.finished
+	parent.hand_r.reparent(parent)
+	parent.hand_l.reparent(parent)
+	parent.queue_free()
+"
+
+[sub_resource type="Animation" id="Animation_xkxwo"]
+resource_name = "hit_flash"
+length = 0.1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/solid_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.819608), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_scih6"]
+_data = {
+"hit_flash": SubResource("Animation_xkxwo")
+}
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_20m5l"]
+random_pitch = 1.2
+streams_count = 1
+stream_0/stream = ExtResource("6_xnjup")
+stream_0/weight = 1.0
+
+[node name="SkeletonBoss" type="CharacterBody2D"]
+position = Vector2(320, 58)
+script = SubResource("GDScript_y0eke")
+
+[node name="HAND_R" type="Node2D" parent="."]
+position = Vector2(56, 30)
+
+[node name="Polygon2D" type="Polygon2D" parent="HAND_R"]
+polygon = PackedVector2Array(-16, -18, -16, 14, 2.18115, 14, 16, 14, 16, -18)
+
+[node name="HAND_L" type="Node2D" parent="."]
+position = Vector2(-56, 30)
+
+[node name="Polygon2D" type="Polygon2D" parent="HAND_L"]
+polygon = PackedVector2Array(-16, -18, -16, 14, 16, 14, 16, -18)
+
+[node name="Healthbar" type="ProgressBar" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = 254.0
+offset_right = 192.0
+offset_bottom = 262.0
+grow_horizontal = 2
+grow_vertical = 0
+value = 100.0
+show_percentage = false
+
+[node name="Sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_mabln")
+scale = Vector2(2, 2)
+texture = ExtResource("2_yuykx")
+hframes = 4
+frame = 1
+
+[node name="Hurtbox" type="Area2D" parent="Sprite" node_paths=PackedStringArray("parent")]
+position = Vector2(0, -5.5)
+script = ExtResource("3_wh82c")
+parent = NodePath("../..")
+team_affiliation = "EnemyTeam"
+databox_type = "Hurtbox"
+max_health = 25000
+recieves_knockback = false
+is_knockback_forced_upwards = false
+armor_multiplier = 0.0
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite/Hurtbox"]
+shape = SubResource("CircleShape2D_jd5nt")
+
+[node name="Hitbox" type="Area2D" parent="Sprite" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_wh82c")
+parent = NodePath("../..")
+team_affiliation = "EnemyTeam"
+damage = 10.0
+knockback_amount = 6000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite/Hitbox"]
+position = Vector2(0, -5.5)
+shape = SubResource("CircleShape2D_rs8xx")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("4_fgkdi")]
+parent = NodePath("..")
+intial_state = NodePath("intro")
+
+[node name="intro" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_2v21p")
+parent = NodePath("../..")
+is_state_cancelable = false
+
+[node name="return_to_idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_mnaxk")
+parent = NodePath("../..")
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_qqqpf")
+parent = NodePath("../..")
+
+[node name="idle_anim" type="AnimationPlayer" parent="StateMachine/idle"]
+root_node = NodePath("../../..")
+libraries = {
+"": SubResource("AnimationLibrary_8fi0c")
+}
+playback_default_blend_time = 1.5
+
+[node name="chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_ix1sk")
+bullet = ExtResource("5_4cjuf")
+parent = NodePath("../..")
+
+[node name="charge" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_tm7w4")
+bullet = ExtResource("5_4cjuf")
+parent = NodePath("../..")
+
+[node name="Charge_Cooldown_Timer" type="Timer" parent="StateMachine/charge"]
+wait_time = 5.3
+one_shot = true
+
+[node name="Hand_pos" type="Timer" parent="StateMachine/charge"]
+wait_time = 5.3
+
+[node name="pos1" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(16, 16)
+
+[node name="pos2" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(624, 16)
+
+[node name="pos3" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(624, 344)
+
+[node name="pos4" type="Marker2D" parent="StateMachine/charge"]
+position = Vector2(16, 344)
+
+[node name="Rush_Indicator" type="Polygon2D" parent="StateMachine/charge"]
+visible = false
+color = Color(1, 0, 0, 0.0392157)
+polygon = PackedVector2Array(-64, 0, 64, 0, 64, 384, -64, 384)
+
+[node name="lazer" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_7cdxf")
+parent = NodePath("../..")
+
+[node name="spin_duration" type="Timer" parent="StateMachine/lazer"]
+
+[node name="lazer" type="Polygon2D" parent="StateMachine/lazer"]
+visible = false
+position = Vector2(320, 72)
+polygon = PackedVector2Array(-24, 56, 0, 0, 24, 56, 40, 448, -40, 448)
+
+[node name="warning" type="Polygon2D" parent="StateMachine/lazer/lazer"]
+color = Color(1, 0, 0, 0.0392157)
+polygon = PackedVector2Array(-24, 56, 0, 0, 24, 56, 40, 448, -40, 448)
+
+[node name="Hitbox" type="Area2D" parent="StateMachine/lazer/lazer" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_wh82c")
+parent = NodePath("../../../..")
+team_affiliation = "EnemyTeam"
+is_disabled = true
+damage = 25.0
+knockback_amount = 3000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionPolygon2D" parent="StateMachine/lazer/lazer/Hitbox"]
+polygon = PackedVector2Array(0, 0, -24, 56, -40, 448, 40, 448, 24, 56)
+
+[node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_m4i04")
+parent = NodePath("../..")
+
+[node name="IntroEffects" type="Node" parent="."]
+
+[node name="Flash" type="ColorRect" parent="IntroEffects"]
+visible = false
+top_level = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -68.0
+offset_top = -60.0
+offset_right = 68.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Hit Flash" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_scih6")
+}
+
+[node name="Hit Sound Effect" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_20m5l")
+volume_db = -12.0
+mix_target = 2
+
+[node name="Hit Particles" parent="." instance=ExtResource("7_bfvni")]
+
+[connection signal="PlayerTeamHurtbox_entered" from="Sprite/Hitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="timeout" from="StateMachine/charge/Charge_Cooldown_Timer" to="StateMachine/charge" method="_on_charge_cooldown_timer_timeout"]
+[connection signal="timeout" from="StateMachine/charge/Hand_pos" to="StateMachine/charge" method="_on_hand_pos_timeout"]
+[connection signal="PlayerTeamHurtbox_entered" from="StateMachine/lazer/lazer/Hitbox" to="StateMachine/lazer" method="pteam_entered"]

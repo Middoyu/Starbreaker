@@ -2,6 +2,7 @@ extends Node2D
 class_name StageBase
 
 const LVL_MANAGER = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn")
+const WALL_COLLISIONS = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls/wall_collisions.tscn")
 
 # Music variables
 @export var music_WAV : AudioStreamWAV
@@ -19,6 +20,9 @@ const LVL_MANAGER = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_
 # Boss Variables
 var is_boss_active = false
 
+func add_wall_collision():
+	var i = WALL_COLLISIONS.instantiate()
+	add_child(i)
 
 func _ready() -> void:
 	var i = LVL_MANAGER
@@ -26,6 +30,7 @@ func _ready() -> void:
 	global.current_stage = self
 	mainloop_setup()
 	music_setup()
+	add_wall_collision()
 
 func mainloop_setup():
 	add_child(enemy_spawn_timer)
@@ -43,7 +48,8 @@ func stage_specifc_spawns():
 	pass
 
 func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO):
-	var enemy_int = load(enemy_path).instantiate() as Enemy
+	var enemy_int = load(enemy_path)
+	enemy_int = enemy_int.instantiate() as Enemy
 	
 	if forced_spawnpoint != Vector2.ZERO:
 		enemy_int.global_position = forced_spawnpoint
