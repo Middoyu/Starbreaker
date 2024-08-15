@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://dkvxr10sg8n2a"]
 
-[ext_resource type="AudioStream" uid="uid://ccg5a62soyu8i" path="res://Game Folder/game_assets/Stages/0 - ProtoZone/MUSIC/protozone_theme.wav" id="1_dwpjp"]
+[ext_resource type="AudioStream" uid="uid://ccg5a62soyu8i" path="res://Game Folder/game_assets/Stages/0 - ProtoZone/Music/protozone_theme.wav" id="1_dwpjp"]
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_qus8j"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="3_4psp2"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="5_n4xl8"]
@@ -160,5 +160,7 @@ libraries = {
 autoplay = "protozone_animation"
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 
 [editable path="HUD"]

@@ -5,8 +5,10 @@ const LVL_MANAGER = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_
 const WALL_COLLISIONS = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls/wall_collisions.tscn")
 
 # Music variables
-@export var music_WAV : AudioStreamWAV
+@export var default_music_WAV : AudioStreamWAV
+@export var hardmode_music_WAV : AudioStreamWAV
 @onready var music_player = AudioStreamPlayer.new()
+var audio_time = null
 
 # Enemy spawner variables
 @export var enemy_list : Dictionary = {
@@ -20,6 +22,8 @@ const WALL_COLLISIONS = preload("res://Game Folder/game_assets/Stages/00 - BASE/
 # Boss Variables
 var is_boss_active = false
 
+@export var player_starting_position := Vector2.ZERO
+
 func add_wall_collision():
 	var i = WALL_COLLISIONS.instantiate()
 	add_child(i)
@@ -28,9 +32,13 @@ func _ready() -> void:
 	var i = LVL_MANAGER
 	i.instantiate()
 	global.current_stage = self
-	mainloop_setup()
 	music_setup()
 	add_wall_collision()
+	global.player.global_position = player_starting_position
+
+func _process(delta: float) -> void:
+	if is_instance_valid(default_music_WAV):
+		audio_time = music_player.get_playback_position()
 
 func mainloop_setup():
 	add_child(enemy_spawn_timer)
@@ -60,10 +68,14 @@ func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO):
 	
 	add_child(enemy_int)
 
+func sync_music():
+	if audio_time != null:
+		audio_time = round(audio_time * 10) / 10
+
 func music_setup():
-	if is_instance_valid(music_WAV):
+	if is_instance_valid(default_music_WAV):
 		add_child(music_player)
-		music_player.stream = music_WAV
+		music_player.stream = default_music_WAV
 		music_player.volume_db = -14
 		music_player.reparent(global.main_manager)
 		global.music_player = music_player

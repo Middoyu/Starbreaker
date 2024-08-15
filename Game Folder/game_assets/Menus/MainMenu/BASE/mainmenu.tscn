@@ -11,7 +11,6 @@ script/source = "extends Node2D
 @onready var options_menu = $Options
 
 
-
 func play_pressed() -> void:
 	global.main_manager.add_level()
 	queue_free()

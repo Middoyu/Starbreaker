@@ -1012,7 +1012,7 @@ radius = 1.41421
 [sub_resource type="GDScript" id="GDScript_4ckef"]
 resource_name = "primaryweaponscript"
 script/source = "extends WeaponBase
-@export var firerate := 0.1
+@export var firerate := 0.08
 @onready var bullet_pos = 1
 @export var right_pos = Vector2(5.5, -0.6)
 @export var left_pos = Vector2(-5.5, -0.6)
@@ -1047,9 +1047,6 @@ func switch_bullet_pos(projectile_instance):
 			bullet_pos = 1
 
 func effects():
-	if is_instance_valid(global.camera):
-		var camera = global.camera as juicycamera_component
-		camera.shake(1)
 	firing_sfx.play()
 "
 
@@ -1057,7 +1054,6 @@ func effects():
 random_pitch = 1.1
 streams_count = 1
 stream_0/stream = ExtResource("5_f5jtw")
-stream_0/weight = 1.0
 
 [sub_resource type="GDScript" id="GDScript_ld5h1"]
 resource_name = "secondaries"

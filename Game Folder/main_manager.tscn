@@ -3,13 +3,12 @@
 [sub_resource type="GDScript" id="GDScript_essvl"]
 resource_name = "mainscene_manager"
 script/source = "extends Node
-const UPGRADE_UI = preload(\"res://Game Folder/game_assets/Player/HUD/UpgradeHUD/upgrade_ui.tscn\")
 const MAINMENU = preload(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
 const GAMEOVER = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\")
 
 func _ready():
 	global.main_manager = self
-	add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	add_level(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
 
 func add_level(path := \"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\"):
 	var i = load(path) as PackedScene
@@ -22,10 +21,6 @@ func gameover_sequence():
 		i.queue_free()
 	var go_menu = GAMEOVER.instantiate()
 	add_child(go_menu)
-
-func display_upgrade_UI():
-	var upgrade_ui_int = UPGRADE_UI.instantiate()
-	add_child(upgrade_ui_int)
 
 func pause(node : Node2D):
 	node.process_mode = Node.PROCESS_MODE_DISABLED

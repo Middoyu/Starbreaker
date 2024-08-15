@@ -128,9 +128,11 @@ func take_damage(colliding_hitbox : Databox):
 	if !parent.has_method("on_parent_death"):
 		push_error(str(parent.name) + " didn't have a method called on_parent_death")
 	if health <= 0:
-		parent.call("on_parent_death", colliding_hitbox, damage_taken)
+		if parent.has_method("on_parent_death"):
+			parent.call("on_parent_death", colliding_hitbox, damage_taken)
 	else:
-		parent.call("on_parent_hit", colliding_hitbox, damage_taken)
+		if parent.has_method("on_parent_hit"):
+			parent.call("on_parent_hit", colliding_hitbox, damage_taken)
 #region Knockback Reactions
 # Higher knockback amounts and lower stun duration results in a snappier knockback effect.
 # Lower knockback amounts and higher stun durations are good a long knockback effect.
