@@ -17,7 +17,6 @@ const BULLET_TRISHOOTER = preload(\"res://Game Folder/game_assets/Enemies/Tres-2
 
 func spin_spr():
 	spr.rotate(3.0)
-	spr_outline.rotate(3.0)
 
 func _physics_process(delta: float) -> void:
 	spin_spr()
@@ -66,29 +65,29 @@ func enter():
 "
 
 [node name="Trishooter" type="CharacterBody2D"]
-position = Vector2(160, 40)
+motion_mode = 1
 script = SubResource("GDScript_4qk1k")
 
 [node name="spr" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(16, 0, 16, 8, 8, 16, 0, 16, -8, 16, -16, 8, -16, 0, -16, -8, -8, -16, 0, -16, 8, -16, 16, -8)
 
-[node name="spr_outline" type="Polygon2D" parent="."]
+[node name="spr_outline" type="Polygon2D" parent="spr"]
 z_index = -1
 scale = Vector2(1.08525, 1.09683)
 color = Color(1, 0, 0, 1)
 polygon = PackedVector2Array(16, 0, 16, 8, 8, 16, 0, 16, -8, 16, -16, 8, -16, 0, -16, -8, -8, -16, 0, -16, 8, -16, 16, -8)
-
-[node name="shoot_cooldown" type="Timer" parent="."]
-process_callback = 0
-wait_time = 1.5
-one_shot = true
-autostart = true
 
 [node name="Bullet Pattern Generator" parent="." instance=ExtResource("2_340sr")]
 bulletpath = ExtResource("3_uiu6o")
 firerate = 3.0
 rotation_speed = 25
 bullet_points = 3
+
+[node name="shoot_cooldown" type="Timer" parent="."]
+process_callback = 0
+wait_time = 1.5
+one_shot = true
+autostart = true
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("3_4xhks")

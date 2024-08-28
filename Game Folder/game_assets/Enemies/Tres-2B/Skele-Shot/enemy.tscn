@@ -943,8 +943,7 @@ script = SubResource("GDScript_vvde2")
 sprite_frames = SubResource("SpriteFrames_bk3gu")
 animation = &"hit_state"
 autoplay = "chase_state"
-frame = 59
-frame_progress = 1.0
+frame = 19
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("2_7osdy")

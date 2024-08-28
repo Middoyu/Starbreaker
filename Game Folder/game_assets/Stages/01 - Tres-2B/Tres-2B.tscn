@@ -1,9 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=12 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
-[ext_resource type="PackedScene" uid="uid://tmv7qtq62kb6" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn" id="4_661ew"]
+[ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
@@ -19,7 +19,22 @@ func spawn_enemies_pattern(pattern: int) -> void:
 	match pattern:
 		0:
 			# Spawn enemies at a specific position with a given scene
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(174, 78))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(128, -16))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(320, -16))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(512, -16))
+		1:
+			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", Vector2(320, -16))
+			await get_tree().create_timer(2.5, true, true, false)
+			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+		2:
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(-16, 192))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(320, 376))
+		3:
+			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(512, 64))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(128, 64))
 	
 	# Wait for 0.15 seconds before allowing spawning again
 	await get_tree().create_timer(0.15, true, true, false).timeout
@@ -31,6 +46,15 @@ func spawn_enemies_pattern(pattern: int) -> void:
 func _physics_process(delta: float) -> void:
 	sync_music()
 
+func _ready() -> void:
+	super()
+	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+
 # Syncs music timing with enemy spawning
 func sync_music() -> void:
 	super()
@@ -38,13 +62,47 @@ func sync_music() -> void:
 	if is_spawning:
 		match audio_time:
 			2.6:
-				spawn_enemies_pattern(0)
+				spawn_enemies_pattern(3)
 			5.2:
-				spawn_enemies_pattern(0)
+				spawn_enemies_pattern(1)
+			7.9:
+				spawn_enemies_pattern(2)
+			20.8:
+				spawn_enemies_pattern(3)
 	else:
 		# No action needed when not spawning
 		pass
 "
+
+[sub_resource type="Gradient" id="Gradient_e8xxh"]
+interpolation_mode = 2
+colors = PackedColorArray(0, 0, 0, 0.0235294, 1, 1, 0, 0.67451)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_s3au4"]
+frequency = 0.0232
+domain_warp_enabled = true
+domain_warp_fractal_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_que5d"]
+seamless = true
+seamless_blend_skirt = 1.0
+color_ramp = SubResource("Gradient_e8xxh")
+noise = SubResource("FastNoiseLite_s3au4")
+
+[sub_resource type="Gradient" id="Gradient_kgje8"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 0.846111, 0.82002, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_duswx"]
+gradient = SubResource("Gradient_kgje8")
+
+[sub_resource type="Environment" id="Environment_1emyr"]
+background_mode = 3
+glow_enabled = true
+glow_normalized = true
+glow_bloom = 0.06
+glow_blend_mode = 0
+adjustment_enabled = true
+adjustment_color_correction = SubResource("GradientTexture1D_duswx")
 
 [node name="Tres-2b" type="Node2D"]
 script = SubResource("GDScript_sy80a")
@@ -62,4 +120,47 @@ limit_bottom = 380
 position_smoothing_speed = 109.5
 initial_zoom_value = 1.0
 
-[node name="Gas Comet" parent="." instance=ExtResource("4_661ew")]
+[node name="Background" type="Parallax2D" parent="."]
+z_index = -4096
+scroll_scale = Vector2(0, 0.5)
+repeat_size = Vector2(1166, 720)
+autoscroll = Vector2(0, 175)
+repeat_times = 100
+ignore_camera_scroll = true
+
+[node name="Sprite" type="Sprite2D" parent="Background"]
+self_modulate = Color(1, 1, 1, 0.0196078)
+position = Vector2(320, 184)
+scale = Vector2(2, 2)
+texture = ExtResource("4_npuxh")
+
+[node name="Gas_Background" type="Parallax2D" parent="."]
+z_index = -4096
+scroll_scale = Vector2(0, 0.5)
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(0, 87)
+repeat_times = 5
+
+[node name="Sprite" type="Sprite2D" parent="Gas_Background"]
+self_modulate = Color(1, 1, 1, 0.00392157)
+z_index = -4090
+position = Vector2(320, 184)
+scale = Vector2(2, 2)
+texture = SubResource("NoiseTexture2D_que5d")
+
+[node name="Clouds_Background" type="Parallax2D" parent="."]
+z_index = -4093
+scroll_scale = Vector2(0, 0.5)
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(0, 43)
+repeat_times = 5
+
+[node name="Sprite" type="Sprite2D" parent="Clouds_Background"]
+self_modulate = Color(1, 0.12549, 1, 0.00392157)
+z_index = -4090
+position = Vector2(320, 184)
+scale = Vector2(2, 2)
+texture = SubResource("NoiseTexture2D_que5d")
+
+[node name="Graphics & Tone" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1emyr")

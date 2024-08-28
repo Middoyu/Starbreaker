@@ -146,7 +146,8 @@ func calculate_knockback(colliding_hitbox : Databox):
 	latest_knockback_amount = colliding_hitbox.knockback_amount
 	knockback_direction = colliding_hitbox.global_position.direction_to(parent.global_position)
 	## Starts the timer using the knockback duration.
-	knockback_timer.start(colliding_hitbox.knockback_stun_duration)
+	knockback_stun_duration = colliding_hitbox.knockback_stun_duration
+	knockback_timer.start(knockback_stun_duration)
 	emit_signal("is_taking_knockback", knockback_stun_duration)
 
 

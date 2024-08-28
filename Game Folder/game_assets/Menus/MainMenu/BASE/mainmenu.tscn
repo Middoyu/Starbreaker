@@ -12,8 +12,8 @@ script/source = "extends Node2D
 
 
 func play_pressed() -> void:
-	global.main_manager.add_level()
 	queue_free()
+	global.main_manager.add_level(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
 
 
 func options_pressed():

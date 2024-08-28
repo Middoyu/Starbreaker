@@ -1,4 +1,4 @@
-[gd_scene load_steps=157 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=160 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
@@ -1012,29 +1012,33 @@ radius = 1.41421
 [sub_resource type="GDScript" id="GDScript_4ckef"]
 resource_name = "primaryweaponscript"
 script/source = "extends WeaponBase
+signal primary_fired
 @export var firerate := 0.08
 @onready var bullet_pos = 1
 @export var right_pos = Vector2(5.5, -0.6)
 @export var left_pos = Vector2(-5.5, -0.6)
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
 @onready var firing_sfx: AudioStreamPlayer = $firing_SFX
 
 
 # Overrides WeaponBase's function to allowing switching of the position.
 func spawn_projectile(projectile_path):
 	var proj_int = projectile_path.instantiate()
+	
 	proj_int.global_position = player.global_position
-	switch_bullet_pos(proj_int)
-	global.current_stage.add_child(proj_int)
 	proj_int.parent = get_parent()
-	upgrade_projectile(proj_int)
+	switch_bullet_pos(proj_int)
+	
+	global.add_child(proj_int)
 
 # Shoots the projectile and starts the cooldown.
 func shoot():
 	if cooldown_timer.time_left <= 0:
-		effects()
 		cooldown_timer.start(firerate)
+		
+		emit_signal(\"primary_fired\")
 		spawn_projectile(bullet)
+		effects()
 
 # Switches the bullets position on a alternating value.
 func switch_bullet_pos(projectile_instance):
@@ -1054,6 +1058,44 @@ func effects():
 random_pitch = 1.1
 streams_count = 1
 stream_0/stream = ExtResource("5_f5jtw")
+
+[sub_resource type="Animation" id="Animation_yl2xd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jrc6c"]
+resource_name = "int"
+length = 0.1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Sprite:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1),
+"transitions": PackedFloat32Array(1, -0.5, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_af5pi"]
+_data = {
+"RESET": SubResource("Animation_yl2xd"),
+"int": SubResource("Animation_jrc6c")
+}
 
 [sub_resource type="GDScript" id="GDScript_ld5h1"]
 resource_name = "secondaries"
@@ -1222,6 +1264,11 @@ stream = SubResource("AudioStreamRandomizer_40emr")
 volume_db = -16.0
 mix_target = 2
 
+[node name="PrimaryFiringAnimation" type="AnimationPlayer" parent="Primary"]
+libraries = {
+"": SubResource("AnimationLibrary_af5pi")
+}
+
 [node name="Secondary" type="Node" parent="." node_paths=PackedStringArray("player")]
 script = SubResource("GDScript_ld5h1")
 player = NodePath("..")
@@ -1265,6 +1312,7 @@ shape = SubResource("RectangleShape2D_2icmy")
 
 [node name="Tickrate" type="Timer" parent="Breaker/BreakerLazer"]
 
+[connection signal="primary_fired" from="Primary" to="." method="on_primary_fired"]
 [connection signal="EnemyTeamHitbox_entered" from="Utility/Utility_Hitbox" to="Utility" method="enemy_team_hitbox_entered"]
 [connection signal="EnemyTeamHurtbox_entered" from="Breaker/BreakerLazer/LazerDatabox" to="Breaker" method="eteam_hurtbox_entered"]
 [connection signal="timeout" from="Breaker/BreakerLazer/Tickrate" to="Breaker" method="tickrate_timeout"]

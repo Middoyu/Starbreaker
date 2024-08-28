@@ -57,7 +57,7 @@ func stage_specifc_spawns():
 
 func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO):
 	var enemy_int = load(enemy_path)
-	enemy_int = enemy_int.instantiate() as Enemy
+	enemy_int = enemy_int.instantiate()
 	
 	if forced_spawnpoint != Vector2.ZERO:
 		enemy_int.global_position = forced_spawnpoint

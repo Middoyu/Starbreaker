@@ -91,3 +91,10 @@ func invincibility_check():
 				player_hurtbox.is_disabled = true
 
 #endregion
+
+
+
+@onready var primary_firing_animation: AnimationPlayer = $Primary/PrimaryFiringAnimation
+func on_primary_fired() -> void:
+	primary_firing_animation.stop()
+	primary_firing_animation.play("int")

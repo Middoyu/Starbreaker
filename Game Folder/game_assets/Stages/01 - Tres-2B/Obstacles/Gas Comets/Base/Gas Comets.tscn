@@ -1,7 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://tmv7qtq62kb6"]
+[gd_scene load_steps=13 format=3 uid="uid://tmv7qtq62kb6"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_343ls"]
 [ext_resource type="Texture2D" uid="uid://fll005ijx1el" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/comet.png" id="2_0ja1j"]
+[ext_resource type="Texture2D" uid="uid://dvqrhbjhh7g83" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/Warn_signs/offscreen_indicator.png" id="3_ubqiq"]
+[ext_resource type="Texture2D" uid="uid://d1qgp2wevag1o" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/bone_fragments_spr.png" id="3_yvflk"]
+[ext_resource type="Texture2D" uid="uid://q0bg472wrv17" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/Warn_signs/warn_sign.png" id="4_fw8mj"]
 
 [sub_resource type="GDScript" id="GDScript_torgt"]
 resource_name = "cometscript"
@@ -10,75 +13,125 @@ script/source = "extends Entity
 @onready var gas_hitbox: Databox = $Gas/GasHitbox
 @onready var hurtbox: Databox = $Hurtbox
 @onready var gas: GPUParticles2D = $Gas
+@onready var notifier_sprite: Sprite2D = $Notifier_Sprite
+@onready var gas_duration: Timer = $Gas/Gas_Duration
 
-@export var fall_speed = 15
-@export var gas_duration = 3.5
+@export var fall_speed = 150
 @export var target = null
 @export var sprite_rotation_amount = 5.5
 @onready var player_x_position : float = 0.0
 
 func _ready() -> void:
-	await get_tree().create_timer(0.4).timeout
-	get_player_y()
+	spawning()
 
+func spawning():
+	if global.player:
+		global_position.x = global.player.global_position.x
+	global_position.y -= 250
+	notifier_sprite.global_position.y = 16
+	notifier_sprite.reparent(global)
+
+func screen_entered() -> void:
+	notifier_sprite.hide()
 
 func rotate_sprite(delta):
 	sprite.rotate(sprite_rotation_amount * delta)
-
-func get_player_y():
-	if global.player:
-		target = global.player
-		player_x_position = target.global_position.x
-		global_position.x = player_x_position
-	else:
-		global_position.x = get_global_mouse_position().x
 
 func _physics_process(delta: float) -> void:
 	rotate_sprite(delta)
 	global_position.y += fall_speed * delta
 
-
-func pteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(gas_hitbox)
-	gas_hitbox.is_disabled = true
-	await get_tree().create_timer(0.08, true, true, false).timeout
-	gas_hitbox.is_disabled = false
-func eteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(gas_hitbox)
-	gas_hitbox.is_disabled = true
-	await get_tree().create_timer(0.08, true, true, false).timeout
-	gas_hitbox.is_disabled = false
-
-func on_parent_death(colliding_hitbox: Variant, damage_taken: Variant) -> void:
+func summon_gas():
 	hurtbox.is_disabled = true
 	sprite.hide()
 	gas_hitbox.is_disabled = false
 	gas.emitting = true
 	fall_speed = 0
+	gas_duration.start()
+
+func flash_gas_hitbox():
+	gas_hitbox.is_disabled = true
+	await get_tree().create_timer(0.08, true, true, false).timeout
+	gas_hitbox.is_disabled = false
+
+
+func pteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(gas_hitbox)
+	flash_gas_hitbox()
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(gas_hitbox)
+	flash_gas_hitbox()
+
+func on_parent_death(colliding_hitbox: Variant, damage_taken: Variant) -> void:
+	summon_gas()
+
+
+func screen_exited() -> void:
+	queue_free()
+
+
+func on_gas_timeout() -> void:
+	queue_free()
 "
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ime8v"]
 radius = 15.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ivfka"]
+particles_animation = true
+particles_anim_h_frames = 10
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_cl4o0"]
+_data = [Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(0.0483871, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_q36r6"]
+curve = SubResource("Curve_cl4o0")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k6y62"]
 particle_flag_disable_z = true
 emission_shape_scale = Vector3(32, 32, 1)
 emission_shape = 1
 emission_sphere_radius = 1.0
+angle_min = 720.0
+angle_max = 720.0
+angular_velocity_min = -720.0
+angular_velocity_max = 720.0
+orbit_velocity_min = 0.0360001
+orbit_velocity_max = 0.0360001
+radial_velocity_min = 9.00998
+radial_velocity_max = 9.00998
 gravity = Vector3(0, -1, 0)
-color = Color(1, 1, 0, 0.588235)
+radial_accel_min = 100.0
+radial_accel_max = 100.0
+tangential_accel_min = 98.2
+tangential_accel_max = 98.2
+damping_min = 30.18
+damping_max = 30.18
+attractor_interaction_enabled = false
+color = Color(1, 1, 0, 1)
+alpha_curve = SubResource("CurveTexture_q36r6")
+hue_variation_min = -0.18
+hue_variation_max = 0.07
+anim_speed_max = 1.0
+turbulence_enabled = true
+turbulence_influence_min = 1.0
+turbulence_influence_max = 1.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kooud"]
 radius = 25.0
 
 [node name="Gas Comet" type="CharacterBody2D"]
+scale = Vector2(2, 2)
 motion_mode = 1
 script = SubResource("GDScript_torgt")
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("1_343ls")
 parent = NodePath("..")
-team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
 max_health = 500
 recieves_knockback = false
@@ -91,12 +144,15 @@ shape = SubResource("CircleShape2D_ime8v")
 texture = ExtResource("2_0ja1j")
 
 [node name="Gas" type="GPUParticles2D" parent="."]
+z_index = -1000
+material = SubResource("CanvasItemMaterial_ivfka")
 emitting = false
 amount = 500
 process_material = SubResource("ParticleProcessMaterial_k6y62")
-lifetime = 0.08
+texture = ExtResource("3_yvflk")
+randomness = 1.0
 fixed_fps = 60
-interp_to_end = 1.0
+trail_lifetime = 0.01
 
 [node name="GasHitbox" type="Area2D" parent="Gas" node_paths=PackedStringArray("parent")]
 script = ExtResource("1_343ls")
@@ -108,6 +164,30 @@ knockback_stun_duration = 0.1
 [node name="Collision" type="CollisionShape2D" parent="Gas/GasHitbox"]
 shape = SubResource("CircleShape2D_kooud")
 
+[node name="Gas_Duration" type="Timer" parent="Gas"]
+process_callback = 0
+wait_time = 3.5
+one_shot = true
+
+[node name="ScreenNotifier" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(0, -2.08616e-07)
+scale = Vector2(1.5, 1.5)
+
+[node name="Notifier_Sprite" type="Sprite2D" parent="."]
+visible = false
+rotation = -1.5708
+texture = ExtResource("3_ubqiq")
+
+[node name="WarningSign" type="Sprite2D" parent="Notifier_Sprite"]
+modulate = Color(1, 1, 0, 1)
+position = Vector2(-4, 5)
+rotation = 1.5708
+scale = Vector2(1.125, 1.375)
+texture = ExtResource("4_fw8mj")
+
 [connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
 [connection signal="EnemyTeamHurtbox_entered" from="Gas/GasHitbox" to="." method="eteam_hurtbox_entered"]
 [connection signal="PlayerTeamHurtbox_entered" from="Gas/GasHitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="timeout" from="Gas/Gas_Duration" to="." method="on_gas_timeout"]
+[connection signal="screen_entered" from="ScreenNotifier" to="." method="screen_entered"]
+[connection signal="screen_exited" from="ScreenNotifier" to="." method="screen_exited"]

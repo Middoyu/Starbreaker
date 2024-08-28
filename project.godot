@@ -28,12 +28,13 @@ events="*res://Game Folder/game_components/global_components/Scripts/events.gd"
 utility="*res://Game Folder/game_components/global_components/Scripts/utils.gd"
 options="*res://Game Folder/game_components/global_components/Scripts/options.gd"
 score_event="*res://Game Folder/game_components/global_components/Scripts/score.gd"
+cache="*res://Game Folder/game_components/global_components/Scripts/cache.gd"
 
 [display]
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=4
+window/size/mode=2
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true

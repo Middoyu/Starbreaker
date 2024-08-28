@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://bfrqijlkiagie"]
+[gd_scene load_steps=4 format=3 uid="uid://bfrqijlkiagie"]
+
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_dgf3v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_a5ygm"]
 font_size = 10
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="GDScript" id="GDScript_f0jcg"]
 resource_name = "damage_display"
@@ -16,6 +20,7 @@ func _ready() -> void:
 func int_setup():
 	reposition_display()
 	remove_other_displays()
+	random_rotation()
 	wait(spawning_tween_duration, slowly_move_display)
 	wait(spawning_tween_duration + movement_tween_duration, remove_display)
 
@@ -36,10 +41,13 @@ func remove_other_displays():
 	add_to_group(\"DamageDisplay\")
 	reparent(global.current_stage)
 
+func random_rotation():
+	rotation_degrees = randf_range(-6.5, 6.5)
+
 func slowly_move_display():
 	var tween_movement = create_tween().set_parallel(true)
 	tween_movement.tween_property(self, \"position:y\", global_position.y + randf_range(-10, -5), movement_tween_duration)
-	tween_movement.tween_property(self, \"position:x\", global_position.x + randf_range(-5, 5), movement_tween_duration)
+	tween_movement.tween_property(self, \"position:x\", global_position.x + randf_range(-7.5, 7.5), movement_tween_duration)
 
 func remove_display():
 	var remove_display_tween = create_tween().set_parallel(true)
@@ -51,7 +59,11 @@ func remove_display():
 [node name="DamageDisplay" type="Label"]
 offset_right = 19.0
 offset_bottom = 23.0
+rotation = 0.113446
+pivot_offset = Vector2(9.5, 11.5)
 mouse_filter = 1
+theme = ExtResource("1_dgf3v")
+theme_override_colors/font_outline_color = Color(0, 1, 1, 1)
 text = "33"
 label_settings = SubResource("LabelSettings_a5ygm")
 horizontal_alignment = 1

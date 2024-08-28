@@ -220,7 +220,7 @@ var hardmode_mvt_speed_accel = 12.5
 var normal_mvt_speed_accel = 10.8
 
 var bullet_pos = 1
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
 @onready var cooldown_timer : Timer = Timer.new()
 
 var movement_speed = 0.0
@@ -285,7 +285,7 @@ script/source = "extends State
 
 
 var bullet_pos = 1
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/testbullet.tscn\")
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
 @onready var cooldown_timer : Timer = Timer.new()
 
 @onready var current_pos = 0
@@ -562,7 +562,6 @@ _data = {
 random_pitch = 1.2
 streams_count = 1
 stream_0/stream = ExtResource("6_xnjup")
-stream_0/weight = 1.0
 
 [node name="SkeletonBoss" type="CharacterBody2D"]
 position = Vector2(320, 58)

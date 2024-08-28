@@ -24,4 +24,3 @@ func spawn_projectile(projectile_path):
 	var proj_int = projectile_path.instantiate()
 	proj_int.global_position = player.global_position
 	get_tree().get_root().add_child(proj_int)
-

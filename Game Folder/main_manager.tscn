@@ -8,7 +8,8 @@ const GAMEOVER = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver
 
 func _ready():
 	global.main_manager = self
-	add_level(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
 
 func add_level(path := \"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\"):
 	var i = load(path) as PackedScene
