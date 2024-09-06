@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=12 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://c531nix6id5xh" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.wav" id="1_j4fed"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="3_mm2qm"]
+[ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
 
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
 resource_name = "mainmenu"
@@ -10,15 +11,26 @@ script/source = "extends Node2D
 @onready var main_menu = $MainMenu
 @onready var options_menu = $Options
 
+func start():
+	global.current_stage = self
+	$Music.play()
+
+func _ready() -> void:
+	start()
 
 func play_pressed() -> void:
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
 	queue_free()
-	global.main_manager.add_level(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+
 
 
 func options_pressed():
 	options_menu.show()
 	main_menu.hide()
+
+
+func quit_pressed() -> void:
+	get_tree().quit(0)
 "
 
 [sub_resource type="Animation" id="Animation_c6u7e"]
@@ -50,18 +62,109 @@ emission_box_extents = Vector3(1000, 1000, 1)
 gravity = Vector3(0, 0, 0)
 color = Color(1, 1, 1, 0.00784314)
 
+[sub_resource type="Animation" id="Animation_lhi5l"]
+resource_name = "Fade"
+length = 0.62
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Black:self_modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.55),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Music:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Black")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.00999999, 0.55),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"show"
+}, {
+"args": [],
+"method": &"hide"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_igopm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Black:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Music:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Black")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"hide"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_n1wfx"]
+_data = {
+"Fade": SubResource("Animation_lhi5l"),
+"RESET": SubResource("Animation_igopm")
+}
+
 [node name="MainMenu" type="Node2D"]
 script = SubResource("GDScript_cf4c7")
 
 [node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
 ignore_rotation = false
-enabled = false
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_j4fed")
 volume_db = -16.0
-autoplay = true
 
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 3
@@ -71,9 +174,9 @@ offset_bottom = 360.0
 
 [node name="Title" type="TextureRect" parent="MainMenu"]
 layout_mode = 0
-offset_top = -138.841
+offset_top = -140.0
 offset_right = 640.0
-offset_bottom = 453.159
+offset_bottom = 452.0
 texture = ExtResource("2_leuxi")
 
 [node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
@@ -83,31 +186,39 @@ libraries = {
 autoplay = "bob"
 playback_default_blend_time = 1.0
 
-[node name="Container" type="VBoxContainer" parent="MainMenu"]
-z_index = 5
+[node name="HFlowContainer" type="VBoxContainer" parent="MainMenu"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 64.0
-offset_top = -120.0
-offset_right = 199.0
-offset_bottom = -19.0
+offset_top = -104.0
+offset_right = 256.0
+offset_bottom = 96.0
 grow_vertical = 0
-theme = ExtResource("3_mm2qm")
 
-[node name="PLAY" type="Button" parent="MainMenu/Container"]
+[node name="PLAY" type="Button" parent="MainMenu/HFlowContainer"]
 layout_mode = 2
 theme = ExtResource("3_mm2qm")
 text = "Play"
+text_overrun_behavior = 1
+script = ExtResource("4_tprer")
 
-[node name="OPTIONS" type="Button" parent="MainMenu/Container"]
+[node name="OPTIONS" type="Button" parent="MainMenu/HFlowContainer"]
+visible = false
 layout_mode = 2
+theme = ExtResource("3_mm2qm")
 text = "Options"
+script = ExtResource("4_tprer")
 
-[node name="QUIT" type="Button" parent="MainMenu/Container"]
+[node name="QUIT" type="Button" parent="MainMenu/HFlowContainer"]
 layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+shortcut_feedback = false
+shortcut_in_tooltip = false
 text = "Quit"
+script = ExtResource("4_tprer")
 
 [node name="Options" type="Control" parent="."]
 visible = false
@@ -126,5 +237,24 @@ preprocess = 20.0
 fixed_fps = 60
 visibility_rect = Rect2(-348, -25, 686.5, 387)
 
-[connection signal="pressed" from="MainMenu/Container/PLAY" to="." method="play_pressed"]
-[connection signal="pressed" from="MainMenu/Container/OPTIONS" to="." method="options_pressed"]
+[node name="Fade" type="Node" parent="."]
+
+[node name="Black" type="ColorRect" parent="Fade"]
+z_index = 10
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Fade" type="AnimationPlayer" parent="Fade"]
+libraries = {
+"": SubResource("AnimationLibrary_n1wfx")
+}
+autoplay = "Fade"
+
+[connection signal="pressed" from="MainMenu/HFlowContainer/PLAY" to="." method="play_pressed"]
+[connection signal="pressed" from="MainMenu/HFlowContainer/OPTIONS" to="." method="options_pressed"]
+[connection signal="pressed" from="MainMenu/HFlowContainer/QUIT" to="." method="quit_pressed"]

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://86q38sai5foc" path="res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/charge_orb/orb_base.png" id="1_ylmih"]
 
+
 [sub_resource type="GDScript" id="GDScript_atq2j"]
 resource_name = "charge_orb_script"
 script/source = "extends Entity

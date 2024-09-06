@@ -1,0 +1,22 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://b1rbffoke0vnr"]
+
+[ext_resource type="FontFile" uid="uid://cohq7acthuyhd" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf" id="1_c6gth"]
+[ext_resource type="Texture2D" uid="uid://c0v5q1fgdsek2" path="res://Game Folder/game_assets/Menus/Themes/Sprite-0002.png" id="2_vofbu"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jmitd"]
+texture = ExtResource("2_vofbu")
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+region_rect = Rect2(29, 17, 49, 37)
+
+[resource]
+default_font = ExtResource("1_c6gth")
+default_font_size = 20
+Button/colors/font_outline_color = Color(0, 0, 0, 1)
+Button/constants/outline_size = 20
+Button/font_sizes/font_size = 20
+Button/fonts/font = ExtResource("1_c6gth")
+Button/styles/normal = SubResource("StyleBoxTexture_jmitd")
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 20
+Label/font_sizes/font_size = 20

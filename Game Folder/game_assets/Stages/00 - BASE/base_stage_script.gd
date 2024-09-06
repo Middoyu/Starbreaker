@@ -28,13 +28,16 @@ func add_wall_collision():
 	var i = WALL_COLLISIONS.instantiate()
 	add_child(i)
 
-func _ready() -> void:
+func start():
 	var i = LVL_MANAGER
 	i.instantiate()
 	global.current_stage = self
 	music_setup()
 	add_wall_collision()
 	global.player.global_position = player_starting_position
+
+func _ready() -> void:
+	pass
 
 func _process(delta: float) -> void:
 	if is_instance_valid(default_music_WAV):
@@ -55,16 +58,15 @@ func stage_specifc_spawns():
 	push_error("Spawning for " + str(enemy_spawn_count) + " not specified, unable to spawn enemies.")
 	pass
 
-func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO):
+func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO, extra_arg_1 := 0.0, extra_arg_2 := 0.3):
 	var enemy_int = load(enemy_path)
 	enemy_int = enemy_int.instantiate()
 	
 	if forced_spawnpoint != Vector2.ZERO:
 		enemy_int.global_position = forced_spawnpoint
-	#elif is_instance_valid(enemy_spawnpoint_array):
-		#enemy_int.global_position = enemy_spawnpoint_array[randi_range(0, enemy_spawnpoint_array.size() - 1)]
-	elif is_instance_valid(enemy_spawnpoint_array) and is_instance_valid(forced_spawnpoint) == false:
-		push_error("Enemy spawnpoint isn't set.")
+	if enemy_path == "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn":
+		enemy_int.spawn_rotation = extra_arg_1
+		enemy_int.rotation_speed = extra_arg_2
 	
 	add_child(enemy_int)
 

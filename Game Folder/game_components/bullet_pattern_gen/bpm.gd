@@ -63,3 +63,7 @@ func shoot():
 func rotate_rotater(delta):
 	var new_rotation = rotater.rotation_degrees + rotation_speed * delta
 	rotater.rotation_degrees = fmod(new_rotation, 360)
+
+func reset_timer():
+	firerate_timer.stop()
+	firerate_timer.start()

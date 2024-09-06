@@ -70,7 +70,7 @@ func progress_dialogue():
 			new_dialogue(\"It doesn't matter then.\")
 			pause_music(false)
 		5:
-			new_dialogue(\"Why the fuck are you here?\")
+			new_dialogue(\"fuck you\")
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j3qv2"]
@@ -136,7 +136,6 @@ default_font_size = 20
 random_pitch = 1.1
 streams_count = 1
 stream_0/stream = ExtResource("2_dguqf")
-stream_0/weight = 1.0
 
 [node name="LilGuy" type="CharacterBody2D"]
 position = Vector2(320, 128)
@@ -175,8 +174,8 @@ mouse_filter = 1
 theme = SubResource("Theme_r4fwe")
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.0392157)
-theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_offset_x = 1
 theme_override_fonts/bold_font = ExtResource("2_k4k30")
 theme_override_font_sizes/normal_font_size = 11
 bbcode_enabled = true

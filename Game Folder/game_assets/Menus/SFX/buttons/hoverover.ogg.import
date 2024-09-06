@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://incjcgb86dvj"
+path="res://.godot/imported/hoverover.ogg-3af9b0083aaeed9e261b61331f71f91d.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Menus/SFX/buttons/hoverover.ogg"
+dest_files=["res://.godot/imported/hoverover.ogg-3af9b0083aaeed9e261b61331f71f91d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -30,11 +30,24 @@ func spawn_enemies_pattern(pattern: int) -> void:
 		2:
 			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
 			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(-16, 192))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(320, 376))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", Vector2(320, 376))
 		3:
-			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(512, 64))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(128, 64))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(512, 64), -90, -0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(128, 64), 90, 0.3)
+		4:
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(-16, 192))
+		5:
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(256, 16), 180, 0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(384, 16), 180, -0.3)
+		6:
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(624, 192), 90, 0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(16, 192), -90, -0.3)
+		7:
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(624, 192), 90, 0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(16, 192), -90, -0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(256, 16), 0, -0.3)
+			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(384, 16), 0, 0.3)
 	
 	# Wait for 0.15 seconds before allowing spawning again
 	await get_tree().create_timer(0.15, true, true, false).timeout
@@ -47,13 +60,14 @@ func _physics_process(delta: float) -> void:
 	sync_music()
 
 func _ready() -> void:
-	super()
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+	start()
+
 
 # Syncs music timing with enemy spawning
 func sync_music() -> void:
@@ -62,16 +76,84 @@ func sync_music() -> void:
 	if is_spawning:
 		match audio_time:
 			2.6:
-				spawn_enemies_pattern(3)
+				spawn_enemies_pattern(0)
 			5.2:
 				spawn_enemies_pattern(1)
 			7.9:
 				spawn_enemies_pattern(2)
-			20.8:
+			10.0:
+				spawn_enemies_pattern(4)
+			13.0:
+				spawn_enemies_pattern(0)
+			15.7:
+				spawn_enemies_pattern(2)
+			18.3:
 				spawn_enemies_pattern(3)
+			21.0:
+				spawn_enemies_pattern(5)
+			26.0:
+				spawn_enemies_pattern(1)
+			29.0:
+				spawn_enemies_pattern(6)
+			31.0:
+				spawn_enemies_pattern(0)
+			33.8:
+				spawn_enemies_pattern(2)
+			36.5:
+				spawn_enemies_pattern(6)
+			37.0:
+				spawn_enemies_pattern(1)
+			39.0:
+				spawn_enemies_pattern(3)
+			41.0:
+				spawn_enemies_pattern(0)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(0)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(1)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(0)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(2)
+			49.4:
+				spawn_enemies_pattern(6)
+			52.0:
+				spawn_enemies_pattern(3)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(6)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(1)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(0)
+				await get_tree().create_timer(0.5, false, true, false).timeout
+				spawn_enemies_pattern(2)
+			59.8:
+				spawn_enemies_pattern(7)
+			65.0:
+				spawn_enemies_pattern(0)
+			67.5:
+				spawn_enemies_pattern(5)
+			72.5:
+				spawn_enemies_pattern(2)
+			75.4:
+				spawn_enemies_pattern(1)
+			80.6:
+				spawn_enemies_pattern(1)
+			83.1:
+				# Begin rapid spawns.
+				$Rapid_Spawning_End.start()
+			124.7:
+				$Rapid_Spawning_End.stop()
+				pass
+			134.0:
+				global.main_manager.gameover_sequence()
 	else:
 		# No action needed when not spawning
 		pass
+
+
+func rapid_spawning() -> void:
+	spawn_enemies_pattern(randi_range(0, 4))
 "
 
 [sub_resource type="Gradient" id="Gradient_e8xxh"]
@@ -105,6 +187,7 @@ adjustment_enabled = true
 adjustment_color_correction = SubResource("GradientTexture1D_duswx")
 
 [node name="Tres-2b" type="Node2D"]
+rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
 default_music_WAV = ExtResource("1_4se7a")
 player_starting_position = Vector2(320, 288)
@@ -158,9 +241,18 @@ repeat_times = 5
 [node name="Sprite" type="Sprite2D" parent="Clouds_Background"]
 self_modulate = Color(1, 0.12549, 1, 0.00392157)
 z_index = -4090
-position = Vector2(320, 184)
+position = Vector2(320.049, 183.915)
 scale = Vector2(2, 2)
 texture = SubResource("NoiseTexture2D_que5d")
 
 [node name="Graphics & Tone" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1emyr")
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(256, 16)
+
+[node name="Rapid_Spawning_End" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.75
+
+[connection signal="timeout" from="Rapid_Spawning_End" to="." method="rapid_spawning"]

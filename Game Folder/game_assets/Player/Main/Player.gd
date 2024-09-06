@@ -44,6 +44,8 @@ func setup_player():
 func _physics_process(delta: float) -> void:
 	charge = 1 * delta
 	input_detection(delta)
+
+func _process(delta: float) -> void:
 	invincibility_check()
 
 #region Movement & Action Functions 
@@ -54,11 +56,8 @@ func input_detection(delta):
 		if Input.is_action_pressed("primary"):
 			primary.shoot()
 		if Input.is_action_just_pressed("secondary"):
-			secondary.shoot()
-		if Input.is_action_pressed("utility"):
-			od_utility.action()
-		if Input.is_action_just_pressed("breaker"):
-			breaker.action()
+			pass
+
 
 func movement_handler():
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
@@ -77,8 +76,8 @@ func on_parent_death(colliding_hitbox, damage_taken) -> void:
 	global.main_manager.gameover_sequence()
 
 func handle_death():
-	invincibility_override = true
 	player_hurtbox.is_disabled = true
+	invincibility_override = true
 	is_actionable = false
 	is_moveable = false
 
@@ -91,8 +90,6 @@ func invincibility_check():
 				player_hurtbox.is_disabled = true
 
 #endregion
-
-
 
 @onready var primary_firing_animation: AnimationPlayer = $Primary/PrimaryFiringAnimation
 func on_primary_fired() -> void:

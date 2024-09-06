@@ -1113,11 +1113,9 @@ func spawn_projectile(projectile_path):
 	upgrade_projectile(proj_int)
 
 func shoot():
-	if global.player.charge >= 50.0:
-		for i in missile_amount:
-			spawn_projectile(MISSILE_PROJ)
-			global.player.charge = -50 / missile_amount
-
+	for i in missile_amount:
+		spawn_projectile(MISSILE_PROJ)
+		global.player.charge = -50 / missile_amount
 "
 
 [sub_resource type="GDScript" id="GDScript_0bcgs"]

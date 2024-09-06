@@ -14,6 +14,7 @@ var current_stage_score := 0
 
 var music_player = null
 
+var button_audio = AudioStreamPlayer.new()
 
 var lvl_manager = null
 

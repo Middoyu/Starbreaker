@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bjbn45w132wur"
+path="res://.godot/imported/unlock.ogg-a777e8e77b572fe3a162b4df8c4947a8.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Menus/SFX/buttons/unlock.ogg"
+dest_files=["res://.godot/imported/unlock.ogg-a777e8e77b572fe3a162b4df8c4947a8.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -81,8 +81,6 @@ func explosion(position := Vector2.ZERO):
 func eteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
 	explosion(area.global_position)
-
-
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k43y"]

@@ -2303,6 +2303,9 @@ func enter():
 	sprite.play(\"Hit\")
 	spin()
 
+func exit():
+	spin_animation.stop()
+
 func spin():
 	spin_animation.play(\"spin\")
 
@@ -2369,6 +2372,7 @@ script = SubResource("GDScript_iesie")
 script = ExtResource("2_vt4o6")
 parent = NodePath("..")
 team_affiliation = "EnemyTeam"
+is_disabled = true
 damage = 30.0
 knockback_amount = 1750.0
 knockback_stun_duration = 0.5
@@ -2388,11 +2392,9 @@ color = Color(1, 0, 0, 1)
 polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 
 [node name="Collision" type="CollisionPolygon2D" parent="Hitbox"]
-visible = false
 polygon = PackedVector2Array(-8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 
 [node name="Particles" type="GPUParticles2D" parent="Hitbox"]
-visible = false
 material = SubResource("CanvasItemMaterial_g3l1p")
 emitting = false
 amount = 250
@@ -2402,13 +2404,16 @@ trail_lifetime = 0.1
 
 [node name="spr" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_32irs")
-animation = &"Hit"
+animation = &"Spawn"
+frame = 59
+frame_progress = 1.0
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("2_vt4o6")
 parent = NodePath("..")
 team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
+max_health = 1
 recieves_knockback = false
 is_knockback_forced_upwards = false
 armor_multiplier = 0.0

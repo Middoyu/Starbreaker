@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://doh802xelrd5k"
+path="res://.godot/imported/cancel.ogg-8b10371b27ea141f06e40c7ba949202d.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Menus/SFX/buttons/cancel.ogg"
+dest_files=["res://.godot/imported/cancel.ogg-8b10371b27ea141f06e40c7ba949202d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

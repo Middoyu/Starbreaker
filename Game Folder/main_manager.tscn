@@ -1,27 +1,54 @@
-[gd_scene load_steps=2 format=3 uid="uid://y4ga4anlwqmc"]
+[gd_scene load_steps=4 format=3 uid="uid://y4ga4anlwqmc"]
+
+[ext_resource type="PackedScene" uid="uid://c4x1qm6djaif4" path="res://Game Folder/game_components/global_loading/loading.tscn" id="1_onr71"]
 
 [sub_resource type="GDScript" id="GDScript_essvl"]
 resource_name = "mainscene_manager"
 script/source = "extends Node
-const MAINMENU = preload(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
-const GAMEOVER = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\")
+
 
 func _ready():
 	global.main_manager = self
-	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
-	add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
 
-func add_level(path := \"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\"):
-	var i = load(path) as PackedScene
-	i = i.instantiate()
-	global.current_stage = i
+#region Loading
+@onready var loading_handler: Node = $Loading_Handler
+
+func switch_level_to(level_list):
+	display_load_visuals(level_list)
+
+func display_load_visuals(level_list):
+	loading_handler.display_visuals(true)
+	await loading_handler.animation.animation_finished
+	load_level(level_list)
+
+func load_level(level_list):
+	if level_list is String:
+		ResourceLoader.load_threaded_request(level_list)
+		while ResourceLoader.load_threaded_get_status(level_list):
+			if ResourceLoader.load_threaded_get_status(level_list) == 3:
+				hide_load_visuals(level_list)
+				break
+
+func update_load_visuals():
+	pass
+
+func hide_load_visuals(level_list):
+	loading_handler.display_visuals(false)
+	await loading_handler.animation.animation_finished
+	var i = ResourceLoader.load_threaded_get(level_list).instantiate()
 	add_child(i)
+	if i.has_method(\"start\"):
+		i.start()
+#endregion
 
 func gameover_sequence():
 	for i in get_children():
+		if i != loading_handler:
+			i.queue_free()
+	for i in global.get_children():
 		i.queue_free()
-	var go_menu = GAMEOVER.instantiate()
-	add_child(go_menu)
+	self.add_child(load(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\").instantiate())
 
 func pause(node : Node2D):
 	node.process_mode = Node.PROCESS_MODE_DISABLED
@@ -30,5 +57,23 @@ func unpause(node : Node2D):
 	node.process_mode = Node.PROCESS_MODE_ALWAYS
 "
 
+[sub_resource type="GDScript" id="GDScript_es8hl"]
+script/source = "extends Node
+@onready var animation: AnimationPlayer = $Loading_Visuals/Animation
+
+func display_visuals(display : bool):
+	if display:
+		animation.play(\"RESET\")
+		animation.play(\"Fade_To_Show\")
+	else:
+		animation.play(\"RESET\")
+		animation.play(\"Fade_To_Hide\")
+"
+
 [node name="MAIN_MANAGER" type="Node"]
 script = SubResource("GDScript_essvl")
+
+[node name="Loading_Handler" type="Node" parent="."]
+script = SubResource("GDScript_es8hl")
+
+[node name="Loading_Visuals" parent="Loading_Handler" instance=ExtResource("1_onr71")]

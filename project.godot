@@ -12,7 +12,7 @@ config_version=5
 
 config/name="STARBREAKER"
 config/tags=PackedStringArray("starbreaker")
-run/main_scene="res://Game Folder/main_manager.tscn"
+run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 boot_splash/show_image=false
 boot_splash/use_filter=false
@@ -34,7 +34,7 @@ cache="*res://Game Folder/game_components/global_components/Scripts/cache.gd"
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=2
+window/size/mode=3
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
@@ -55,6 +55,8 @@ folder_colors={
 "res://Game Folder/game_assets/Enemies/": "red",
 "res://Game Folder/game_assets/Items/": "orange",
 "res://Game Folder/game_assets/Menus/": "yellow",
+"res://Game Folder/game_assets/Menus/IntroCine/": "pink",
+"res://Game Folder/game_assets/Menus/SFX/": "blue",
 "res://Game Folder/game_assets/Menus/Themes/": "purple",
 "res://Game Folder/game_assets/NPCs/": "gray",
 "res://Game Folder/game_assets/Player/": "blue",

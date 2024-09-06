@@ -12,9 +12,8 @@ func _ready() -> void:
 	await get_tree().create_timer(2.5).timeout
 	return_button.show()
 
-
 func button_pressed() -> void:
-	global.main_manager.add_level(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
 	queue_free()
 "
 
