@@ -149,6 +149,8 @@ autoplay = "idle"
 frame_progress = 0.383752
 
 [node name="PersonalCamera" type="Camera2D" parent="."]
+visible = false
+enabled = false
 zoom = Vector2(2, 2)
 
 [node name="BobbingAnimation" type="AnimationPlayer" parent="."]

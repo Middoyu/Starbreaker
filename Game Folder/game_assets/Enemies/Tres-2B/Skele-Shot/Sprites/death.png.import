@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0giwyh1og78x"
-path="res://.godot/imported/hit.png-c8b44c193b7059c80c22b5a570802152.ctex"
+uid="uid://cwwn34618nmuy"
+path="res://.godot/imported/death.png-f00400498d0e3eb854f60433ce2f3b34.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/hit.png"
-dest_files=["res://.godot/imported/hit.png-c8b44c193b7059c80c22b5a570802152.ctex"]
+source_file="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/death.png"
+dest_files=["res://.godot/imported/death.png-f00400498d0e3eb854f60433ce2f3b34.ctex"]
 
 [params]
 

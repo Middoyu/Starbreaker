@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=13 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://c531nix6id5xh" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.wav" id="1_j4fed"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
@@ -14,15 +14,19 @@ script/source = "extends Node2D
 func start():
 	global.current_stage = self
 	$Music.play()
+	$TutorialPrompt.hide()
 
 func _ready() -> void:
 	start()
 
 func play_pressed() -> void:
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
-	queue_free()
+	if global.has_viewed_tutorial == false:
+		show_tutorial_prompt()
+		main_menu.hide()
 
 
+func show_tutorial_prompt():
+	$TutorialPrompt.show()
 
 func options_pressed():
 	options_menu.show()
@@ -31,6 +35,20 @@ func options_pressed():
 
 func quit_pressed() -> void:
 	get_tree().quit(0)
+"
+
+[sub_resource type="GDScript" id="GDScript_fs3n1"]
+script/source = "extends Control
+
+
+func _tutorial_yes_pressed() -> void:
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\")
+	get_parent().queue_free()
+
+
+func _tutorial_no_pressed() -> void:
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	get_parent().queue_free()
 "
 
 [sub_resource type="Animation" id="Animation_c6u7e"]
@@ -166,6 +184,79 @@ ignore_rotation = false
 stream = ExtResource("1_j4fed")
 volume_db = -16.0
 
+[node name="TutorialPrompt" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = SubResource("GDScript_fs3n1")
+
+[node name="ColorRect" type="ColorRect" parent="TutorialPrompt"]
+z_index = 500
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0862745, 0.0862745, 0.0862745, 0.956863)
+
+[node name="Label" type="Label" parent="TutorialPrompt"]
+z_index = 505
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 280.0
+offset_top = 176.0
+offset_right = 363.0
+offset_bottom = 199.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_mm2qm")
+text = "Would you like to view a tutorial?"
+
+[node name="PromptContainter" type="BoxContainer" parent="TutorialPrompt"]
+z_index = 575
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 192.0
+offset_top = 64.0
+offset_right = 448.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Tutorial_Yes" type="Button" parent="TutorialPrompt/PromptContainter"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_mm2qm")
+text = "Proceed"
+script = ExtResource("4_tprer")
+
+[node name="Tutorial_No" type="Button" parent="TutorialPrompt/PromptContainter"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 8
+theme = ExtResource("3_mm2qm")
+text = "No!"
+script = ExtResource("4_tprer")
+
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
@@ -174,9 +265,10 @@ offset_bottom = 360.0
 
 [node name="Title" type="TextureRect" parent="MainMenu"]
 layout_mode = 0
-offset_top = -140.0
-offset_right = 640.0
-offset_bottom = 452.0
+offset_left = -8.0
+offset_top = -144.0
+offset_right = 632.0
+offset_bottom = 448.0
 texture = ExtResource("2_leuxi")
 
 [node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
@@ -240,6 +332,7 @@ visibility_rect = Rect2(-348, -25, 686.5, 387)
 [node name="Fade" type="Node" parent="."]
 
 [node name="Black" type="ColorRect" parent="Fade"]
+visible = false
 z_index = 10
 anchors_preset = 15
 anchor_right = 1.0
@@ -255,6 +348,8 @@ libraries = {
 }
 autoplay = "Fade"
 
+[connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
+[connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]
 [connection signal="pressed" from="MainMenu/HFlowContainer/PLAY" to="." method="play_pressed"]
 [connection signal="pressed" from="MainMenu/HFlowContainer/OPTIONS" to="." method="options_pressed"]
 [connection signal="pressed" from="MainMenu/HFlowContainer/QUIT" to="." method="quit_pressed"]

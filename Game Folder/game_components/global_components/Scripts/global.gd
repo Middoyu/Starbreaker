@@ -17,6 +17,7 @@ var music_player = null
 var button_audio = AudioStreamPlayer.new()
 
 var lvl_manager = null
+var has_viewed_tutorial = false
 
 
 func _process(_delta: float) -> void:

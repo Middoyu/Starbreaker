@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=13 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
@@ -156,6 +156,11 @@ func rapid_spawning() -> void:
 	spawn_enemies_pattern(randi_range(0, 4))
 "
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1nr6p"]
+vertices = PackedVector2Array(694.109, 437.813, -53.8828, 438.008, -54.0234, -117.977, 693.969, -118.18)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-64.0339, -127.983, 703.966, -128.187, 704.119, 447.813, -63.8813, 448.017, -64.0339, -127.983)])
+
 [sub_resource type="Gradient" id="Gradient_e8xxh"]
 interpolation_mode = 2
 colors = PackedColorArray(0, 0, 0, 0.0235294, 1, 1, 0, 0.67451)
@@ -191,6 +196,9 @@ rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
 default_music_WAV = ExtResource("1_4se7a")
 player_starting_position = Vector2(320, 288)
+
+[node name="Nav" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_1nr6p")
 
 [node name="Player" parent="." instance=ExtResource("2_8fgom")]
 
