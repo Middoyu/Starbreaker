@@ -2,7 +2,6 @@ res://z_Export/default_bus_layout.tres
 res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
 res://Game Folder/game_assets/Menus/Themes/THEME.tres
+res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn
 res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_components/entity_components/Entity/entity_base.gd
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
-res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn

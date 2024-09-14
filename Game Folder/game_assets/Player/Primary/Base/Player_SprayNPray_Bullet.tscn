@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://ln88vbvxsas4"]
+[gd_scene load_steps=11 format=3 uid="uid://ln88vbvxsas4"]
 
 [ext_resource type="Texture2D" uid="uid://cnm0sw6ir0dyf" path="res://Game Folder/game_assets/Player/Primary/Sprites/bullet.png" id="1_4ym67"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_ncdc7"]
+[ext_resource type="PackedScene" uid="uid://dlq8my4bamdlh" path="res://Game Folder/game_assets/Player/VFX/More Hit Particles.tscn" id="3_tpoy3"]
 
 [sub_resource type="GDScript" id="GDScript_4ywsl"]
 resource_name = "testbullet"
@@ -9,7 +10,9 @@ script/source = "extends Projectile
 @onready var sprite: Sprite2D = $Sprite
 @onready var spawn_anim: AnimationPlayer = $Spawn_anim
 @onready var timer: Timer = $Timer
+@onready var camera = global.camera as juicycamera_component
 @onready var hit_particles: GPUParticles2D = $hit_particles
+@onready var hit_particles_2: CPUParticles2D = $hit_particles2
 
 func _ready() -> void:
 	super()
@@ -32,8 +35,14 @@ func _physics_process(delta: float) -> void:
 	sprite.rotate(15 * delta)
 
 func effects():
+	VFX()
+
+func VFX():
+	camera.shake(10.0)
+	camera.freezeframe(0.1, 0.08)
 	hit_particles.global_position = self.global_position
 	hit_particles.emitting = true
+	hit_particles_2.global_position = self.global_position
 "
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c4qqr"]
@@ -131,6 +140,8 @@ speed_scale = 44.0
 explosiveness = 1.0
 randomness = 1.0
 fixed_fps = 60
+
+[node name="hit_particles2" parent="." instance=ExtResource("3_tpoy3")]
 
 [connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
 [connection signal="NeutralTeamHurtbox_entered" from="Hitbox" to="." method="nteam_hurtbox_entered"]

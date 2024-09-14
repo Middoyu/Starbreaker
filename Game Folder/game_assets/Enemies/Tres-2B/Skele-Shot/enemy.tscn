@@ -1,4 +1,4 @@
-[gd_scene load_steps=219 format=3 uid="uid://dfepk5fmqyutd"]
+[gd_scene load_steps=217 format=3 uid="uid://dfepk5fmqyutd"]
 
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/death.png" id="2_3ivxn"]
@@ -1500,6 +1500,7 @@ script/source = "extends State
 
 func enter():
 	sprite.play(\"chase\")
+	# Upon entering; plays the animation of chasing.
 
 func make_path():
 	if global.player:
@@ -1522,8 +1523,6 @@ func pathfinding_velocity_computed(safe_velocity: Vector2) -> void:
 [sub_resource type="GDScript" id="GDScript_rnofh"]
 resource_name = "hit_state"
 script/source = "extends State
-
-@onready var camera = global.camera as juicycamera_component
 @onready var hit_particles: CPUParticles2D = $hit_particles
 
 func enter():
@@ -1531,12 +1530,6 @@ func enter():
 	sprite.offset = Vector2(1, 0)
 	sprite.stop()
 	sprite.play(\"hit\")
-	VFX()
-
-func VFX():
-	camera.shake(10.0)
-	camera.freezeframe(0.1, 0.08)
-	hit_particles.emitting = true
 
 func exit():
 	sprite.offset = Vector2(0, 0)
@@ -1545,13 +1538,6 @@ func _on_hurtbox_is_taking_knockback(duration: float) -> void:
 	await get_tree().create_timer(duration).timeout
 	Transistioned.emit(self, \"chase\")
 "
-
-[sub_resource type="Curve" id="Curve_5f22q"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.752336, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Gradient" id="Gradient_g2cnq"]
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GDScript" id="GDScript_2nrcc"]
 resource_name = "death_state"
@@ -1584,7 +1570,7 @@ debug_enabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"chase"
+animation = &"death"
 autoplay = "chase"
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
@@ -1634,30 +1620,6 @@ autostart = true
 script = SubResource("GDScript_rnofh")
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
-
-[node name="hit_particles" type="CPUParticles2D" parent="StateMachine/hit"]
-emitting = false
-amount = 15
-lifetime = 0.3
-one_shot = true
-explosiveness = 1.0
-randomness = 1.0
-fixed_fps = 60
-direction = Vector2(0, 0)
-spread = 180.0
-gravity = Vector2(0, 0)
-initial_velocity_min = 15.0
-initial_velocity_max = 80.0
-angular_velocity_min = 720.0
-angular_velocity_max = 720.0
-radial_accel_min = -100.0
-radial_accel_max = 100.0
-tangential_accel_max = 100.0
-damping_min = 100.0
-damping_max = 100.0
-scale_amount_max = 2.0
-scale_amount_curve = SubResource("Curve_5f22q")
-color_ramp = SubResource("Gradient_g2cnq")
 
 [node name="death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
 script = SubResource("GDScript_2nrcc")
