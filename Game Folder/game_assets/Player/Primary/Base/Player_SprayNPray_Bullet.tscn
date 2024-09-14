@@ -1,18 +1,22 @@
-[gd_scene load_steps=11 format=3 uid="uid://ln88vbvxsas4"]
+[gd_scene load_steps=13 format=3 uid="uid://ln88vbvxsas4"]
 
 [ext_resource type="Texture2D" uid="uid://cnm0sw6ir0dyf" path="res://Game Folder/game_assets/Player/Primary/Sprites/bullet.png" id="1_4ym67"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_ncdc7"]
 [ext_resource type="PackedScene" uid="uid://dlq8my4bamdlh" path="res://Game Folder/game_assets/Player/VFX/More Hit Particles.tscn" id="3_tpoy3"]
+[ext_resource type="AudioStream" uid="uid://brao2bap7hjx" path="res://Game Folder/game_assets/Player/Primary/Audio/sp_hit.ogg" id="4_jgb20"]
 
 [sub_resource type="GDScript" id="GDScript_4ywsl"]
 resource_name = "testbullet"
 script/source = "extends Projectile
+@onready var player_primary = global.player.primary
 @onready var sprite: Sprite2D = $Sprite
 @onready var spawn_anim: AnimationPlayer = $Spawn_anim
 @onready var timer: Timer = $Timer
 @onready var camera = global.camera as juicycamera_component
 @onready var hit_particles: GPUParticles2D = $hit_particles
 @onready var hit_particles_2: CPUParticles2D = $hit_particles2
+@onready var sfx_hit: AudioStreamPlayer = $sfx_hit
+
 
 func _ready() -> void:
 	super()
@@ -35,6 +39,8 @@ func _physics_process(delta: float) -> void:
 	sprite.rotate(15 * delta)
 
 func effects():
+	sfx_hit.reparent(global)
+	sfx_hit.play()
 	VFX()
 
 func VFX():
@@ -99,6 +105,11 @@ linear_accel_max = 100.0
 color = Color(0, 1, 1, 1)
 alpha_curve = SubResource("CurveTexture_j6vgf")
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_o5l0r"]
+random_pitch = 1.2
+streams_count = 1
+stream_0/stream = ExtResource("4_jgb20")
+
 [node name="test_ubullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
 scale = Vector2(1e-05, 1e-05)
 motion_mode = 1
@@ -142,6 +153,13 @@ randomness = 1.0
 fixed_fps = 60
 
 [node name="hit_particles2" parent="." instance=ExtResource("3_tpoy3")]
+
+[node name="sfx_hit" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_o5l0r")
+volume_db = -12.0
+max_polyphony = 3
+bus = &"SFX"
+playback_type = 2
 
 [connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
 [connection signal="NeutralTeamHurtbox_entered" from="Hitbox" to="." method="nteam_hurtbox_entered"]
