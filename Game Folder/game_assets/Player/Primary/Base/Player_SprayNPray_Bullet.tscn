@@ -125,7 +125,7 @@ script = ExtResource("2_ncdc7")
 parent = NodePath("..")
 team_affiliation = "PlayerTeam"
 damage = 33.3
-knockback_amount = 7000.0
+knockback_amount = 8400.0
 knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]

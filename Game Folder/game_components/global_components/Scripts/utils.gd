@@ -1,6 +1,6 @@
 extends Node
 
-func play_isolated_audio(audio : String, _volume : float = 0.0): # Creates a isolated audio player and plays the audio. Should account for volume with the added vairable.
+func play_isolated_audio(audio : String, _volume : float = 0.0, _is_random := false): # Creates a isolated audio player and plays the audio. Should account for volume with the added vairable.
 	# Creates the isolated nodes.
 	var isolated_audio_player = AudioStreamPlayer.new()
 	var isolated_audio_stream = AudioStream.new()
@@ -15,6 +15,8 @@ func play_isolated_audio(audio : String, _volume : float = 0.0): # Creates a iso
 	# Corrects the volume if it's changed.
 	if _volume:
 		isolated_audio_player.volume_db = _volume
+	if _is_random:
+		isolated_audio_player.pitch_scale = randf_range(0.8, 1.2)
 	
 	# Plays the audio, waits for it to finish before deleting.
 	isolated_audio_player.play()

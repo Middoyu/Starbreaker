@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b3k0fm0dgqarv"
+path="res://.godot/imported/sfx_death.ogg-6fe6d4b8d7ee2bde382343b610731308.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Player/Primary/Audio/sfx_death.ogg"
+dest_files=["res://.godot/imported/sfx_death.ogg-6fe6d4b8d7ee2bde382343b610731308.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1510,7 +1510,7 @@ func make_path():
 
 func physics_update(_delta):
 	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
-	var intended_velocity = dir * 500
+	var intended_velocity = dir * 250
 	pathfinding.set_velocity(intended_velocity)
 	
 func _on_timer_timeout() -> void:
@@ -1550,14 +1550,10 @@ func enter():
 	parent.hitbox.queue_free()
 	sprite.stop()
 	sprite.play(\"death\")
-	VFX()
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Primary/Audio/sfx_death.ogg\", -12, true)
 	await sprite.animation_finished
-	score_event.update_score(25)
 	parent.queue_free()
-
-func VFX():
-	camera.shake(10.0)
-	camera.freezeframe(0.1, 0.08)
+	
 "
 
 [node name="Enemy" type="CharacterBody2D"]
