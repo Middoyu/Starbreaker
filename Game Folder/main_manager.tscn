@@ -6,6 +6,7 @@
 resource_name = "mainscene_manager"
 script/source = "extends Node
 
+@onready var GameOver_Menu = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\")
 
 func _ready():
 	global.main_manager = self
@@ -44,12 +45,17 @@ func hide_load_visuals(level_list):
 #endregion
 
 func gameover_sequence():
+	clear_entities()
+	var GameOver_Menu_Int = GameOver_Menu.instantiate()
+	self.add_child(GameOver_Menu_Int, true)
+	events.emit_signal(\"GameOver\", int(score_event.score))
+
+func clear_entities():
 	for i in get_children():
 		if i != loading_handler:
 			i.queue_free()
 	for i in global.get_children():
 		i.queue_free()
-	self.add_child(load(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\").instantiate())
 
 func pause(node : Node2D):
 	node.process_mode = Node.PROCESS_MODE_DISABLED
