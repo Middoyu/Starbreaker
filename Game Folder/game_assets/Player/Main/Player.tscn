@@ -1,11 +1,11 @@
-[gd_scene load_steps=160 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=155 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
 [ext_resource type="Texture2D" uid="uid://xfck8bbqa15o" path="res://Game Folder/game_assets/Player/Sprites/playerdeath.png" id="2_kefrx"]
 [ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_qie6g"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
-[ext_resource type="AudioStream" uid="uid://bxrhsgdwv711w" path="res://Game Folder/game_assets/Player/Primary/Audio/sp_firing.wav" id="5_f5jtw"]
+[ext_resource type="PackedScene" uid="uid://fual85xipl34" path="res://Game Folder/game_assets/Player/Primary/Base/primary.tscn" id="6_pq6y1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 8.0
@@ -1006,96 +1006,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_p71ln"]
-radius = 1.41421
-
-[sub_resource type="GDScript" id="GDScript_4ckef"]
-resource_name = "primaryweaponscript"
-script/source = "extends WeaponBase
-signal primary_fired
-@export var firerate := 0.08
-@onready var bullet_pos = 1
-@export var right_pos = Vector2(5.5, -0.6)
-@export var left_pos = Vector2(-5.5, -0.6)
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
-@onready var firing_sfx: AudioStreamPlayer = $firing_SFX
-
-
-# Overrides WeaponBase's function to allowing switching of the position.
-func spawn_projectile(projectile_path):
-	var proj_int = projectile_path.instantiate()
-	
-	proj_int.global_position = player.global_position
-	proj_int.parent = get_parent()
-	switch_bullet_pos(proj_int)
-	
-	global.add_child(proj_int)
-
-# Shoots the projectile and starts the cooldown.
-func shoot():
-	if cooldown_timer.time_left <= 0:
-		cooldown_timer.start(firerate)
-		
-		emit_signal(\"primary_fired\")
-		spawn_projectile(bullet)
-		effects()
-
-# Switches the bullets position on a alternating value.
-func switch_bullet_pos(projectile_instance):
-	match(bullet_pos):
-		1:
-			projectile_instance.global_position += right_pos
-			bullet_pos = 2
-		2:
-			projectile_instance.global_position += left_pos
-			bullet_pos = 1
-
-func effects():
-	firing_sfx.play()
-"
-
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_40emr"]
-random_pitch = 1.1
-streams_count = 1
-stream_0/stream = ExtResource("5_f5jtw")
-
-[sub_resource type="Animation" id="Animation_yl2xd"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_jrc6c"]
-resource_name = "int"
-length = 0.1
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
-tracks/0/interp = 2
-tracks/0/loop_wrap = false
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.1),
-"transitions": PackedFloat32Array(1, -0.5, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_af5pi"]
-_data = {
-"RESET": SubResource("Animation_yl2xd"),
-"int": SubResource("Animation_jrc6c")
-}
+[sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
+radius = 1.0
 
 [sub_resource type="GDScript" id="GDScript_ld5h1"]
 resource_name = "secondaries"
@@ -1248,24 +1160,12 @@ databox_type = "Hurtbox"
 is_knockback_forced_upwards = false
 
 [node name="Collision" type="CollisionShape2D" parent="PlayerHurtbox"]
-shape = SubResource("CircleShape2D_p71ln")
+shape = SubResource("CircleShape2D_rq3p4")
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="Primary" type="Node" parent="." node_paths=PackedStringArray("player")]
-script = SubResource("GDScript_4ckef")
-player = NodePath("..")
-
-[node name="firing_SFX" type="AudioStreamPlayer" parent="Primary"]
-stream = SubResource("AudioStreamRandomizer_40emr")
-volume_db = -16.0
-mix_target = 2
-
-[node name="PrimaryFiringAnimation" type="AnimationPlayer" parent="Primary"]
-libraries = {
-"": SubResource("AnimationLibrary_af5pi")
-}
+[node name="Primary" parent="." instance=ExtResource("6_pq6y1")]
 
 [node name="Secondary" type="Node" parent="." node_paths=PackedStringArray("player")]
 script = SubResource("GDScript_ld5h1")
@@ -1288,6 +1188,7 @@ script = SubResource("GDScript_haiii")
 player = NodePath("..")
 
 [node name="BreakerLazer" type="Node2D" parent="Breaker"]
+visible = false
 
 [node name="Display" type="ColorRect" parent="Breaker/BreakerLazer"]
 offset_left = -9.0
@@ -1310,7 +1211,9 @@ shape = SubResource("RectangleShape2D_2icmy")
 
 [node name="Tickrate" type="Timer" parent="Breaker/BreakerLazer"]
 
-[connection signal="primary_fired" from="Primary" to="." method="on_primary_fired"]
+[node name="AudioListener" type="AudioListener2D" parent="."]
+current = true
+
 [connection signal="EnemyTeamHitbox_entered" from="Utility/Utility_Hitbox" to="Utility" method="enemy_team_hitbox_entered"]
 [connection signal="EnemyTeamHurtbox_entered" from="Breaker/BreakerLazer/LazerDatabox" to="Breaker" method="eteam_hurtbox_entered"]
 [connection signal="timeout" from="Breaker/BreakerLazer/Tickrate" to="Breaker" method="tickrate_timeout"]

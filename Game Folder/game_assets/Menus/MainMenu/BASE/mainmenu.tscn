@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://c8cl1sli3qnjh"]
 
-[ext_resource type="AudioStream" uid="uid://c531nix6id5xh" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.wav" id="1_j4fed"]
+[ext_resource type="AudioStream" uid="uid://byvjgvcggg4s7" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/MainMenu_Starbreaker.wav" id="1_udanv"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="3_mm2qm"]
 [ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
@@ -16,13 +16,14 @@ func start():
 	$Music.play()
 	$TutorialPrompt.hide()
 
+
 func _ready() -> void:
 	start()
 
 func play_pressed() -> void:
 	if global.has_viewed_tutorial == false:
-		show_tutorial_prompt()
-		main_menu.hide()
+		global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+		queue_free()
 
 
 func show_tutorial_prompt():
@@ -37,19 +38,12 @@ func quit_pressed() -> void:
 	get_tree().quit(0)
 "
 
-[sub_resource type="GDScript" id="GDScript_fs3n1"]
-script/source = "extends Control
-
-
-func _tutorial_yes_pressed() -> void:
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\")
-	get_parent().queue_free()
-
-
-func _tutorial_no_pressed() -> void:
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
-	get_parent().queue_free()
-"
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e5p0j"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1000, 1)
+gravity = Vector3(0, 0, 0)
+color = Color(1, 1, 1, 0.00784314)
 
 [sub_resource type="Animation" id="Animation_c6u7e"]
 resource_name = "bob"
@@ -73,12 +67,19 @@ _data = {
 "bob": SubResource("Animation_c6u7e")
 }
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e5p0j"]
-particle_flag_disable_z = true
-emission_shape = 3
-emission_box_extents = Vector3(1000, 1000, 1)
-gravity = Vector3(0, 0, 0)
-color = Color(1, 1, 1, 0.00784314)
+[sub_resource type="GDScript" id="GDScript_fs3n1"]
+script/source = "extends Control
+
+
+func _tutorial_yes_pressed() -> void:
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\")
+	get_parent().queue_free()
+
+
+func _tutorial_no_pressed() -> void:
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	get_parent().queue_free()
+"
 
 [sub_resource type="Animation" id="Animation_lhi5l"]
 resource_name = "Fade"
@@ -176,13 +177,89 @@ _data = {
 [node name="MainMenu" type="Node2D"]
 script = SubResource("GDScript_cf4c7")
 
+[node name="VisualEffects" type="Node2D" parent="."]
+
+[node name="Motionlines" type="GPUParticles2D" parent="VisualEffects"]
+position = Vector2(336, 8)
+amount = 2743
+process_material = SubResource("ParticleProcessMaterial_e5p0j")
+lifetime = 3.0
+preprocess = 20.0
+fixed_fps = 28
+interpolate = false
+visibility_rect = Rect2(-348, -25, 686.5, 387)
+
 [node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
 ignore_rotation = false
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_j4fed")
+stream = ExtResource("1_udanv")
 volume_db = -16.0
+bus = &"Music"
+
+[node name="MainMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+
+[node name="Title" type="TextureRect" parent="MainMenu"]
+layout_mode = 0
+offset_left = -8.0
+offset_top = -144.0
+offset_right = 632.0
+offset_bottom = 448.0
+texture = ExtResource("2_leuxi")
+
+[node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
+libraries = {
+"": SubResource("AnimationLibrary_0bqiu")
+}
+autoplay = "bob"
+playback_default_blend_time = 1.0
+
+[node name="ButtonContainer" type="VBoxContainer" parent="MainMenu"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = -104.0
+offset_right = 256.0
+offset_bottom = 96.0
+grow_vertical = 0
+
+[node name="PLAY" type="Button" parent="MainMenu/ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+text = "Play"
+text_overrun_behavior = 1
+script = ExtResource("4_tprer")
+
+[node name="OPTIONS" type="Button" parent="MainMenu/ButtonContainer"]
+visible = false
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+text = "Options"
+script = ExtResource("4_tprer")
+
+[node name="QUIT" type="Button" parent="MainMenu/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "Quit"
+script = ExtResource("4_tprer")
+
+[node name="Options" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+metadata/_edit_use_anchors_ = true
 
 [node name="TutorialPrompt" type="Control" parent="."]
 visible = false
@@ -257,78 +334,6 @@ theme = ExtResource("3_mm2qm")
 text = "No!"
 script = ExtResource("4_tprer")
 
-[node name="MainMenu" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 640.0
-offset_bottom = 360.0
-
-[node name="Title" type="TextureRect" parent="MainMenu"]
-layout_mode = 0
-offset_left = -8.0
-offset_top = -144.0
-offset_right = 632.0
-offset_bottom = 448.0
-texture = ExtResource("2_leuxi")
-
-[node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
-libraries = {
-"": SubResource("AnimationLibrary_0bqiu")
-}
-autoplay = "bob"
-playback_default_blend_time = 1.0
-
-[node name="HFlowContainer" type="VBoxContainer" parent="MainMenu"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = -104.0
-offset_right = 256.0
-offset_bottom = 96.0
-grow_vertical = 0
-
-[node name="PLAY" type="Button" parent="MainMenu/HFlowContainer"]
-layout_mode = 2
-theme = ExtResource("3_mm2qm")
-text = "Play"
-text_overrun_behavior = 1
-script = ExtResource("4_tprer")
-
-[node name="OPTIONS" type="Button" parent="MainMenu/HFlowContainer"]
-visible = false
-layout_mode = 2
-theme = ExtResource("3_mm2qm")
-text = "Options"
-script = ExtResource("4_tprer")
-
-[node name="QUIT" type="Button" parent="MainMenu/HFlowContainer"]
-layout_mode = 2
-focus_mode = 0
-theme = ExtResource("3_mm2qm")
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "Quit"
-script = ExtResource("4_tprer")
-
-[node name="Options" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_right = 640.0
-offset_bottom = 360.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Motionlines" type="GPUParticles2D" parent="."]
-position = Vector2(336, 8)
-amount = 2743
-process_material = SubResource("ParticleProcessMaterial_e5p0j")
-lifetime = 3.0
-preprocess = 20.0
-fixed_fps = 60
-visibility_rect = Rect2(-348, -25, 686.5, 387)
-
 [node name="Fade" type="Node" parent="."]
 
 [node name="Black" type="ColorRect" parent="Fade"]
@@ -348,8 +353,8 @@ libraries = {
 }
 autoplay = "Fade"
 
+[connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
+[connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
+[connection signal="pressed" from="MainMenu/ButtonContainer/QUIT" to="." method="quit_pressed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]
-[connection signal="pressed" from="MainMenu/HFlowContainer/PLAY" to="." method="play_pressed"]
-[connection signal="pressed" from="MainMenu/HFlowContainer/OPTIONS" to="." method="options_pressed"]
-[connection signal="pressed" from="MainMenu/HFlowContainer/QUIT" to="." method="quit_pressed"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c26v2faggef5y"]
 
-[ext_resource type="AudioStream" uid="uid://cxtry2q0lddnj" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver_Mus.wav" id="1_qr5mx"]
+[ext_resource type="AudioStream" uid="uid://huf82ig833c" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker_GameOver.wav" id="1_2152m"]
 
 [sub_resource type="GDScript" id="GDScript_1qpdw"]
 resource_name = "gameover"
@@ -51,8 +51,8 @@ offset_bottom = 299.0
 text = "Return to Main Menu"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_qr5mx")
+stream = ExtResource("1_2152m")
 volume_db = -16.0
-autoplay = true
+bus = &"Music"
 
 [connection signal="pressed" from="Control/Return_Button" to="." method="button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=329 format=3 uid="uid://2kuv342uj1hh"]
+[gd_scene load_steps=330 format=3 uid="uid://2kuv342uj1hh"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_vt4o6"]
 [ext_resource type="Texture2D" uid="uid://cv6llxenkgbte" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/charging_anim.png" id="2_winjy"]
@@ -2273,11 +2273,12 @@ func charging_timer_timeout() -> void:
 [sub_resource type="GDScript" id="GDScript_t821x"]
 script/source = "extends State
 
+
 func enter():
 	fire()
+	$firing_timer.start(1.0)
 
 func physics_update(_delta):
-	parent.rotate(parent.rotation_speed * _delta)
 	if global.camera:
 		global.camera.shake(1.5)
 
@@ -2292,6 +2293,17 @@ func exit():
 	parent.lzr_spr.hide()
 	parent.particles.emitting = false
 	parent.hitbox.is_disabled = true
+
+
+func timeout() -> void:
+	self.Transistioned.emit(self, \"leave\")
+"
+
+[sub_resource type="GDScript" id="GDScript_geu3j"]
+script/source = "extends State
+
+func physics_update(_delta):
+	parent.position.y -= 15
 "
 
 [sub_resource type="GDScript" id="GDScript_4q7xi"]
@@ -2446,6 +2458,14 @@ script = SubResource("GDScript_t821x")
 parent = NodePath("../..")
 sprite = NodePath("../../spr")
 
+[node name="firing_timer" type="Timer" parent="StateMachine/firing"]
+process_callback = 0
+wait_time = 2.5
+
+[node name="leave" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_geu3j")
+parent = NodePath("../..")
+
 [node name="hit" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
 script = SubResource("GDScript_4q7xi")
 parent = NodePath("../..")
@@ -2473,3 +2493,4 @@ sprite = NodePath("../../spr")
 [connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
 [connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
 [connection signal="timeout" from="StateMachine/charging/charging_timer" to="StateMachine/charging" method="charging_timer_timeout"]
+[connection signal="timeout" from="StateMachine/firing/firing_timer" to="StateMachine/firing" method="timeout"]

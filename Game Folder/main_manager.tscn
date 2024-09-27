@@ -13,6 +13,7 @@ func _ready():
 
 #region Loading
 @onready var loading_handler: Node = $Loading_Handler
+@onready var loading_visuals: Control = $Loading_Handler/Loading_Visuals
 
 func switch_level_to(level_list):
 	display_load_visuals(level_list)

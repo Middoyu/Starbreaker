@@ -1,39 +1,20 @@
 extends Entity
 class_name Player
+signal PlayerHit
+signal PlayerDeath
+@onready var audio_listener: AudioListener2D = $AudioListener
 
-#region Charge Variables
-@onready var charge : float = 0.0:
-	set(new_value):
-		charge += new_value
-		charge = clamp(charge, 0.0, 100.0)
-		events.emit_signal("charge_updated", charge)
-	get:
-		return charge
-#endregion
-#region Animation Variables
-@onready var player_sprite = $Sprite
-#endregion
-#region Collisions Variables
-@onready var player_hurtbox: Databox = $PlayerHurtbox
-#endregion
-#region Movement & Actions Variables
-@onready var is_moveable = true
-@onready var is_actionable = true
-@export var movenet_speed = 150
-#endregion
-#region Invincibility Variables
-@onready var invincibility_override = false
+@onready var is_moveable : bool = true
+@onready var is_actionable : bool = true
+@export var movement_speed : float = 10_000.0
+
+@onready var player_sprite: AnimatedSprite2D = $Sprite
+
+@onready var invincibility_override : bool = false
 @onready var invincibility_timer: Timer = $InvincibilityTimer
-#endregion
-#region Upgrades
-@onready var upgrade_list : Array[Base_Projectile_Upgrade] = []
-#endregion
-#region Weapons Variables
-@onready var primary = $Primary
-@onready var secondary = $Secondary
-@onready var od_utility: Node = $Utility
-@onready var breaker: Node = $Breaker
-#endregion
+
+@onready var hurtbox: Databox = $PlayerHurtbox
+
 
 func _ready() -> void:
 	setup_player()
@@ -42,32 +23,26 @@ func setup_player():
 	global.player = self
 
 func _physics_process(delta: float) -> void:
-	charge = 1 * delta
-	input_detection(delta)
-
-func _process(delta: float) -> void:
+	audio_listener.global_position = self.global_position
+	movement_handler(delta)
 	invincibility_check()
 
-#region Movement & Action Functions 
-func input_detection(delta):
+func movement_handler(delta):
 	if is_moveable:
-		movement_handler()
-	if is_actionable:
-		if Input.is_action_pressed("primary"):
-			primary.shoot()
-		if Input.is_action_just_pressed("secondary"):
-			pass
+		var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
+		velocity = direction * movement_speed * delta
+		move_and_slide()
 
-
-func movement_handler():
-	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
-	velocity = direction * movenet_speed
-	move_and_slide()
-#endregion
-#region Interaction Handlers
 func on_parent_hit(colliding_hitbox, damage_taken) -> void:
+	hit_vfx()
 	player_sprite.play("hit")
 	invincibility_timer.start(1.0)
+
+func hit_vfx():
+	if global.camera:
+		var camera = global.camera as juicycamera_component
+		camera.shake(25.0)
+		camera.freezeframe(0.01, 0.3)
 
 func on_parent_death(colliding_hitbox, damage_taken) -> void:
 	player_sprite.play("death")
@@ -76,7 +51,7 @@ func on_parent_death(colliding_hitbox, damage_taken) -> void:
 	global.main_manager.gameover_sequence()
 
 func handle_death():
-	player_hurtbox.is_disabled = true
+	hurtbox.is_disabled = true
 	invincibility_override = true
 	is_actionable = false
 	is_moveable = false
@@ -85,13 +60,6 @@ func invincibility_check():
 	if invincibility_override == false:
 		match invincibility_timer.time_left:
 			0.0:
-				player_hurtbox.is_disabled = false
+				hurtbox.is_disabled = false
 			_:
-				player_hurtbox.is_disabled = true
-
-#endregion
-
-@onready var primary_firing_animation: AnimationPlayer = $Primary/PrimaryFiringAnimation
-func on_primary_fired() -> void:
-	primary_firing_animation.stop()
-	primary_firing_animation.play("int")
+				hurtbox.is_disabled = true

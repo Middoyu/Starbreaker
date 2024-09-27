@@ -14,6 +14,7 @@ config/name="STARBREAKER"
 config/tags=PackedStringArray("starbreaker")
 run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+run/max_fps=240
 boot_splash/show_image=false
 boot_splash/use_filter=false
 
@@ -27,14 +28,14 @@ global="*res://Game Folder/game_components/global_components/Scripts/global.gd"
 events="*res://Game Folder/game_components/global_components/Scripts/events.gd"
 utility="*res://Game Folder/game_components/global_components/Scripts/utils.gd"
 options="*res://Game Folder/game_components/global_components/Scripts/options.gd"
-score_event="*res://Game Folder/game_components/global_components/Scripts/score.gd"
+score_event="*res://Game Folder/game_components/global_components/ScoreManager/ScoreEventBus.gd"
 cache="*res://Game Folder/game_components/global_components/Scripts/cache.gd"
 
 [display]
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=3
+window/size/mode=4
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
@@ -53,7 +54,6 @@ enabled=PackedStringArray()
 
 folder_colors={
 "res://Game Folder/game_assets/Enemies/": "red",
-"res://Game Folder/game_assets/Items/": "orange",
 "res://Game Folder/game_assets/Menus/": "yellow",
 "res://Game Folder/game_assets/Menus/IntroCine/": "pink",
 "res://Game Folder/game_assets/Menus/SFX/": "blue",

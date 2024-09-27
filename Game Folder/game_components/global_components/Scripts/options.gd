@@ -3,6 +3,7 @@ extends Node
 
 
 var screenshake_enabled : bool = true
+var displaydamage_enabled : bool = false
 
 func _ready() -> void:
 	pass

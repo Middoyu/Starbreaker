@@ -20,17 +20,17 @@ func _physics_process(_delta: float) -> void:
 
 #region Interaction Handlers
 func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
+	score_event.update_score(roundi(damage_taken))
 	events.enemy_damaged.emit(self)
 	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 
 func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
+	score_event.update_score(roundi(damage_taken))
 	events.enemy_killed.emit(self)
 	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	sprite.rotation -= global_position.angle_to_point(global.player.global_position)
-
-
 
 func pteam_hurtbox_entered(area):
 	area.take_damage(hitbox)
@@ -1475,7 +1475,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_el4kx"]
-radius = 4.0
+radius = 9.0
 
 [sub_resource type="GDScript" id="GDScript_rrcrv"]
 script/source = "extends State
@@ -1510,14 +1510,13 @@ func make_path():
 
 func physics_update(_delta):
 	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
-	var intended_velocity = dir * 250
+	var intended_velocity = dir * 3750 * _delta
 	pathfinding.set_velocity(intended_velocity)
-	
-func _on_timer_timeout() -> void:
 	make_path()
 
 func pathfinding_velocity_computed(safe_velocity: Vector2) -> void:
-	parent.velocity = safe_velocity
+	if $\"..\".current_state == self:
+		parent.velocity = safe_velocity
 "
 
 [sub_resource type="GDScript" id="GDScript_rnofh"]
@@ -1526,7 +1525,6 @@ script/source = "extends State
 @onready var hit_particles: CPUParticles2D = $hit_particles
 
 func enter():
-	score_event.update_score(5)
 	sprite.offset = Vector2(1, 0)
 	sprite.stop()
 	sprite.play(\"hit\")
@@ -1535,7 +1533,7 @@ func exit():
 	sprite.offset = Vector2(0, 0)
 
 func _on_hurtbox_is_taking_knockback(duration: float) -> void:
-	await get_tree().create_timer(duration).timeout
+	await get_tree().create_timer(duration * 1.2).timeout
 	Transistioned.emit(self, \"chase\")
 "
 
@@ -1553,7 +1551,9 @@ func enter():
 	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Primary/Audio/sfx_death.ogg\", -12, true)
 	await sprite.animation_finished
 	parent.queue_free()
-	
+
+func update(_delta):
+	parent.velocity = Vector2.ZERO
 "
 
 [node name="Enemy" type="CharacterBody2D"]
@@ -1566,7 +1566,7 @@ debug_enabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"death"
+animation = &"chase"
 autoplay = "chase"
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
@@ -1607,11 +1607,6 @@ script = SubResource("GDScript_5wiu6")
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 
-[node name="Timer" type="Timer" parent="StateMachine/chase"]
-process_callback = 0
-wait_time = 0.1
-autostart = true
-
 [node name="hit" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
 script = SubResource("GDScript_rnofh")
 parent = NodePath("../..")
@@ -1633,4 +1628,3 @@ sprite = NodePath("../../Sprite")
 [connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
 [connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
 [connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]
-[connection signal="timeout" from="StateMachine/chase/Timer" to="StateMachine/chase" method="_on_timer_timeout"]

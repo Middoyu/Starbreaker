@@ -212,7 +212,7 @@ var hardmode_mvt_speed_accel = 12.5
 var normal_mvt_speed_accel = 10.8
 
 var bullet_pos = 1
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/player_primary_bullet.tscn\")
 @onready var cooldown_timer : Timer = Timer.new()
 
 var movement_speed = 0.0
@@ -241,7 +241,7 @@ func switch_bullet_pos(projectile_instance):
 func spawn_projectile(projectile_path):
 	var proj_int = projectile_path.instantiate()
 	switch_bullet_pos(proj_int)
-	global.current_stage.add_child(proj_int)
+	global.add_child(proj_int)
 	proj_int.parent = parent
 
 func shoot():
@@ -277,7 +277,7 @@ script/source = "extends State
 
 
 var bullet_pos = 1
-@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/Player_SprayNPray_Bullet.tscn\")
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/player_primary_bullet.tscn\")
 @onready var cooldown_timer : Timer = Timer.new()
 
 @onready var current_pos = 0
@@ -329,7 +329,7 @@ func switch_bullet_pos(projectile_instance):
 func spawn_projectile(projectile_path):
 	var proj_int = projectile_path.instantiate()
 	switch_bullet_pos(proj_int)
-	global.current_stage.add_child(proj_int)
+	global.add_child(proj_int)
 	proj_int.parent = parent
 
 func shoot():

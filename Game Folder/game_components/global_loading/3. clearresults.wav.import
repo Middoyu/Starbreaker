@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dd4t5ojk38qwi"
+path="res://.godot/imported/3. clearresults.wav-dad511878ec652df8b74ddcc43f6d352.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_components/global_loading/3. clearresults.wav"
+dest_files=["res://.godot/imported/3. clearresults.wav-dad511878ec652df8b74ddcc43f6d352.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -159,7 +159,8 @@ func apply_knockback(delta):
 	knockback_velocity = knockback_direction * latest_knockback_amount
 	## Makes sure the knockback always sends upwards.
 	if is_knockback_forced_upwards:
-		knockback_velocity.y = -abs(knockback_velocity.y)
+		knockback_velocity.y = -abs(knockback_velocity.y) * 1.3
+		knockback_velocity.x /= 2.5
 	## Applies the vector.
 	parent.velocity = knockback_velocity * delta
 	

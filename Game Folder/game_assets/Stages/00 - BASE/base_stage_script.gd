@@ -18,6 +18,7 @@ var audio_time = null
 @onready var enemy_spawn_timer = Timer.new()
 @export var enemy_spawnrate := 1.5
 @onready var enemy_spawn_count := 0
+@onready var stage_started = false
 
 # Boss Variables
 var is_boss_active = false
@@ -29,6 +30,7 @@ func add_wall_collision():
 	add_child(i)
 
 func start():
+	stage_started = true
 	var i = LVL_MANAGER
 	i.instantiate()
 	global.current_stage = self

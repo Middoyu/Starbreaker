@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=3 uid="uid://fual85xipl34"]
+
+[ext_resource type="AudioStream" uid="uid://bxrhsgdwv711w" path="res://Game Folder/game_assets/Player/Primary/Audio/sp_firing.wav" id="1_bqieh"]
+
+[sub_resource type="GDScript" id="GDScript_4ckef"]
+resource_name = "primaryweaponscript"
+script/source = "extends WeaponBase
+signal PlayerPrimaryFired
+@export var firerate := 0.1
+@onready var bullet_pos = 1
+@export var right_pos = Vector2(5.5, -0.6)
+@export var left_pos = Vector2(-5.5, -0.6)
+@export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/player_primary_bullet.tscn\")
+@onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
+
+
+func _physics_process(delta: float) -> void:
+	if Input.is_action_pressed(\"primary\", true):
+		shoot()
+
+# Overrides WeaponBase's function to allowing switching of the position.
+func spawn_projectile(projectile_path):
+	var player = global.player
+	var proj_int = projectile_path.instantiate()
+	
+	proj_int.global_position = player.global_position
+	proj_int.parent = get_parent()
+	switch_bullet_pos(proj_int)
+	
+	global.add_child(proj_int)
+
+# Shoots the projectile and starts the cooldown.
+func shoot():
+	if cooldown_timer.time_left <= 0:
+		cooldown_timer.start(firerate)
+		
+		emit_signal(\"PlayerPrimaryFired\")
+		spawn_projectile(bullet)
+		effects()
+
+# Switches the bullets position on a alternating value.
+func switch_bullet_pos(projectile_instance):
+	match(bullet_pos):
+		1:
+			projectile_instance.global_position += right_pos
+			bullet_pos = 2
+		2:
+			projectile_instance.global_position += left_pos
+			bullet_pos = 1
+
+func effects():
+	var player = global.player
+	sfx_firing.global_position = player.global_position
+	sfx_firing.play()
+	if global.camera:
+		global.camera.shake(2.0)
+"
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_pnshu"]
+random_pitch = 1.05
+streams_count = 1
+stream_0/stream = ExtResource("1_bqieh")
+
+[node name="Primary" type="Node"]
+script = SubResource("GDScript_4ckef")
+
+[node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_pnshu")
+max_polyphony = 2
+bus = &"SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
