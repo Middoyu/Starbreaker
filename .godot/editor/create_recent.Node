@@ -1,9 +1,10 @@
+ColorRect
+CustomButton
 WorldEnvironment
 CPUParticles2D
 AnimationPlayer
 Timer
 SubViewport
-CustomButton
 VBoxContainer
 RichTextLabel
 Label
@@ -12,4 +13,3 @@ AudioStreamPlayer
 AudioListener2D
 AudioStreamPlayer2D
 Node3D
-Camera2D

@@ -12,37 +12,52 @@ func _ready():
 	global.main_manager = self
 	switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
 
-#region Loading
+#region NEW Loading
+@onready var path_loading = \"null\"
+@onready var loading_status
 @onready var loading_handler: Node = $Loading_Handler
 @onready var loading_visuals: Control = $Loading_Handler/Loading_Visuals
 
 func switch_level_to(level_list):
-	display_load_visuals(level_list)
+	_display_load_visuals(level_list)
 
-func display_load_visuals(level_list):
+func _display_load_visuals(level_list):
 	loading_handler.display_visuals(true)
 	await loading_handler.animation.animation_finished
 	load_level(level_list)
 
-func load_level(level_list):
-	if level_list is String:
-		ResourceLoader.load_threaded_request(level_list)
-		while ResourceLoader.load_threaded_get_status(level_list):
-			if ResourceLoader.load_threaded_get_status(level_list) == 3:
-				hide_load_visuals(level_list)
-				break
+func load_level(level_path : StringName):
+	path_loading = level_path
+	ResourceLoader.load_threaded_request(level_path, \"\", true)
 
-func update_load_visuals():
-	pass
+func _process(delta: float) -> void:
+	print(path_loading)
+	loading_status = ResourceLoader.load_threaded_get_status(path_loading)
+	match loading_status:
+		0, 2:
+			pass
+		1:
+			ResourceLoader.load_threaded_get_status(path_loading)
+		3:
+			_hide_load_visuals(ResourceLoader.load_threaded_get(path_loading))
+			loading_status = 0
+			print(\"Completed\")
 
-func hide_load_visuals(level_list):
+func _hide_load_visuals(loaded_level):
 	loading_handler.display_visuals(false)
 	await loading_handler.animation.animation_finished
-	var i = ResourceLoader.load_threaded_get(level_list).instantiate()
+	var i = loaded_level.instantiate()
 	add_child(i)
+	path_loading = \"null\"
+	loading_status = 0
 	if i.has_method(\"start\"):
 		i.start()
+
 #endregion
+
+
+
+
 
 func gameover_sequence():
 	clear_entities()

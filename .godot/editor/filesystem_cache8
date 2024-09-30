@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1727476579
+::res://::1727699170
 export_presets.cfg::TextFile::-1::1725659795::0::1::::<><>::
 node_2d.tscn::PackedScene::9220126157541492319::1727460585::0::1::::<><>::uid://c3thas2ivw5s8::::res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn<>uid://dju5f2wa2fucv::::res://Game Folder/game_assets/Player/Main/Player.tscn
 ::res://Game Folder/::1727476405
@@ -17,10 +17,10 @@ hit_particles.tscn::PackedScene::4177749330021298866::1723847880::0::1::::<><>::
 Starbreaker_VsTimothy.wav::AudioStreamWAV::7000795501812941117::1719544733::1722650294::1::::<><>::
 ::res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sound Effects/::1722650294
 boss_hitsfx.wav::AudioStreamWAV::9111594407594868312::1720441376::1722650294::1::::<><>::
-::res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/::1727476571
+::res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/::1727478379
 bone_fragments_spr.png::CompressedTexture2D::4590119434882833287::1720442825::1722650292::1::::<><>::
 boss.png::CompressedTexture2D::8754213371992271562::1719544733::1722650292::1::::<><>::
-hit_flash.gdshader::Shader::-1::1727476571::0::1::::<><>::
+hit_flash.gdshader::Shader::-1::1727478379::0::1::::<><>::
 spr_timsplash.png::CompressedTexture2D::1024761360997965293::1720445146::1722650294::1::::<><>::
 TIMOTHY_SPLASH.png::CompressedTexture2D::6159825844472255767::1720444728::1722650292::1::::<><>::
 ::res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/::1727456296
@@ -56,8 +56,8 @@ trishooter_bullet.png::CompressedTexture2D::3672737002286590908::1724935944::172
 trishooter_explode.png::CompressedTexture2D::3702566625524592354::1724937680::1724937684::1::::<><>::
 trishooter_hit.png::CompressedTexture2D::6023690053902652272::1724934332::1724934339::1::::<><>::
 ::res://Game Folder/game_assets/Menus/::1725283572
-::res://Game Folder/game_assets/Menus/IntroCine/::1727476405
-intro_cine.tscn::PackedScene::5725440982744966108::1727476405::0::1::::<><>::uid://b1rbffoke0vnr::::res://Game Folder/game_assets/Menus/Themes/THEME.tres
+::res://Game Folder/game_assets/Menus/IntroCine/::1727478378
+intro_cine.tscn::PackedScene::5725440982744966108::1727478378::0::1::::<><>::uid://b1rbffoke0vnr::::res://Game Folder/game_assets/Menus/Themes/THEME.tres
 ::res://Game Folder/game_assets/Menus/MainMenu/::1727460258
 ::res://Game Folder/game_assets/Menus/MainMenu/BASE/::1727463588
 mainmenu.tscn::PackedScene::7093917243326044909::1727463588::0::1::::<><>::uid://byvjgvcggg4s7::::res://Game Folder/game_assets/Menus/MainMenu/BASE/MainMenu_Starbreaker.wav<>uid://d38sar1je8rdt::::res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png<>uid://b1rbffoke0vnr::::res://Game Folder/game_assets/Menus/Themes/THEME.tres<>res://Game Folder/game_components/button_component/global_button.gd
@@ -76,9 +76,9 @@ cancel.ogg::AudioStreamOggVorbis::8158406265757160202::1725283578::1725283578::1
 click_on.ogg::AudioStreamOggVorbis::3630020365415395262::1725283578::1725283578::1::::<><>::
 hoverover.ogg::AudioStreamOggVorbis::588485280443997063::1725283578::1725283578::1::::<><>::
 unlock.ogg::AudioStreamOggVorbis::3021027374024685545::1725283578::1725283578::1::::<><>::
-::res://Game Folder/game_assets/Menus/Themes/::1727471519
+::res://Game Folder/game_assets/Menus/Themes/::1727476596
 Sprite-0002.png::CompressedTexture2D::6572765847266199103::1721828434::1721828434::1::::<><>::
-THEME.tres::Theme::4246494970767969639::1727471519::0::1::::<><>::uid://cohq7acthuyhd::::res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf<>uid://c0v5q1fgdsek2::::res://Game Folder/game_assets/Menus/Themes/Sprite-0002.png
+THEME.tres::Theme::4246494970767969639::1727476596::0::1::::<><>::uid://cohq7acthuyhd::::res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf<>uid://c0v5q1fgdsek2::::res://Game Folder/game_assets/Menus/Themes/Sprite-0002.png
 ::res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/::1721823577
 PixeloidMono-d94EV.ttf::FontFile::3759690944337528605::1721823214::1721823262::1::::<><>::
 PixeloidSans-mLxMm.ttf::FontFile::1408916164217491923::1721823214::1721823259::1::::<><>::
@@ -228,6 +228,6 @@ utils.gd::GDScript::-1::1726409584::0::1::::<>Node<>::
 3. clearresults.wav::AudioStreamWAV::7430903483264073212::1727190371::1727190372::1::::<><>::
 loading.tscn::PackedScene::6857406414064403863::1727463587::0::1::::<><>::uid://b1rbffoke0vnr::::res://Game Folder/game_assets/Menus/Themes/THEME.tres<>uid://ccikbbrr1mfeq::::res://Game Folder/game_components/global_loading/unlock.ogg
 unlock.ogg::AudioStreamOggVorbis::4930343112008964364::1725581285::1725581290::1::::<><>::
-::res://z_Export/::1727471477
-default_bus_layout.tres::AudioBusLayout::4798454958987988914::1727471477::0::1::::<><>::
+::res://z_Export/::1727476581
+default_bus_layout.tres::AudioBusLayout::4798454958987988914::1727476581::0::1::::<><>::
 export_presets.cfg::TextFile::-1::1715692358::0::1::::<><>::

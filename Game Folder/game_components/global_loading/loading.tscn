@@ -233,19 +233,20 @@ process_priority = 1
 process_thread_group = 1
 process_thread_group_order = 1
 process_thread_messages = 0
+self_modulate = Color(1, 1, 1, 0.0588235)
 z_index = 4096
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -2.0
-offset_top = -13.5
-offset_right = 2.0
-offset_bottom = 13.5
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -32.0
+offset_top = -40.0
+offset_right = -28.0
+offset_bottom = -11.0
+grow_horizontal = 0
+grow_vertical = 0
 theme = ExtResource("1_n23vh")
 value = 92.0
 
@@ -254,6 +255,9 @@ libraries = {
 "": SubResource("AnimationLibrary_xlna1")
 }
 autoplay = "RESET"
+speed_scale = 10.0
 
 [node name="Finished" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_rvmjo")
+volume_db = -80.0
+bus = &"SFX"
