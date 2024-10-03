@@ -18,6 +18,10 @@ func timeout() -> void:
 
 func pteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	if hitbox.team_affiliation == \"PlayerTeam\":
+		area.take_damage(hitbox)
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1tab7"]
@@ -478,4 +482,5 @@ knockback_stun_duration = 0.5
 shape = SubResource("CircleShape2D_sdpf7")
 
 [connection signal="timeout" from="Timer" to="." method="timeout"]
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
 [connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]

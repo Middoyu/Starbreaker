@@ -1,4 +1,4 @@
-[gd_scene load_steps=155 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=152 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_qie6g"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
 [ext_resource type="PackedScene" uid="uid://fual85xipl34" path="res://Game Folder/game_assets/Player/Primary/Base/primary.tscn" id="6_pq6y1"]
+[ext_resource type="PackedScene" uid="uid://clnbqyu26xqex" path="res://Game Folder/game_assets/Player/Utility/Base/defense_utility.tscn" id="7_s10c6"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 8.0
@@ -1030,114 +1031,6 @@ func shoot():
 		global.player.charge = -50 / missile_amount
 "
 
-[sub_resource type="GDScript" id="GDScript_0bcgs"]
-resource_name = "player_util"
-script/source = "extends Node
-@onready var parent = get_parent() as Player
-@export var charge_threshold : int = 25
-@onready var utility_hitbox: Databox = $Utility_Hitbox
-
-
-func _ready() -> void:
-	setup_teleport_hitboxes()
-
-#region Teleportation Functions
-func setup_teleport_hitboxes():
-	# Disables the hitbox on boot.
-	utility_hitbox.is_disabled = true
-	
-	# Pause to allow children setting up.
-	await get_tree().create_timer(0.3).timeout
-	
-	# Reparents the hitbox to the parent.
-	utility_hitbox.reparent(global.player)
-	
-	# Sets the hitbox global position to the player's position to avoid offsets.
-	utility_hitbox.global_position = utility.get_player().global_position
-
-func teleport_action():
-	# Detects if the player matches the charge threshold.
-	if utility.get_player().charge >= charge_threshold: # Detects if the player matches the charge threshold.
-		# Quickly disables the players hurtboxes.
-		parent.invincibility_override = true
-		parent.player_hurtbox.is_disabled = true
-		
-		# Teleports the crosshair position.
-		get_parent().global_position = utility.get_crosshair().global_position
-		utility_hitbox.global_position = utility.get_player().global_position
-		
-		# Removes the required charge from the player's current charge.
-		utility.get_player().charge = -charge_threshold
-		
-		# Enables the hitbox for the teleport.
-		utility_hitbox.is_disabled = false
-		
-		# Creates a short pause for the collisions to not break.
-		await get_tree().create_timer(0.1).timeout
-		
-		# Disables the hitbox for the teleport.
-		utility_hitbox.is_disabled = true
-		
-		# Enabled the player collisions.
-		parent.invincibility_override = false
-		parent.player_hurtbox.is_disabled = false
-
-func enemy_team_hitbox_entered(area: Databox) -> void:
-	# Damages the enemy.
-	area.take_damage(utility_hitbox)
-
-#endregion
-"
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_mcrtv"]
-radius = 25.0
-
-[sub_resource type="GDScript" id="GDScript_haiii"]
-resource_name = "Breaker"
-script/source = "extends WeaponBase
-@onready var lazer_databox: Databox = $BreakerLazer/LazerDatabox
-@onready var display: ColorRect = $BreakerLazer/Display
-@onready var tickrate: Timer = $BreakerLazer/Tickrate
-@onready var breaker_lazer: Node2D = $BreakerLazer
-@onready var is_active = false
-@export var charge_threshold : int = 75
-@export var charge_drain_amount = -5.0
-
-func _ready() -> void:
-	display.hide()
-
-func _physics_process(delta: float) -> void:
-	breaker_lazer.global_position = player.global_position
-
-func action():
-	if global.player.charge >= charge_threshold:
-		is_active = true
-		tickrate_timeout()
-		display.show()
-
-func tickrate_timeout() -> void:
-	player.charge = charge_drain_amount
-	match lazer_databox.is_disabled:
-		false:
-			lazer_databox.is_disabled = true
-			tickrate.start(0.08)
-		true:
-			lazer_databox.is_disabled = false
-			tickrate.start(0.08)
-	if is_zero_approx(global.player.charge):
-		tickrate.stop()
-		is_active = false
-		display.hide()
-		lazer_databox.is_disabled = true
-
-
-func eteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(lazer_databox)
-"
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2icmy"]
-size = Vector2(20, 646)
-
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
@@ -1171,49 +1064,7 @@ one_shot = true
 script = SubResource("GDScript_ld5h1")
 player = NodePath("..")
 
-[node name="Utility" type="Node" parent="."]
-script = SubResource("GDScript_0bcgs")
-
-[node name="Utility_Hitbox" type="Area2D" parent="Utility" node_paths=PackedStringArray("parent")]
-script = ExtResource("4_42uin")
-parent = NodePath("../..")
-team_affiliation = "PlayerTeam"
-damage = 5.0
-
-[node name="Collision" type="CollisionShape2D" parent="Utility/Utility_Hitbox"]
-shape = SubResource("CircleShape2D_mcrtv")
-
-[node name="Breaker" type="Node" parent="." node_paths=PackedStringArray("player")]
-script = SubResource("GDScript_haiii")
-player = NodePath("..")
-
-[node name="BreakerLazer" type="Node2D" parent="Breaker"]
-visible = false
-
-[node name="Display" type="ColorRect" parent="Breaker/BreakerLazer"]
-offset_left = -9.0
-offset_top = -654.0
-offset_right = 9.0
-offset_bottom = -8.0
-
-[node name="LazerDatabox" type="Area2D" parent="Breaker/BreakerLazer" node_paths=PackedStringArray("parent")]
-script = ExtResource("4_42uin")
-parent = NodePath("../../..")
-team_affiliation = "PlayerTeam"
-is_disabled = true
-damage = 25.0
-knockback_amount = 3000.0
-knockback_stun_duration = 0.3
-
-[node name="Collision" type="CollisionShape2D" parent="Breaker/BreakerLazer/LazerDatabox"]
-position = Vector2(0, -331)
-shape = SubResource("RectangleShape2D_2icmy")
-
-[node name="Tickrate" type="Timer" parent="Breaker/BreakerLazer"]
+[node name="DefenseUtility" parent="." instance=ExtResource("7_s10c6")]
 
 [node name="AudioListener" type="AudioListener2D" parent="."]
 current = true
-
-[connection signal="EnemyTeamHitbox_entered" from="Utility/Utility_Hitbox" to="Utility" method="enemy_team_hitbox_entered"]
-[connection signal="EnemyTeamHurtbox_entered" from="Breaker/BreakerLazer/LazerDatabox" to="Breaker" method="eteam_hurtbox_entered"]
-[connection signal="timeout" from="Breaker/BreakerLazer/Tickrate" to="Breaker" method="tickrate_timeout"]

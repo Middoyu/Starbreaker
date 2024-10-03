@@ -59,7 +59,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = SubResource("GDScript_byaqo")
 
-[node name="Emidya" type="RichTextLabel" parent="."]
+[node name="Splash" type="RichTextLabel" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -75,7 +75,7 @@ grow_vertical = 2
 pivot_offset = Vector2(47, 20)
 mouse_filter = 1
 theme = ExtResource("1_6xr3x")
-text = "EMIDYA"
+text = "ESTER DEV-TEAM"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
@@ -85,6 +85,7 @@ libraries = {
 "": SubResource("AnimationLibrary_546xc")
 }
 autoplay = "Fade"
+speed_scale = 3.0
 
 [node name="Black" type="ColorRect" parent="."]
 layout_mode = 1

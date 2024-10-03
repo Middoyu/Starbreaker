@@ -8,10 +8,12 @@ script/source = "extends WeaponBase
 signal PlayerPrimaryFired
 @export var firerate := 0.1
 @onready var bullet_pos = 1
+
 @export var right_pos = Vector2(5.5, -0.6)
 @export var left_pos = Vector2(-5.5, -0.6)
 @export var bullet = preload(\"res://Game Folder/game_assets/Player/Primary/Base/player_primary_bullet.tscn\")
 @onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
+
 
 
 func _physics_process(delta: float) -> void:

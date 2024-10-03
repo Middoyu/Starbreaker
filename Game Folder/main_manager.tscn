@@ -31,7 +31,6 @@ func load_level(level_path : StringName):
 	ResourceLoader.load_threaded_request(level_path, \"\", true)
 
 func _process(delta: float) -> void:
-	print(path_loading)
 	loading_status = ResourceLoader.load_threaded_get_status(path_loading)
 	match loading_status:
 		0, 2:
@@ -41,7 +40,6 @@ func _process(delta: float) -> void:
 		3:
 			_hide_load_visuals(ResourceLoader.load_threaded_get(path_loading))
 			loading_status = 0
-			print(\"Completed\")
 
 func _hide_load_visuals(loaded_level):
 	loading_handler.display_visuals(false)

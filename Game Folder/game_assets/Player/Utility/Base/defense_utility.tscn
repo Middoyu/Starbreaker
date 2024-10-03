@@ -1,0 +1,109 @@
+[gd_scene load_steps=3 format=3 uid="uid://clnbqyu26xqex"]
+
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_4ax2y"]
+
+[sub_resource type="GDScript" id="GDScript_0bcgs"]
+resource_name = "player_util"
+script/source = "extends Node
+@export_enum(\"Shine\", \"Teleport\", \"Harpoon\") var currently_active_utility
+@onready var utility_instance = null
+
+@onready var ShineScene = preload(\"res://Game Folder/game_assets/Player/Utility/Shine/ShineBase.tscn\")
+
+@onready var label: Label = $Control/Label
+@onready var label_2: Label = $Control/Label2
+
+@export var max_charge = 4800
+@export var current_charge = max_charge
+@export var charge_consumption = max_charge / 3
+@export var charge_rate = 160
+@export var enemy_charge_reward = 240
+
+
+#region Charge Mechanics
+
+func grant_charge(delta):
+	current_charge += charge_rate * delta
+	current_charge = clamp(current_charge, 0, max_charge)
+
+func reward_charge(_arg):
+	current_charge += enemy_charge_reward
+
+func has_enough_charge() -> bool:
+	if current_charge >= charge_consumption:
+		return true
+	else:
+		return false
+
+func consume_charge():
+	current_charge -= charge_consumption
+#endregion
+
+func _ready() -> void:
+	load_selected_weapon()
+	events.connect(\"enemy_killed\", reward_charge)
+
+func load_selected_weapon():
+	match currently_active_utility:
+		0:
+			var int_ShineScene = ShineScene.instantiate()
+			self.add_child(int_ShineScene)
+			utility_instance = int_ShineScene
+			print(utility_instance)
+
+func _physics_process(delta: float) -> void:
+	match_label()
+	input_detection()
+	grant_charge(delta)
+
+func match_label():
+	label.text = str(current_charge)
+	if current_charge >= 1600:
+			label_2.text = \"1\"
+	if current_charge >= 3200:
+		label_2.text = \"2\"
+	if current_charge >= 4800:
+		label_2.text = \"3\"
+	else:
+		label_2.text = \"0\"
+
+func input_detection():
+	if Input.is_action_just_pressed(\"ctrl\", true) and has_enough_charge():
+		consume_charge()
+		action()
+
+func action():
+	match currently_active_utility:
+		0:
+			utility_instance.action()
+"
+
+[node name="DefenseUtility" type="Node"]
+script = SubResource("GDScript_0bcgs")
+currently_active_utility = 0
+
+[node name="Shine_Utility" type="Node2D" parent="."]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme = ExtResource("1_4ax2y")
+text = "3"
+
+[node name="Label2" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 23.0
+offset_right = 41.0
+offset_bottom = 48.0
+theme = ExtResource("1_4ax2y")
+text = "3"

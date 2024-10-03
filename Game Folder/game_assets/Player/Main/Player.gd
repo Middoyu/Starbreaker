@@ -37,6 +37,8 @@ func on_parent_hit(colliding_hitbox, damage_taken) -> void:
 	hit_vfx()
 	player_sprite.play("hit")
 	invincibility_timer.start(1.0)
+	await player_sprite.animation_finished
+	player_sprite.play("idle")
 
 func hit_vfx():
 	if global.camera:
