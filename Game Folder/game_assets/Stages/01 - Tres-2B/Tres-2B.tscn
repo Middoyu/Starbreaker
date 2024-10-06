@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=12 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
@@ -16,6 +16,7 @@ func start():
 	i.tween_property(black, \"color\", Color(0,0,0,0), 0.5)
 	await i.finished
 	black.queue_free()
+	global.player.is_actionable = true
 
 # Indicates whether enemies are currently spawning
 var is_spawning = true
@@ -34,7 +35,6 @@ func spawn_enemies_pattern(pattern: int) -> void:
 		1:
 			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
 			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", Vector2(320, -16))
-			await get_tree().create_timer(2.5, true, true, false)
 			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
 		2:
 			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
@@ -185,20 +185,12 @@ seamless_blend_skirt = 1.0
 color_ramp = SubResource("Gradient_e8xxh")
 noise = SubResource("FastNoiseLite_s3au4")
 
-[sub_resource type="Gradient" id="Gradient_kgje8"]
-colors = PackedColorArray(0, 0, 0, 1, 1, 0.846111, 0.82002, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_duswx"]
-gradient = SubResource("Gradient_kgje8")
-
-[sub_resource type="Environment" id="Environment_1emyr"]
+[sub_resource type="Environment" id="Environment_t5cpe"]
 background_mode = 3
+tonemap_mode = 3
 glow_enabled = true
-glow_normalized = true
-glow_bloom = 0.06
-glow_blend_mode = 0
+glow_bloom = 0.2
 adjustment_enabled = true
-adjustment_color_correction = SubResource("GradientTexture1D_duswx")
 
 [node name="Tres-2b" type="Node2D"]
 rotation = 0.000265024
@@ -231,7 +223,7 @@ repeat_times = 100
 ignore_camera_scroll = true
 
 [node name="Sprite" type="Sprite2D" parent="Background"]
-self_modulate = Color(1, 1, 1, 0.0196078)
+self_modulate = Color(1, 0, 0, 0.054902)
 position = Vector2(320, 184)
 scale = Vector2(2, 2)
 texture = ExtResource("4_npuxh")
@@ -244,7 +236,7 @@ autoscroll = Vector2(0, 87)
 repeat_times = 5
 
 [node name="Sprite" type="Sprite2D" parent="Gas_Background"]
-self_modulate = Color(1, 1, 1, 0.00392157)
+self_modulate = Color(1, 0, 0, 0.054902)
 z_index = -4090
 position = Vector2(320, 184)
 scale = Vector2(2, 2)
@@ -258,14 +250,14 @@ autoscroll = Vector2(0, 43)
 repeat_times = 5
 
 [node name="Sprite" type="Sprite2D" parent="Clouds_Background"]
-self_modulate = Color(1, 0.12549, 1, 0.00392157)
+self_modulate = Color(1, 1, 1, 0.054902)
 z_index = -4090
 position = Vector2(320.049, 183.915)
 scale = Vector2(2, 2)
 texture = SubResource("NoiseTexture2D_que5d")
 
 [node name="Graphics & Tone" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_1emyr")
+environment = SubResource("Environment_t5cpe")
 
 [node name="Rapid_Spawning_End" type="Timer" parent="."]
 process_callback = 0

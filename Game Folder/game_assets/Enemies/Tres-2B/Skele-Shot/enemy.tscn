@@ -1496,6 +1496,7 @@ func exit():
 resource_name = "idle"
 script/source = "extends State
 @onready var pathfinding: NavigationAgent2D = $\"../../Pathfinding\"
+@onready var state_machine = $\"..\"
 
 
 func enter():
@@ -1515,14 +1516,13 @@ func physics_update(_delta):
 	make_path()
 
 func pathfinding_velocity_computed(safe_velocity: Vector2) -> void:
-	if $\"..\".current_state == self:
+	if state_machine.current_state == self:
 		parent.velocity = safe_velocity
 "
 
 [sub_resource type="GDScript" id="GDScript_rnofh"]
 resource_name = "hit_state"
 script/source = "extends State
-@onready var hit_particles: CPUParticles2D = $hit_particles
 
 func enter():
 	sprite.offset = Vector2(1, 0)
@@ -1566,8 +1566,10 @@ debug_enabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"chase"
+animation = &"hit"
 autoplay = "chase"
+frame = 59
+frame_progress = 1.0
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("2_7osdy")

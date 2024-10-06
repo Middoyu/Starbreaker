@@ -7,7 +7,6 @@
 script/source = "extends Control
 @onready var is_throbber_paused = false
 @onready var throbber: ProgressBar = $Throbber
-@onready var music: AudioStreamPlayer = $Music
 
 
 func _process(delta: float) -> void:

@@ -8,6 +8,8 @@
 [sub_resource type="GDScript" id="GDScript_4ywsl"]
 resource_name = "testbullet"
 script/source = "extends Projectile
+@export var speed = -32000.0
+
 @onready var sprite: Sprite2D = $Sprite
 @onready var spawn_anim: AnimationPlayer = $Spawn_anim
 @onready var timer: Timer = $Timer
@@ -19,23 +21,21 @@ script/source = "extends Projectile
 
 func _ready() -> void:
 	super()
-	hit_particles.reparent(global)
+
 
 #region Interactions
 func eteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
-	effects()
 	queue_free()
 
 func nteam_hurtbox_entered(area: Databox) -> void:
 	area.take_damage(hitbox)
-	effects()
 	queue_free()
 #endregion
 
 func _physics_process(delta: float) -> void:
-	simple_move(delta)
-	sprite.rotate(15 * delta)
+	velocity.y = speed * delta
+	move_and_slide()
 
 func effects():
 	sfx_hit.reparent(global)
@@ -112,7 +112,6 @@ stream_0/stream = ExtResource("4_qh70t")
 [node name="test_ubullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
 motion_mode = 1
 script = SubResource("GDScript_4ywsl")
-speed = -35000
 hitbox = NodePath("Hitbox")
 
 [node name="Sprite" type="Sprite2D" parent="."]

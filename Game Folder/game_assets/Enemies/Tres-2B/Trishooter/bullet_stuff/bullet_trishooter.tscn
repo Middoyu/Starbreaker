@@ -5,7 +5,7 @@
 
 [sub_resource type="GDScript" id="GDScript_qlpno"]
 script/source = "extends Projectile
-
+var speed = 3000
 
 func _physics_process(delta: float) -> void:
 	velocity = transform.x * delta * speed
@@ -457,7 +457,6 @@ radius = 8.0
 
 [node name="BulletTrishooter" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
 script = SubResource("GDScript_qlpno")
-speed = 2300
 hitbox = NodePath("Hitbox")
 
 [node name="Timer" type="Timer" parent="."]
@@ -465,6 +464,7 @@ one_shot = true
 autostart = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+light_mask = 0
 sprite_frames = SubResource("SpriteFrames_1jvj4")
 animation = &"pulse"
 autoplay = "pulse"

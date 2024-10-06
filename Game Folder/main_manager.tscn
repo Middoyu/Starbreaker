@@ -30,7 +30,7 @@ func load_level(level_path : StringName):
 	path_loading = level_path
 	ResourceLoader.load_threaded_request(level_path, \"\", true)
 
-func _process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	loading_status = ResourceLoader.load_threaded_get_status(path_loading)
 	match loading_status:
 		0, 2:
@@ -48,8 +48,7 @@ func _hide_load_visuals(loaded_level):
 	add_child(i)
 	path_loading = \"null\"
 	loading_status = 0
-	if i.has_method(\"start\"):
-		i.start()
+
 
 #endregion
 

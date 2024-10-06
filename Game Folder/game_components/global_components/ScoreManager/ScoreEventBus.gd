@@ -31,6 +31,6 @@ func get_score_position() -> Vector2:
 func _physics_process(delta: float) -> void:
 	passive_score_update(100, delta)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if is_instance_valid(score_display):
 		score_display.text = str(score)

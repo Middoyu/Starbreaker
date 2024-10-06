@@ -3,10 +3,13 @@ class_name Player
 signal PlayerHit
 signal PlayerDeath
 @onready var audio_listener: AudioListener2D = $AudioListener
+@onready var sprite: AnimatedSprite2D = $Sprite
+
+@export var bullet = preload("res://Game Folder/game_assets/Player/Primary/Base/player_primary_bullet.tscn")
 
 @onready var is_moveable : bool = true
-@onready var is_actionable : bool = true
-@export var movement_speed : float = 10_000.0
+@onready var is_actionable : bool = false
+@export var movement_speed : float = 12_500.0
 
 @onready var player_sprite: AnimatedSprite2D = $Sprite
 
@@ -31,7 +34,7 @@ func movement_handler(delta):
 	if is_moveable:
 		var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 		velocity = direction * movement_speed * delta
-		move_and_slide()
+	move_and_slide()
 
 func on_parent_hit(colliding_hitbox, damage_taken) -> void:
 	hit_vfx()
@@ -65,3 +68,5 @@ func invincibility_check():
 				hurtbox.is_disabled = false
 			_:
 				hurtbox.is_disabled = true
+	elif invincibility_override == true:
+		hurtbox.is_disabled = true

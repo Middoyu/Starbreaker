@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
 [ext_resource type="PackedScene" uid="uid://fual85xipl34" path="res://Game Folder/game_assets/Player/Primary/Base/primary.tscn" id="6_pq6y1"]
 [ext_resource type="PackedScene" uid="uid://clnbqyu26xqex" path="res://Game Folder/game_assets/Player/Utility/Base/defense_utility.tscn" id="7_s10c6"]
+[ext_resource type="PackedScene" uid="uid://c6p8p33q12vuu" path="res://Game Folder/game_assets/Player/Secondary/Base/secondary.tscn" id="7_thxeg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 8.0
@@ -1010,27 +1011,6 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
 radius = 1.0
 
-[sub_resource type="GDScript" id="GDScript_ld5h1"]
-resource_name = "secondaries"
-script/source = "extends WeaponBase
-const MISSILE_PROJ = preload(\"res://Game Folder/game_assets/Player/Secondary/Missile/missile_proj.tscn\")
-
-@export var missile_amount = 7
-
-# Overrides WeaponBase's function to allowing for upgrades.
-func spawn_projectile(projectile_path):
-	var proj_int = projectile_path.instantiate()
-	proj_int.global_position = player.global_position
-	global.current_stage.add_child(proj_int)
-	proj_int.parent = get_parent()
-	upgrade_projectile(proj_int)
-
-func shoot():
-	for i in missile_amount:
-		spawn_projectile(MISSILE_PROJ)
-		global.player.charge = -50 / missile_amount
-"
-
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
@@ -1058,11 +1038,11 @@ shape = SubResource("CircleShape2D_rq3p4")
 [node name="InvincibilityTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="Primary" parent="." instance=ExtResource("6_pq6y1")]
-
-[node name="Secondary" type="Node" parent="." node_paths=PackedStringArray("player")]
-script = SubResource("GDScript_ld5h1")
+[node name="Primary" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_pq6y1")]
 player = NodePath("..")
+
+[node name="Secondary" parent="." instance=ExtResource("7_thxeg")]
+currently_active_secondary = 0
 
 [node name="DefenseUtility" parent="." instance=ExtResource("7_s10c6")]
 

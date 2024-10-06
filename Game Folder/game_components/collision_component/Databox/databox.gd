@@ -54,7 +54,7 @@ func _physics_process(delta: float) -> void:
 	check_knockback_process(delta)
 #endregion
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	check_disable_mode_process()
 
 #region Runtime Checks

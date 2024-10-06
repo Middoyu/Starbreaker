@@ -29,7 +29,7 @@ func play_sound(sound):
 	utility.play_isolated_audio(sound)
 #endregion
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pivot_offset = size / 2
 	if is_hovered() and scales_with_input:
 		mouse_in()

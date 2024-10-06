@@ -15,6 +15,7 @@ config/tags=PackedStringArray("starbreaker")
 run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/max_fps=240
+run/low_processor_mode_sleep_usec=11195
 boot_splash/show_image=false
 boot_splash/use_filter=false
 
@@ -35,7 +36,7 @@ cache="*res://Game Folder/game_components/global_components/Scripts/cache.gd"
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=3
+window/size/mode=4
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
@@ -201,6 +202,7 @@ ctrl={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/lossless_compression/force_png=true
 textures/decals/filter=0

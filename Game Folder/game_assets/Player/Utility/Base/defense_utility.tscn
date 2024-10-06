@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://clnbqyu26xqex"]
+[gd_scene load_steps=7 format=3 uid="uid://clnbqyu26xqex"]
 
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_4ax2y"]
+[ext_resource type="Texture2D" uid="uid://2mhw4smwqtbv" path="res://Game Folder/game_assets/Player/Utility/Base/Sprites/Ca_undert.png" id="1_jb1d4"]
+[ext_resource type="Texture2D" uid="uid://fg46i66vh5lt" path="res://Game Folder/game_assets/Player/Utility/Base/Sprites/Ca_oveoverr-export.png" id="2_ajtr5"]
+[ext_resource type="Texture2D" uid="uid://bluqabdpnwdgi" path="res://Game Folder/game_assets/Player/Utility/Base/Sprites/Ca_progresst.png" id="3_m06bf"]
+[ext_resource type="AudioStream" uid="uid://bjbn45w132wur" path="res://Game Folder/game_assets/Menus/SFX/buttons/unlock.ogg" id="4_8uth4"]
 
 [sub_resource type="GDScript" id="GDScript_0bcgs"]
 resource_name = "player_util"
@@ -10,8 +13,10 @@ script/source = "extends Node
 
 @onready var ShineScene = preload(\"res://Game Folder/game_assets/Player/Utility/Shine/ShineBase.tscn\")
 
-@onready var label: Label = $Control/Label
-@onready var label_2: Label = $Control/Label2
+@onready var can_1: TextureProgressBar = $Control/HBoxContainer/Can1
+@onready var can_2: TextureProgressBar = $Control/HBoxContainer/Can2
+@onready var can_3: TextureProgressBar = $Control/HBoxContainer/Can3
+
 
 @export var max_charge = 4800
 @export var current_charge = max_charge
@@ -19,6 +24,16 @@ script/source = "extends Node
 @export var charge_rate = 160
 @export var enemy_charge_reward = 240
 
+func update_progressbar():
+	can_1.min_value = 0
+	can_2.min_value = 1600
+	can_3.min_value = 2400
+	can_1.max_value = 1600
+	can_2.max_value = 2400
+	can_3.max_value = 4800
+	can_1.value = current_charge
+	can_2.value = current_charge
+	can_3.value = current_charge
 
 #region Charge Mechanics
 
@@ -49,26 +64,14 @@ func load_selected_weapon():
 			var int_ShineScene = ShineScene.instantiate()
 			self.add_child(int_ShineScene)
 			utility_instance = int_ShineScene
-			print(utility_instance)
 
 func _physics_process(delta: float) -> void:
-	match_label()
+	update_progressbar()
 	input_detection()
 	grant_charge(delta)
 
-func match_label():
-	label.text = str(current_charge)
-	if current_charge >= 1600:
-			label_2.text = \"1\"
-	if current_charge >= 3200:
-		label_2.text = \"2\"
-	if current_charge >= 4800:
-		label_2.text = \"3\"
-	else:
-		label_2.text = \"0\"
-
 func input_detection():
-	if Input.is_action_just_pressed(\"ctrl\", true) and has_enough_charge():
+	if Input.is_action_just_pressed(\"ctrl\", true) and has_enough_charge() and global.player.is_actionable:
 		consume_charge()
 		action()
 
@@ -76,6 +79,42 @@ func action():
 	match currently_active_utility:
 		0:
 			utility_instance.action()
+"
+
+[sub_resource type="GDScript" id="GDScript_hsdti"]
+script/source = "extends Node
+@onready var granted_util: AudioStreamPlayer = $Granted_Util
+
+@onready var can_1: TextureProgressBar = $\"../Can1\"
+@onready var can_2: TextureProgressBar = $\"../Can2\"
+@onready var can_3: TextureProgressBar = $\"../Can3\"
+
+
+
+func can_3_value_changed(value: float) -> void:
+	if value == 4800:
+		var i = create_tween().bind_node($\"..\").set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+		i.tween_property($\"..\", \"scale\", Vector2(1.1, 1.1), 0.15)
+		i.tween_property($\"..\", \"scale\", Vector2(1.0, 1.0), 0.15)
+		granted_util.pitch_scale = 1.5
+		granted_util.play()
+
+
+func can_2_value_changed(value: float) -> void:
+	if value == 2400:
+		var i = create_tween().bind_node($\"..\").set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+		i.tween_property($\"..\", \"scale\", Vector2(1.1, 1.1), 0.15)
+		i.tween_property($\"..\", \"scale\", Vector2(1.0, 1.0), 0.15)
+		granted_util.pitch_scale = 1.25
+		granted_util.play()
+
+func can_1_value_changed(value: float) -> void:
+	if value == 1600:
+		var i = create_tween().bind_node($\"..\").set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+		i.tween_property($\"..\", \"scale\", Vector2(1.1, 1.1), 0.15)
+		i.tween_property($\"..\", \"scale\", Vector2(1.0, 1.0), 0.15)
+		granted_util.pitch_scale = 1.0
+		granted_util.play()
 "
 
 [node name="DefenseUtility" type="Node"]
@@ -89,21 +128,58 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="Control"]
+[node name="HBoxContainer" type="FlowContainer" parent="Control"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme = ExtResource("1_4ax2y")
-text = "3"
+offset_left = -8.0
+offset_right = 88.0
+offset_bottom = 56.0
+pivot_offset = Vector2(48, 28)
+theme_override_constants/h_separation = 30
+theme_override_constants/v_separation = -45
+last_wrap_alignment = 2
 
-[node name="Label2" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 23.0
-offset_right = 41.0
-offset_bottom = 48.0
-theme = ExtResource("1_4ax2y")
-text = "3"
+[node name="Can1" type="TextureProgressBar" parent="Control/HBoxContainer"]
+layout_mode = 2
+max_value = 66.0
+page = 25.0
+value = 41.0
+fill_mode = 3
+texture_under = ExtResource("1_jb1d4")
+texture_over = ExtResource("2_ajtr5")
+texture_progress = ExtResource("3_m06bf")
+
+[node name="Can2" type="TextureProgressBar" parent="Control/HBoxContainer"]
+layout_mode = 2
+page = 25.0
+value = 75.0
+fill_mode = 3
+texture_under = ExtResource("1_jb1d4")
+texture_over = ExtResource("2_ajtr5")
+texture_progress = ExtResource("3_m06bf")
+
+[node name="Can3" type="TextureProgressBar" parent="Control/HBoxContainer"]
+layout_mode = 2
+page = 25.0
+value = 75.0
+fill_mode = 3
+texture_under = ExtResource("1_jb1d4")
+texture_over = ExtResource("2_ajtr5")
+texture_progress = ExtResource("3_m06bf")
+
+[node name="VFX" type="Node" parent="Control/HBoxContainer"]
+script = SubResource("GDScript_hsdti")
+
+[node name="Granted_Util" type="AudioStreamPlayer" parent="Control/HBoxContainer/VFX"]
+stream = ExtResource("4_8uth4")
+volume_db = 6.0
+mix_target = 2
+bus = &"SFX"
+
+[connection signal="value_changed" from="Control/HBoxContainer/Can1" to="Control/HBoxContainer/VFX" method="can_1_value_changed"]
+[connection signal="value_changed" from="Control/HBoxContainer/Can2" to="Control/HBoxContainer/VFX" method="can_2_value_changed"]
+[connection signal="value_changed" from="Control/HBoxContainer/Can3" to="Control/HBoxContainer/VFX" method="can_3_value_changed"]

@@ -25,7 +25,7 @@ func add_xp(amount):
 	current_xp += amount
 	xp_gained.emit(amount)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if current_xp >= xp_until_lvlup:
 		level_up.emit()
 		xp_until_lvlup *= 2

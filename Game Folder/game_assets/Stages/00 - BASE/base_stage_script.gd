@@ -30,18 +30,18 @@ func add_wall_collision():
 	add_child(i)
 
 func start():
+	add_wall_collision()
 	stage_started = true
+	global.player.global_position = player_starting_position
+	music_setup()
 	var i = LVL_MANAGER
 	i.instantiate()
 	global.current_stage = self
-	music_setup()
-	add_wall_collision()
-	global.player.global_position = player_starting_position
 
 func _ready() -> void:
 	pass
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if is_instance_valid(default_music_WAV):
 		audio_time = music_player.get_playback_position()
 
@@ -78,9 +78,8 @@ func sync_music():
 
 func music_setup():
 	if is_instance_valid(default_music_WAV):
-		add_child(music_player)
 		music_player.stream = default_music_WAV
 		music_player.volume_db = -14
-		music_player.reparent(global.main_manager)
 		global.music_player = music_player
+		self.add_child(music_player)
 		music_player.play()

@@ -1,0 +1,239 @@
+[gd_scene load_steps=17 format=3 uid="uid://ujg1l8k67orr"]
+
+[ext_resource type="Texture2D" uid="uid://bmqfxlqihuoep" path="res://Game Folder/game_assets/Player/Utility/Crosshair/BASE/Sprites/aeaea2.png" id="1_dcuap"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_qeljx"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Player/Utility/Crosshair/BASE/Idle.gd" id="3_ppdw7"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Player/Utility/Crosshair/BASE/lock_in.gd" id="4_0w17g"]
+[ext_resource type="AudioStream" uid="uid://ifmotbhlnlay" path="res://Game Folder/game_assets/Player/Utility/Crosshair/Lock In/Audio/loackin.ogg" id="5_y41rs"]
+[ext_resource type="AudioStream" uid="uid://cj5pvpan4qk70" path="res://Game Folder/game_assets/Player/Utility/Crosshair/Lock In/Audio/lockout.ogg" id="6_5p4w1"]
+
+[sub_resource type="GDScript" id="GDScript_l2lhf"]
+resource_name = "crosshair"
+script/source = "extends Node2D
+@onready var lockin_size := 1.5
+@onready var current_target = null
+@onready var is_controller_active : bool = false
+@export var spawning_position_offset : Vector2 = Vector2.ZERO
+@export var controller_crosshair_speed : float = 150.0
+@onready var adaptable_animation: AnimationPlayer = $Adaptable_Animation
+@onready var animation: AnimationPlayer = $Animation
+@onready var collision: CollisionShape2D = $Crosshair_Lock/Collision
+@onready var crosshair_lock: Area2D = $Crosshair_Lock
+
+func _enter_tree() -> void:
+	pass
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+
+func _ready() -> void:
+	global.crosshair = self
+	setup_crosshair()
+
+#region Setup
+func setup_crosshair():
+	# Spawns crosshair on the Player (if valid) with a offset to the intial position.
+	if is_instance_valid(utility.get_player()):
+		global_position = utility.get_player().global_position + spawning_position_offset
+#endregion
+
+func _exit_tree() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sbysk"]
+radius = 12.0
+
+[sub_resource type="Animation" id="Animation_76ppk"]
+resource_name = "Scaling"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_g5vc7"]
+_data = {
+"Scaling": SubResource("Animation_76ppk")
+}
+
+[sub_resource type="Animation" id="Animation_8h88y"]
+resource_name = "Idle"
+loop_mode = 1
+
+[sub_resource type="Animation" id="Animation_m4s5q"]
+resource_name = "Lock In"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 1, 1, 1), Color(0, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_6qdyu"]
+resource_name = "Lock Out"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(0, 1, 1, 1), Color(0, 1, 1, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_npwac"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1shga"]
+_data = {
+"Idle": SubResource("Animation_8h88y"),
+"Lock In": SubResource("Animation_m4s5q"),
+"Lock Out": SubResource("Animation_6qdyu"),
+"RESET": SubResource("Animation_npwac")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fdyd3"]
+custom_solver_bias = 0.025
+radius = 37.054
+
+[node name="Crosshair" type="Node2D"]
+z_index = 4096
+scale = Vector2(1.09009, 1.09009)
+script = SubResource("GDScript_l2lhf")
+spawning_position_offset = Vector2(0, -121)
+
+[node name="Left_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+
+[node name="Right_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_h = true
+
+[node name="L_Lower_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_v = true
+
+[node name="R_Lower_Corner" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcuap")
+flip_h = true
+flip_v = true
+
+[node name="Crosshair_Lock" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Crosshair_Lock"]
+shape = SubResource("CircleShape2D_sbysk")
+
+[node name="Adaptable_Animation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_g5vc7")
+}
+autoplay = "Scaling"
+playback_default_blend_time = 0.3
+
+[node name="Animation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1shga")
+}
+autoplay = "Idle"
+playback_default_blend_time = 0.3
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("2_qeljx")]
+parent = NodePath("..")
+intial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("3_ppdw7")
+parent = NodePath("../..")
+
+[node name="lock_in" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("4_0w17g")
+parent = NodePath("../..")
+
+[node name="Mouse_Detection" type="Area2D" parent="."]
+priority = 1545
+
+[node name="Collision" type="CollisionShape2D" parent="Mouse_Detection"]
+process_priority = 10
+shape = SubResource("CircleShape2D_fdyd3")
+
+[node name="LockIn" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_5p4w1")
+volume_db = -10.0
+
+[node name="LockOut" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_y41rs")
+volume_db = -10.0
+
+[node name="DamageStutterFix" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="area_entered" from="Crosshair_Lock" to="StateMachine/idle" method="area_entered"]
+[connection signal="animation_finished" from="Animation" to="." method="animation_finished"]
+[connection signal="mouse_exited" from="Mouse_Detection" to="StateMachine/lock_in" method="mouse_exited"]
+[connection signal="timeout" from="DamageStutterFix" to="StateMachine/lock_in" method="stutter_fix_timeout"]

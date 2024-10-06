@@ -4,7 +4,7 @@ signal shooting()
 signal recharging()
 signal before_shooting()
 
-@export var bulletpath = load("res://Modules/Bullet Pattern Module/defaultbullet.tscn")
+@export var bulletpath = load("res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn")
 
 @onready var firerate_timer := Timer.new()
 @onready var rotater := Node2D.new()
