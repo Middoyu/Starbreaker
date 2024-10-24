@@ -1,0 +1,138 @@
+[gd_scene load_steps=13 format=3 uid="uid://bh7jqee2gbos1"]
+
+[ext_resource type="AudioStream" uid="uid://dhhq7xky2cxdy" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Shine/Effects/use.mp3" id="1_be02m"]
+[ext_resource type="Texture2D" uid="uid://bwhwe54nvdjsm" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Shine/Effects/Shine_texturing.png" id="2_018hd"]
+
+[sub_resource type="GDScript" id="GDScript_ej84n"]
+script/source = "extends Node2D
+@onready var collision: CollisionShape2D = $Reflection_Area/Collision
+@onready var internal_cooldown: Timer = $Internal_Cooldown
+@onready var use_sfx: AudioStreamPlayer2D = $UseSFX
+@onready var sprite: AnimatedSprite2D = $Shape/Sprite
+
+
+func _process(_delta: float) -> void:
+	if get_parent().player:
+		self.global_position = get_parent().player.global_position
+
+func action():
+	use_sfx.play()
+	sprite.stop()
+	sprite.play(\"default\")
+	collision.disabled = false
+	internal_cooldown.start()
+	await internal_cooldown.timeout
+	collision.disabled = true
+
+func area_entered(area: Area2D) -> void:
+	if area is Databox:
+		var targeted_area = area as Databox
+		match targeted_area.team_affiliation:
+			\"EnemyTeam\", \"NeutralTeam\":
+				reflect_projectile(targeted_area)
+			_:
+				pass
+
+func reflect_projectile(targeted_area : Databox):
+	if targeted_area.parent is Projectile:
+		var ta_parent = targeted_area.parent as Projectile
+		targeted_area.team_affiliation = \"PlayerTeam\"
+		ta_parent.speed = -ta_parent.speed
+		for i in ta_parent.get_children():
+			if i is AnimatedSprite2D:
+				i.self_modulate = Color(0,255,255)
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yjxju"]
+size = Vector2(64, 64)
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_abcvd"]
+random_pitch = 1.05
+streams_count = 1
+stream_0/stream = ExtResource("1_be02m")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_abaxt"]
+blend_mode = 3
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hsfbt"]
+atlas = ExtResource("2_018hd")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aooac"]
+atlas = ExtResource("2_018hd")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlcrj"]
+atlas = ExtResource("2_018hd")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uhg4g"]
+atlas = ExtResource("2_018hd")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vql6"]
+atlas = ExtResource("2_018hd")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g27x2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hsfbt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aooac")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mlcrj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uhg4g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vql6")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 28.0
+}]
+
+[node name="ShineBase" type="Node2D"]
+script = SubResource("GDScript_ej84n")
+
+[node name="Reflection_Area" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Reflection_Area"]
+shape = SubResource("RectangleShape2D_yjxju")
+disabled = true
+
+[node name="Internal_Cooldown" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.08
+one_shot = true
+
+[node name="UseSFX" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_abcvd")
+bus = &"SFX"
+
+[node name="Shape" type="Polygon2D" parent="."]
+clip_children = 2
+light_mask = 0
+visibility_layer = 2
+material = SubResource("CanvasItemMaterial_abaxt")
+scale = Vector2(2, 2)
+polygon = PackedVector2Array(0, -16, -4, -16, -8, -12, -12, -8, -16, -4, -16, 0, -16, 4, -12, 8, -8, 12, -4, 16, 0, 16, 4, 16, 8, 12, 12, 8, 16, 4, 16, 0, 16, -4, 12, -8, 8, -12, 4, -16)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Shape"]
+light_mask = 0
+sprite_frames = SubResource("SpriteFrames_g27x2")
+frame = 6
+frame_progress = 1.0
+
+[connection signal="area_entered" from="Reflection_Area" to="." method="area_entered"]

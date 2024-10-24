@@ -1,0 +1,92 @@
+[gd_scene load_steps=16 format=3 uid="uid://ftfgs547yhwy"]
+
+[ext_resource type="Texture2D" uid="uid://ivfqvh25uukv" path="res://Game Folder/game_assets/Player/VFX/Movement Particles/movement-particles.png" id="1_ebcad"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ghrwa"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 1
+particles_anim_loop = true
+
+[sub_resource type="Curve" id="Curve_i2u8v"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.0469799, 1), 0.0, 0.0, 0, 0, Vector2(0.0469899, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_t7wja"]
+curve = SubResource("Curve_i2u8v")
+
+[sub_resource type="Curve" id="Curve_5iu3c"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6wh6f"]
+curve = SubResource("Curve_5iu3c")
+
+[sub_resource type="Curve" id="Curve_sab35"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_as0by"]
+curve = SubResource("Curve_sab35")
+
+[sub_resource type="Gradient" id="Gradient_ojs04"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.677778)
+colors = PackedColorArray(0, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_wf8uy"]
+gradient = SubResource("Gradient_ojs04")
+
+[sub_resource type="Curve" id="Curve_tarar"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.104027, 1), 0.0, 0.0, 0, 0, Vector2(0.651007, 1), 0.0, 0.0, 0, 0, Vector2(0.748322, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_8s3uc"]
+curve = SubResource("Curve_tarar")
+
+[sub_resource type="Curve" id="Curve_p7ss6"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_3bdke"]
+curve = SubResource("Curve_p7ss6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mu2xp"]
+particle_flag_disable_z = true
+particle_flag_damping_as_friction = true
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -720.0
+angle_max = 720.0
+angle_curve = SubResource("CurveTexture_6wh6f")
+gravity = Vector3(0, 120, 0)
+scale_curve = SubResource("CurveTexture_8s3uc")
+color_ramp = SubResource("GradientTexture1D_wf8uy")
+alpha_curve = SubResource("CurveTexture_t7wja")
+anim_speed_max = 1.49
+anim_offset_max = 1.0
+anim_offset_curve = SubResource("CurveTexture_as0by")
+turbulence_enabled = true
+turbulence_noise_scale = 0.0
+turbulence_noise_speed_random = 4.0
+turbulence_influence_min = 0.0
+turbulence_influence_max = 0.202
+turbulence_initial_displacement_min = -3.5
+turbulence_initial_displacement_max = 100.0
+turbulence_influence_over_life = SubResource("CurveTexture_3bdke")
+collision_use_scale = true
+
+[node name="MVT_Particles" type="GPUParticles2D"]
+show_behind_parent = true
+texture_filter = 1
+material = SubResource("CanvasItemMaterial_ghrwa")
+position = Vector2(0, 5.5)
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_mu2xp")
+texture = ExtResource("1_ebcad")
+lifetime = 0.45
+fixed_fps = 28
+draw_order = 0

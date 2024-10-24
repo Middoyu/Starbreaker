@@ -1,0 +1,134 @@
+[gd_scene load_steps=6 format=3 uid="uid://bvjh2qftfadea"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_hqvib"]
+[ext_resource type="Texture2D" uid="uid://cnm0sw6ir0dyf" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet.png" id="2_sksq1"]
+
+[sub_resource type="GDScript" id="GDScript_rthx3"]
+resource_name = "missile_script"
+script/source = "extends Projectile
+@export var acceleration_per_frame = 15
+
+@onready var ph_spr: Polygon2D = $PH_Spr
+
+@onready var is_direct_moving = false
+@onready var is_chasing = false
+@onready var is_exploding = false
+@onready var explosion_hitbox: Databox = $Sprite2D/Explosion_Hitbox
+@onready var collision: CollisionShape2D = $Hitbox/Collision
+@onready var speed = 25
+
+func _ready() -> void:
+	$Sprite2D.hide()
+	explosion_hitbox.is_disabled = true
+	tween_spawn_position()
+	wait(randf_range(1.5, 2.0), direct_move_state_on)
+	wait(randf_range(2.5, 3.0), explosion)
+
+func tween_spawn_position():
+	var spawn_pos_tween = create_tween().set_parallel(true)
+	spawn_pos_tween.tween_property(self, \"position:y\", position.y + randf_range(50, 25), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	spawn_pos_tween.tween_property(self, \"position:x\", position.x + randf_range(-50, 50), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	hitbox.is_disabled = true
+	wait(0.3, chase_state_on)
+
+func _physics_process(delta: float) -> void:
+	look_at(get_global_mouse_position())
+	if is_exploding == false and is_chasing == true and is_direct_moving == false:
+		move(delta)
+	if is_exploding == false and is_chasing == true and is_direct_moving == true:
+		direct_move(delta)
+
+
+func chase_state_on():
+	hitbox.is_disabled = false
+	is_chasing = true
+
+func wait(time, function):
+	var timer = get_tree().create_timer(time, false)
+	timer.connect(\"timeout\", function)
+
+func move(delta):
+	velocity += global_position.direction_to(get_global_mouse_position()) * speed
+	if speed <= 25.0:
+		speed += randf_range(8, acceleration_per_frame) * delta
+	velocity.x += randf_range(-20, 20)
+	move_and_slide()
+
+func direct_move(delta):
+	velocity = global_position.direction_to(get_global_mouse_position()) * speed * 20
+	move_and_slide()
+
+func direct_move_state_on():
+	is_direct_moving = true
+
+
+func mouse_entered() -> void:
+	explosion()
+
+func explosion(position := Vector2.ZERO):
+	hitbox.is_disabled = true
+	
+	ph_spr.hide()
+	$Sprite2D.show()
+	
+	
+	
+	is_exploding = true
+	is_chasing = false
+	ph_spr.hide()
+	explosion_hitbox.is_disabled = false
+	wait(0.5, queue_free)
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage(hitbox)
+	explosion(area.global_position)
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0k43y"]
+size = Vector2(6, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ry8yt"]
+radius = 20.0
+
+[node name="missile_proj" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
+script = SubResource("GDScript_rthx3")
+acceleration_per_frame = 75
+hitbox = NodePath("Hitbox")
+
+[node name="PH_Spr" type="Polygon2D" parent="."]
+rotation = 1.5708
+color = Color(0, 1, 1, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 0, -24)
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_hqvib")
+parent = NodePath("..")
+team_affiliation = "PlayerTeam"
+damage = 80.0
+knockback_amount = -10.0
+knockback_stun_duration = 0.9
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(23, 0)
+shape = SubResource("RectangleShape2D_0k43y")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(4.5, 4.125)
+texture = ExtResource("2_sksq1")
+
+[node name="Explosion_Hitbox" type="Area2D" parent="Sprite2D" node_paths=PackedStringArray("parent")]
+scale = Vector2(0.222222, 0.242424)
+script = ExtResource("1_hqvib")
+parent = NodePath("../..")
+team_affiliation = "PlayerTeam"
+damage = 26.6
+knockback_amount = 3000.0
+knockback_stun_duration = 0.4
+is_knockback_forced_upwards = false
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite2D/Explosion_Hitbox"]
+shape = SubResource("CircleShape2D_ry8yt")
+
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
+[connection signal="mouse_entered" from="Hitbox" to="." method="mouse_entered"]
+[connection signal="EnemyTeamHurtbox_entered" from="Sprite2D/Explosion_Hitbox" to="." method="eteam_hurtbox_entered"]

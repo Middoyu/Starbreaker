@@ -23,6 +23,7 @@ func start():
 
 
 func _ready() -> void:
+	ResourceLoader.load_threaded_request(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\", \"\", true)
 	start()
 
 func play_pressed() -> void:

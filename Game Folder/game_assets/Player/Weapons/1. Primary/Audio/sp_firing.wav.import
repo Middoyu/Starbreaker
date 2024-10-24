@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bxrhsgdwv711w"
+path="res://.godot/imported/sp_firing.wav-3f46ea0c26ccc234823de991f1ef6ea6.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sp_firing.wav"
+dest_files=["res://.godot/imported/sp_firing.wav-3f46ea0c26ccc234823de991f1ef6ea6.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=11025.0
+edit/trim=false
+edit/normalize=true
+edit/loop_mode=1
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

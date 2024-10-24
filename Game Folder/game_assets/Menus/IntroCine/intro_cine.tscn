@@ -6,10 +6,12 @@
 script/source = "extends Control
 
 func _ready() -> void:
-	cache.load_in_cache(\"res://Game Folder/main_manager.tscn\")
+	ResourceLoader.load_threaded_request(\"res://Game Folder/main_manager.tscn\", \"\", true)
 
 func fade_animation_finished(_anim_name: StringName) -> void:
-	get_tree().change_scene_to_file(\"res://Game Folder/main_manager.tscn\")
+	var i = ResourceLoader.load_threaded_get(\"res://Game Folder/main_manager.tscn\").instantiate()
+	get_parent().add_child(i)
+	self.queue_free()
 "
 
 [sub_resource type="Animation" id="Animation_dewcp"]

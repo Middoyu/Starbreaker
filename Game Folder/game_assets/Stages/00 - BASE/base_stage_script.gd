@@ -39,6 +39,7 @@ func start():
 	global.current_stage = self
 
 func _ready() -> void:
+	ResourceLoader.load_threaded_request("res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn", "", true)
 	pass
 
 func _process(_delta: float) -> void:

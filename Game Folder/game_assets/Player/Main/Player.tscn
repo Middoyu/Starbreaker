@@ -1,13 +1,10 @@
-[gd_scene load_steps=152 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=149 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
 [ext_resource type="Texture2D" uid="uid://xfck8bbqa15o" path="res://Game Folder/game_assets/Player/Sprites/playerdeath.png" id="2_kefrx"]
 [ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_qie6g"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
-[ext_resource type="PackedScene" uid="uid://fual85xipl34" path="res://Game Folder/game_assets/Player/Primary/Base/primary.tscn" id="6_pq6y1"]
-[ext_resource type="PackedScene" uid="uid://clnbqyu26xqex" path="res://Game Folder/game_assets/Player/Utility/Base/defense_utility.tscn" id="7_s10c6"]
-[ext_resource type="PackedScene" uid="uid://c6p8p33q12vuu" path="res://Game Folder/game_assets/Player/Secondary/Base/secondary.tscn" id="7_thxeg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 8.0
@@ -1014,6 +1011,9 @@ radius = 1.0
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
+max_movement_speed = 17500.0
+acceleration = 127500.0
+friction = 127500.0
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
@@ -1034,17 +1034,3 @@ is_knockback_forced_upwards = false
 
 [node name="Collision" type="CollisionShape2D" parent="PlayerHurtbox"]
 shape = SubResource("CircleShape2D_rq3p4")
-
-[node name="InvincibilityTimer" type="Timer" parent="."]
-one_shot = true
-
-[node name="Primary" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_pq6y1")]
-player = NodePath("..")
-
-[node name="Secondary" parent="." instance=ExtResource("7_thxeg")]
-currently_active_secondary = 0
-
-[node name="DefenseUtility" parent="." instance=ExtResource("7_s10c6")]
-
-[node name="AudioListener" type="AudioListener2D" parent="."]
-current = true

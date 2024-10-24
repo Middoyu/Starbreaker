@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c1k2ssyjaj5h3"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_cqbc3"]
-[ext_resource type="Texture2D" uid="uid://bxu4vpyreyq67" path="res://Game Folder/game_assets/Player/Primary/Sprites/bullet1.png" id="2_btihy"]
+[ext_resource type="Texture2D" uid="uid://bxu4vpyreyq67" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet1.png" id="2_btihy"]
 
 [sub_resource type="GDScript" id="GDScript_yh1ki"]
 resource_name = "skele_boss_bullet"

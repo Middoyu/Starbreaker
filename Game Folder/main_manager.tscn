@@ -6,8 +6,6 @@
 resource_name = "mainscene_manager"
 script/source = "extends Node
 
-@onready var GameOver_Menu = preload(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\")
-
 func _ready():
 	global.main_manager = self
 	switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
@@ -27,16 +25,22 @@ func _display_load_visuals(level_list):
 	load_level(level_list)
 
 func load_level(level_path : StringName):
-	path_loading = level_path
-	ResourceLoader.load_threaded_request(level_path, \"\", true)
+	if ResourceLoader.has_cached(level_path):
+		print(\"Already has path cached in memory.\")
+		_hide_load_visuals(ResourceLoader.load_threaded_get(level_path))
+	else:
+		path_loading = level_path
+		ResourceLoader.load_threaded_request(level_path, \"\", true)
 
 func _physics_process(_delta: float) -> void:
 	loading_status = ResourceLoader.load_threaded_get_status(path_loading)
 	match loading_status:
-		0, 2:
+		0:
 			pass
 		1:
 			ResourceLoader.load_threaded_get_status(path_loading)
+		2:
+			printerr(\"error in loading\")
 		3:
 			_hide_load_visuals(ResourceLoader.load_threaded_get(path_loading))
 			loading_status = 0
@@ -57,9 +61,10 @@ func _hide_load_visuals(loaded_level):
 
 
 func gameover_sequence():
+	ResourceLoader.load_threaded_request(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\", \"\", true)
 	clear_entities()
-	var GameOver_Menu_Int = GameOver_Menu.instantiate()
-	self.add_child(GameOver_Menu_Int, true)
+	var go_i = ResourceLoader.load_threaded_get(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\").instantiate()
+	add_child(go_i)
 	events.emit_signal(\"GameOver\", int(score_event.score))
 
 func clear_entities():
