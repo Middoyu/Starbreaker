@@ -3,6 +3,8 @@ extends Node
 
 
 var screenshake_enabled : bool = true
+var extra_vfx : bool = true
+
 var displaydamage_enabled : bool = false
 
 func _ready() -> void:

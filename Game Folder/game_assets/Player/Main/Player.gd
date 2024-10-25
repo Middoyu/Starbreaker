@@ -27,10 +27,11 @@ signal PlayerDeath
 const PRIMARY = preload("res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn")
 const SECONDARY = preload("res://Game Folder/game_assets/Player/Weapons/2. Secondary/Base/secondary.tscn")
 const D_UTILITY = preload("res://Game Folder/game_assets/Player/Weapons/3. Utility/Base/defense_utility.tscn")
+const MOVEMENT_UTILITY = preload("res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Base/Movement Utility.tscn")
 const BREAKER = preload("res://Game Folder/game_assets/Player/Weapons/4. Breaker/breaker.tscn")
-
 # Effects
 const MVT_PARTICLES = preload("res://Game Folder/game_assets/Player/VFX/Movement Particles/mvt_particles.tscn")
+
 
 func load_local_data():
 	# Variable Setup
@@ -42,15 +43,16 @@ func load_local_data():
 	invincibility_timer.autostart = false
 	invincibility_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	# Weapon Load
-	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), D_UTILITY.instantiate(), BREAKER.instantiate()]
+	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), D_UTILITY.instantiate(), BREAKER.instantiate(), MOVEMENT_UTILITY.instantiate()]
 	for weapon in weapon_list:
 		add_child(weapon, true)
 		weapon.player = self
 	var effect_list = [MVT_PARTICLES.instantiate()]
 	for effect in effect_list:
-		add_child(effect, true)
-		if effect.name == "MVT_Particles":
-			mvt_particles = effect
+		if options.extra_vfx == true:
+			add_child(effect, true)
+			if effect.name == "MVT_Particles":
+				mvt_particles = effect
 	# Audio Listener Load
 	var audio_listener = AudioListener2D.new()
 	add_child(audio_listener, true)
@@ -63,8 +65,13 @@ func setup_player():
 	global.player = self
 
 func _physics_process(delta: float) -> void:
+	look_at_mouse()
 	movement_handler(delta)
 	invincibility_check()
+
+## Experimental
+func look_at_mouse():
+	look_at(get_global_mouse_position())
 
 func movement_handler(delta):
 	if is_moveable:

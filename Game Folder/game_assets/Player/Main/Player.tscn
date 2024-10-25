@@ -1011,7 +1011,7 @@ radius = 1.0
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
-max_movement_speed = 17500.0
+max_movement_speed = 12500.0
 acceleration = 127500.0
 friction = 127500.0
 
@@ -1021,6 +1021,7 @@ shape = SubResource("CircleShape2D_23pmm")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_5bb6v")
+rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_wirgs")
 animation = &"idle"
 autoplay = "idle"

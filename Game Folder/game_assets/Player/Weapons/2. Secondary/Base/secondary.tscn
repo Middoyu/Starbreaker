@@ -5,32 +5,32 @@ resource_name = "secondaries"
 script/source = "extends WeaponBase
 @export_enum(\"Boost\", \"OTHER2\", \"OTHER3\") var currently_active_secondary
 @onready var current_secondary = null
-const BOOST_SCENE = preload(\"res://Game Folder/game_assets/Player/Weapons/2. Secondary/Boost/boost_scene.tscn\")
+#
+#func _ready() -> void:
+	#super()
+	#select_active_secondary()
+#
+#func _physics_process(delta: float) -> void:
+	#input_detection()
+#
+#func input_detection():
+	#if Input.is_action_just_pressed(\"secondary\") and global.player.is_actionable:
+		#action()
 
-func _ready() -> void:
-	super()
-	select_active_secondary()
 
-func _physics_process(delta: float) -> void:
-	input_detection()
-
-func input_detection():
-	if Input.is_action_just_pressed(\"secondary\", true) and global.player.is_actionable:
-		action()
-
-
-func select_active_secondary():
-	match currently_active_secondary:
-		0:
-			var i = BOOST_SCENE.instantiate()
-			add_child(i)
-			current_secondary = i
-
-func action():
-	match currently_active_secondary:
-		0:
-			current_secondary.action()
+#func select_active_secondary():
+	#match currently_active_secondary:
+		#0:
+			#var i = BOOST_SCENE.instantiate()
+			#add_child(i)
+			#current_secondary = i
+#
+#func action():
+	#match currently_active_secondary:
+		#0:
+			#current_secondary.action()
 "
 
 [node name="Secondary" type="Node"]
 script = SubResource("GDScript_ld5h1")
+currently_active_secondary = 0

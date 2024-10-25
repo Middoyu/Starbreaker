@@ -233,7 +233,6 @@ volume_db = -10.0
 [node name="DamageStutterFix" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="area_entered" from="Crosshair_Lock" to="StateMachine/idle" method="area_entered"]
 [connection signal="animation_finished" from="Animation" to="." method="animation_finished"]
 [connection signal="mouse_exited" from="Mouse_Detection" to="StateMachine/lock_in" method="mouse_exited"]
 [connection signal="timeout" from="DamageStutterFix" to="StateMachine/lock_in" method="stutter_fix_timeout"]

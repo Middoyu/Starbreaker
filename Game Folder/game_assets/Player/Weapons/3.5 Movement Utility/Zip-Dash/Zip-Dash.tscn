@@ -1,0 +1,93 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj7jh88a1txx6"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_42pm1"]
+
+[sub_resource type="GDScript" id="GDScript_y1aru"]
+script/source = "extends Node2D
+
+@onready var player = global.player as Player
+@onready var velocity_vector = Vector2.ZERO
+@onready var release_vector = Vector2.ZERO
+@onready var is_on_cooldown = false
+
+enum states{
+	IDLE,
+	FOCUS,
+	RELEASE
+}
+@onready var current_state = states.IDLE
+
+func action():
+	if current_state == states.IDLE and is_on_cooldown == false:
+		is_on_cooldown = true
+		enter_focus()
+
+func enter_focus():
+	$Hitbox.is_disabled = false
+	player.invincibility_override = true
+	current_state = states.FOCUS
+	velocity_vector = Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\").normalized()
+	release(velocity_vector)
+
+func release(direction := Vector2.ZERO):
+	current_state = states.RELEASE
+	player.velocity = Vector2.ZERO
+	player.is_moveable = false
+	player.is_actionable = false
+	if direction == Vector2.ZERO:
+		direction = player.global_position.direction_to(get_global_mouse_position())
+	release_vector = direction
+	$Timer.start(0.25)
+
+func _physics_process(delta: float) -> void:
+	global_position = player.global_position
+	if current_state == states.RELEASE:
+		player.velocity = release_vector * delta * 55000
+
+func timer_timeout() -> void:
+	current_state = states.IDLE
+	player.is_moveable = true
+	player.is_actionable = true
+	$Hitbox.is_disabled = true
+	player.invincibility_override = false
+	player.invincibility_timer.start(0.3)
+	$\"Internal Cooldown\".start(0.65)
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage($Hitbox)
+
+func internal_cooldown_timeout() -> void:
+	is_on_cooldown = false
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2f0y5"]
+size = Vector2(36, 36)
+
+[node name="BoostScene" type="Node2D"]
+script = SubResource("GDScript_y1aru")
+
+[node name="Internal Cooldown" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.65
+one_shot = true
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.3
+one_shot = true
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("1_42pm1")
+team_affiliation = "PlayerTeam"
+is_disabled = true
+damage = 25.0
+knockback_amount = 14000.0
+knockback_stun_duration = 0.4
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_2f0y5")
+disabled = true
+
+[connection signal="timeout" from="Internal Cooldown" to="." method="internal_cooldown_timeout"]
+[connection signal="timeout" from="Timer" to="." method="timer_timeout"]
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]

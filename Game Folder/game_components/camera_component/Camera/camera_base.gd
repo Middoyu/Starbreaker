@@ -56,7 +56,8 @@ func zoom_reset(zoom_duration := DEFAULT_ZOOM_DURATION):
  
 #region Screenshake Functions
 func shake(amplitude := 1000.0): ## Adds a number to the shake strength.
-	shake_strength = amplitude
+	if options.screenshake_enabled:
+		shake_strength = amplitude
 
 func get_random_camera_offset() -> Vector2: ## Returns a random vector by the shake strength determined by the amplitude.
 	return Vector2(randf_range(-shake_strength,  shake_strength), randf_range(-shake_strength, shake_strength))

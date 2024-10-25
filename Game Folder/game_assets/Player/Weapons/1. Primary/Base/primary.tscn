@@ -6,7 +6,7 @@
 resource_name = "primaryweaponscript"
 script/source = "extends WeaponBase
 signal PlayerPrimaryFired
-@export var firerate := 0.1
+@export var firerate := 0.07
 @onready var bullet_pos = 1
 
 
@@ -18,7 +18,7 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/1. 
 
 
 func _physics_process(delta: float) -> void:
-	if Input.is_action_pressed(\"primary\", true) and player.is_actionable:
+	if Input.is_action_pressed(\"primary\") and player.is_actionable:
 		shoot()
 
 # Overrides WeaponBase's function to allowing switching of the position.

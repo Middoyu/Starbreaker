@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://yusjcnetqdct"]
+
+[sub_resource type="GDScript" id="GDScript_gl4md"]
+resource_name = "MovementUtility"
+script/source = "extends WeaponBase
+@export_enum(\"Zip-Dash\", \"OTHER2\", \"OTHER3\") var currently_active_mvt_util
+@onready var current_mvt_util = null
+const ZIP_DASH = preload(\"res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-Dash.tscn\")
+
+func _ready() -> void:
+	super()
+	select_active_mvt_util()
+
+func _physics_process(delta: float) -> void:
+	input_detection()
+
+func input_detection():
+	if Input.is_action_just_pressed(\"movement_util\") and global.player.is_actionable:
+		action()
+
+
+func select_active_mvt_util():
+	match currently_active_mvt_util:
+		0:
+			var i = ZIP_DASH.instantiate()
+			add_child(i)
+			current_mvt_util = i
+
+func action():
+	match currently_active_mvt_util:
+		0:
+			current_mvt_util.action()
+"
+
+[node name="MovementUtility" type="Node"]
+script = SubResource("GDScript_gl4md")
+currently_active_mvt_util = 0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://djpcqt67fwitc"
+path="res://.godot/imported/Starbreaker - Stage Clear.wav-d0545d7ffcde64a73a2bbd68a0070d45.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav"
+dest_files=["res://.godot/imported/Starbreaker - Stage Clear.wav-d0545d7ffcde64a73a2bbd68a0070d45.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

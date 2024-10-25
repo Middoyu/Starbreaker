@@ -1576,8 +1576,7 @@ script = ExtResource("2_7osdy")
 parent = NodePath("..")
 team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
-lockin_size = 1.1
-can_be_locked_in = true
+is_knockback_forced_upwards = false
 
 [node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("CircleShape2D_3n1ei")

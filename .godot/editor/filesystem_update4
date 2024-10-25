@@ -2,3 +2,19 @@ res://z_Export/default_bus_layout.tres
 res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
 res://Game Folder/game_assets/Menus/Themes/THEME.tres
+res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_assets/Player/Main/Player.gd
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
+res://Game Folder/game_components/global_components/Scripts/options.gd
+res://Game Folder/game_components/camera_component/Camera/camera_base.gd
+res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
+res://Game Folder/game_assets/Player/Weapons/2. Secondary/Base/secondary.tscn
+res://Game Folder/game_assets/Player/Weapons/2. Secondary/Boost/boost_scene.tscn
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn
+res://Game Folder/main_manager.tscn
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn
+res://Game Folder/game_assets/Player/Weapons/3. Utility/Crosshair/BASE/crosshair.tscn
+res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Base/Movement Utility.tscn
+res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-Dash.tscn
