@@ -1,0 +1,80 @@
+[gd_scene load_steps=4 format=3 uid="uid://chu0dp2kkaibw"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_uin2f"]
+
+[sub_resource type="GDScript" id="GDScript_rdqev"]
+script/source = "extends Projectile
+const BLAST_PROJECTILE = preload(\"res://Game Folder/game_assets/Player/Weapons/2. Secondary/Implosion Blast/blast_projectile/blast_projectile.tscn\")
+@export var projectile_speed := 15000
+@export var max_ticks := 3
+@onready var current_ticks = 0
+
+@onready var direction = Vector2.ZERO
+
+enum states{
+	MOVING,
+	HIT
+}
+
+var current_state = states.MOVING
+
+func _ready() -> void:
+	$Hitbox/Collision.shape.radius = 20
+
+func move(delta):
+	if current_state == 0:
+		velocity = direction * projectile_speed * delta
+	else:
+		velocity = Vector2.ZERO
+
+func _physics_process(delta: float) -> void:
+	move(delta)
+	move_and_slide()
+
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	current_state = states.HIT
+	area.take_damage($Hitbox)
+	$Tick.start()
+
+func tick_timeout() -> void:
+	tick()
+
+func tick():
+	$Hitbox.is_disabled = !$Hitbox.is_disabled
+	if !$Hitbox.is_disabled:
+		current_ticks += 1
+		$Hitbox/Collision.shape.radius += 2.5
+	if current_ticks == max_ticks:
+		var i = BLAST_PROJECTILE.instantiate()
+		i.global_position = global_position
+		global.add_child(i)
+		queue_free()
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pcysy"]
+radius = 20.0
+
+[node name="Projectile" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
+motion_mode = 1
+script = SubResource("GDScript_rdqev")
+projectile_speed = 75000
+hitbox = NodePath("Hitbox")
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("2_uin2f")
+parent = NodePath("..")
+team_affiliation = "PlayerTeam"
+knockback_amount = -150.0
+knockback_stun_duration = 0.5
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_pcysy")
+debug_color = Color(0.408811, 0.205866, 0.691101, 0.42)
+
+[node name="Tick" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.07
+
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
+[connection signal="timeout" from="Tick" to="." method="tick_timeout"]

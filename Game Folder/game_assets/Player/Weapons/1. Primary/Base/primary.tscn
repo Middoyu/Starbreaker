@@ -6,7 +6,7 @@
 resource_name = "primaryweaponscript"
 script/source = "extends WeaponBase
 signal PlayerPrimaryFired
-@export var firerate := 0.07
+@export var firerate := 0.085
 @onready var bullet_pos = 1
 
 

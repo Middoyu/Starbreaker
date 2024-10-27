@@ -66,9 +66,11 @@ func gameover_sequence(is_true_gameover := true):
 	var go_i = ResourceLoader.load_threaded_get(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn\").instantiate()
 	add_child(go_i)
 	if is_true_gameover:
-		var music = go_i.music as AudioStreamPlayer
-		var stream = load(\"res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav\") as AudioStreamWAV
-		music.set_stream(stream)
+		go_i.music = go_i.gameover_music
+		go_i.music.play()
+	else:
+		go_i.music = go_i.victory_music
+		go_i.music.play()
 	events.emit_signal(\"GameOver\", int(score_event.score))
 
 func clear_entities():

@@ -1,7 +1,9 @@
-Node
 Timer
 CollisionShape2D
 Databox
+Projectile
+AudioStreamPlayer
+Node
 VBoxContainer
 Label
 HSlider
@@ -10,5 +12,3 @@ TextureButton
 GPUParticles2D
 AudioStreamPlayer2D
 Node2D
-AudioStreamPlayer
-FlowContainer

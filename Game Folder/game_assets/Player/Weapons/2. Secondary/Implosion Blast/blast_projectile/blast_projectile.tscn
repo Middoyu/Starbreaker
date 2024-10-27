@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://7iwjoryetydo"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_4pagc"]
+
+[sub_resource type="GDScript" id="GDScript_wtu38"]
+script/source = "extends Projectile
+
+
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	area.take_damage($Hitbox)
+
+
+func duration_timeout() -> void:
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xh4d8"]
+radius = 30.0
+
+[node name="BlastProjectile" type="CharacterBody2D"]
+script = SubResource("GDScript_wtu38")
+
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_4pagc")
+parent = NodePath("..")
+team_affiliation = "PlayerTeam"
+damage = 100.0
+knockback_amount = 5000.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_xh4d8")
+
+[node name="Duration" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+autostart = true
+
+[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
+[connection signal="timeout" from="Duration" to="." method="duration_timeout"]

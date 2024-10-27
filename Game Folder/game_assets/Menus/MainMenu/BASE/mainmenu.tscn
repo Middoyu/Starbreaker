@@ -1,8 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=21 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://byvjgvcggg4s7" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/MainMenu_Starbreaker.wav" id="1_udanv"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
+[ext_resource type="AudioStream" uid="uid://huf82ig833c" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker_GameOver.wav" id="2_u1td3"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="3_mm2qm"]
+[ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="3_wda5l"]
 [ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
 
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
@@ -11,6 +13,8 @@ script/source = "extends Node2D
 @onready var main_menu = $MainMenu
 @onready var options_menu = $Options
 
+@onready var mm_music: AudioStreamPlayer = $MM_Music
+@onready var o_music: AudioStreamPlayer = $O_Music
 
 @onready var main_camera: Camera2D = $MainCamera
 @onready var options_camera: Camera2D = $OptionsCamera
@@ -18,7 +22,7 @@ script/source = "extends Node2D
 func start():
 	global.current_stage = self
 	main_menu.show()
-	$Music.play()
+	mm_music.get_stream_playback().switch_to_clip(0)
 	$TutorialPrompt.hide()
 
 
@@ -36,6 +40,7 @@ func show_tutorial_prompt():
 	$TutorialPrompt.show()
 
 func options_pressed():
+	mm_music.get_stream_playback().switch_to_clip(1)
 	main_camera.enabled = false
 	options_camera.enabled = true
 
@@ -54,6 +59,32 @@ emission_shape = 3
 emission_box_extents = Vector3(1000, 1000, 1)
 gravity = Vector3(0, 0, 0)
 color = Color(1, 1, 1, 0.00784314)
+
+[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_2vl67"]
+clip_count = 3
+clip_0/name = &"main_music"
+clip_0/stream = ExtResource("1_udanv")
+clip_0/auto_advance = 0
+clip_1/name = &"options_music"
+clip_1/stream = ExtResource("2_u1td3")
+clip_1/auto_advance = 0
+clip_2/name = &"Transistion_audio"
+clip_2/stream = ExtResource("3_wda5l")
+clip_2/auto_advance = 0
+_transitions = {
+Vector2i(0, 1): {
+"fade_beats": 1,
+"fade_mode": 3,
+"from_time": 0,
+"to_time": 0
+},
+Vector2i(1, 0): {
+"fade_beats": 1,
+"fade_mode": 3,
+"from_time": 0,
+"to_time": 0
+}
+}
 
 [sub_resource type="Animation" id="Animation_c6u7e"]
 resource_name = "bob"
@@ -81,12 +112,14 @@ _data = {
 script/source = "extends CustomButton
 @onready var main_camera: Camera2D = $\"../../MainCamera\"
 @onready var options_camera: Camera2D = $\"../../OptionsCamera\"
+@onready var mm_music: AudioStreamPlayer = $\"../../MM_Music\"
 
 func _ready() -> void:
 	super()
 	self.connect(\"pressed\", pressed)
 
 func pressed():
+	mm_music.get_stream_playback().switch_to_clip(0)
 	main_camera.enabled = true
 	options_camera.enabled = false
 "
@@ -168,7 +201,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../Music:playing")
+tracks/1/path = NodePath("../MM_Music:playing")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -212,7 +245,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../Music:playing")
+tracks/1/path = NodePath("../MM_Music:playing")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -277,8 +310,8 @@ position = Vector2(896, 0)
 anchor_mode = 0
 ignore_rotation = false
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_udanv")
+[node name="MM_Music" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamInteractive_2vl67")
 volume_db = -16.0
 bus = &"Music"
 

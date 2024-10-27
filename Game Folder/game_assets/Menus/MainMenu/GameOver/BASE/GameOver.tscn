@@ -1,13 +1,18 @@
-[gd_scene load_steps=11 format=3 uid="uid://c26v2faggef5y"]
+[gd_scene load_steps=13 format=3 uid="uid://c26v2faggef5y"]
 
-[ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="1_gd280"]
+[ext_resource type="AudioStream" uid="uid://5d2twp6ej6g2" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over 1.mp3" id="1_cdovi"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_ns363"]
 [ext_resource type="Script" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
+[ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="2_xv7wk"]
 
 [sub_resource type="GDScript" id="GDScript_83bpk"]
 script/source = "extends Node2D
 @onready var gameover_camera: Camera2D = $GameOver_Camera
-@onready var music: AudioStreamPlayer = $Music
+@onready var music = null
+
+@onready var gameover_music: AudioStreamPlayer = $Gameover_Music
+@onready var victory_music: AudioStreamPlayer = $Victory_music
+
 
 @onready var lost_rank_display: RichTextLabel = $GUI_Controller/LostRank_Display
 @onready var lost_score_display: RichTextLabel = $GUI_Controller/LostScore_Display
@@ -27,7 +32,6 @@ func update_display_values(final_score : int):
 	lost_score_display.set_text(\"SCORE LOST - \" + str(final_score))
 
 func begin_gameover_sequence():
-	music.play()
 	gameover_camera.call(\"tween_camera_upwards\")
 
 func end_gameover_sequence():
@@ -46,6 +50,14 @@ func transition_to_mainmenu():
 "
 
 [sub_resource type="GDScript" id="GDScript_jdbvu"]
+script/source = "extends AudioStreamPlayer
+
+func fade():
+	var volume_tween = create_tween().bind_node(self).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	volume_tween.tween_property(self, \"volume_db\", -60.0, 1.0)
+"
+
+[sub_resource type="GDScript" id="GDScript_85053"]
 script/source = "extends AudioStreamPlayer
 
 func fade():
@@ -92,11 +104,16 @@ adjustment_saturation = 8.0
 [node name="GameOver" type="Node2D"]
 script = SubResource("GDScript_83bpk")
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_gd280")
+[node name="Gameover_Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_cdovi")
 volume_db = -16.0
 bus = &"Music"
 script = SubResource("GDScript_jdbvu")
+
+[node name="Victory_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_xv7wk")
+volume_db = -16.0
+script = SubResource("GDScript_85053")
 
 [node name="GameOver_Camera" type="Camera2D" parent="."]
 offset = Vector2(0, 390)
