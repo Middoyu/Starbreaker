@@ -1,6 +1,8 @@
 Timer
 CollisionShape2D
 Databox
+RemoteTransform2D
+GPUParticles2D
 Projectile
 AudioStreamPlayer
 Node
@@ -9,6 +11,4 @@ Label
 HSlider
 CustomButton
 TextureButton
-GPUParticles2D
 AudioStreamPlayer2D
-Node2D

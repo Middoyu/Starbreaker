@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cj7jh88a1txx6"]
+[gd_scene load_steps=9 format=3 uid="uid://cj7jh88a1txx6"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_42pm1"]
+[ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_reuk2"]
 
 [sub_resource type="GDScript" id="GDScript_y1aru"]
 script/source = "extends Node2D
@@ -9,6 +10,7 @@ script/source = "extends Node2D
 @onready var velocity_vector = Vector2.ZERO
 @onready var release_vector = Vector2.ZERO
 @onready var is_on_cooldown = false
+@onready var afterimage: GPUParticles2D = $Afterimage
 
 enum states{
 	IDLE,
@@ -19,6 +21,7 @@ enum states{
 
 func action():
 	if current_state == states.IDLE and is_on_cooldown == false:
+		global.camera.shake(25)
 		is_on_cooldown = true
 		enter_focus()
 
@@ -43,11 +46,15 @@ func _physics_process(delta: float) -> void:
 	global_position = player.global_position
 	if current_state == states.RELEASE:
 		player.velocity = release_vector * delta * 55000
+		if options.extra_vfx:
+			afterimage.emitting = true
 
 func timer_timeout() -> void:
 	current_state = states.IDLE
 	player.is_moveable = true
 	player.is_actionable = true
+	if options.extra_vfx:
+		afterimage.emitting = false
 	$Hitbox.is_disabled = true
 	player.invincibility_override = false
 	player.invincibility_timer.start(0.3)
@@ -62,6 +69,39 @@ func internal_cooldown_timeout() -> void:
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2f0y5"]
 size = Vector2(36, 36)
+
+[sub_resource type="Curve" id="Curve_1imwa"]
+_data = [Vector2(0, 0.0952703), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cedcx"]
+curve = SubResource("Curve_1imwa")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_v6eu1"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -100.0
+linear_accel_max = 100.0
+radial_accel_min = -100.0
+radial_accel_max = 100.0
+tangential_accel_min = -100.0
+tangential_accel_max = 100.0
+color = Color(0, 1, 1, 1)
+alpha_curve = SubResource("CurveTexture_cedcx")
+
+[sub_resource type="GDScript" id="GDScript_evom7"]
+script/source = "extends GPUParticles2D
+
+func _ready() -> void:
+	reparent(global.player)
+	if options.extra_vfx == false:
+		queue_free()
+
+func _process(delta: float) -> void:
+	process_material.set(\"angle\", global.player.global_rotation)
+	
+"
 
 [node name="BoostScene" type="Node2D"]
 script = SubResource("GDScript_y1aru")
@@ -87,6 +127,16 @@ knockback_stun_duration = 0.4
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("RectangleShape2D_2f0y5")
 disabled = true
+
+[node name="Afterimage" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_v6eu1")
+texture = ExtResource("2_reuk2")
+fixed_fps = 240
+draw_order = 0
+trail_lifetime = 0.7
+script = SubResource("GDScript_evom7")
 
 [connection signal="timeout" from="Internal Cooldown" to="." method="internal_cooldown_timeout"]
 [connection signal="timeout" from="Timer" to="." method="timer_timeout"]

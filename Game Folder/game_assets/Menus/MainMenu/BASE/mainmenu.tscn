@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=23 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://byvjgvcggg4s7" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/MainMenu_Starbreaker.wav" id="1_udanv"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
@@ -166,6 +166,36 @@ func _ready() -> void:
 
 func _on_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(0, linear_to_db(value))
+"
+
+[sub_resource type="GDScript" id="GDScript_wo5kl"]
+script/source = "extends HSlider
+
+@export var audio_bus_name := \"Master\"
+
+@onready var _bus := AudioServer.get_bus_index(audio_bus_name)
+
+
+func _ready() -> void:
+	value = db_to_linear(AudioServer.get_bus_volume_db(_bus))
+
+func _on_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_db(1, linear_to_db(value))
+"
+
+[sub_resource type="GDScript" id="GDScript_n2lrk"]
+script/source = "extends HSlider
+
+@export var audio_bus_name := \"Master\"
+
+@onready var _bus := AudioServer.get_bus_index(audio_bus_name)
+
+
+func _ready() -> void:
+	value = db_to_linear(AudioServer.get_bus_volume_db(_bus))
+
+func _on_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_db(2, linear_to_db(value))
 "
 
 [sub_resource type="GDScript" id="GDScript_fs3n1"]
@@ -438,11 +468,37 @@ theme = ExtResource("3_mm2qm")
 text = "Master Audio "
 horizontal_alignment = 1
 
-[node name="Volume Slider" type="HSlider" parent="Options/Container"]
+[node name="Master Vol" type="HSlider" parent="Options/Container"]
 layout_mode = 2
 max_value = 2.0
 step = 0.1
 script = SubResource("GDScript_sfec3")
+
+[node name="SFX" type="Label" parent="Options/Container"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+text = "SFX"
+horizontal_alignment = 1
+
+[node name="SFX Vol" type="HSlider" parent="Options/Container"]
+layout_mode = 2
+max_value = 2.0
+step = 0.1
+script = SubResource("GDScript_wo5kl")
+audio_bus_name = "SFX"
+
+[node name="Music" type="Label" parent="Options/Container"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+text = "Music
+"
+horizontal_alignment = 1
+
+[node name="Music Vol" type="HSlider" parent="Options/Container"]
+layout_mode = 2
+max_value = 2.0
+step = 0.1
+script = SubResource("GDScript_n2lrk")
 
 [node name="TutorialPrompt" type="Control" parent="."]
 visible = false
@@ -541,7 +597,8 @@ environment = SubResource("Environment_8qy31")
 [connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/QUIT" to="." method="quit_pressed"]
-[connection signal="mouse_exited" from="Options/Container/Volume Slider" to="." method="release_focus"]
-[connection signal="value_changed" from="Options/Container/Volume Slider" to="Options/Container/Volume Slider" method="_on_value_changed"]
+[connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
+[connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
+[connection signal="value_changed" from="Options/Container/Music Vol" to="Options/Container/Music Vol" method="_on_value_changed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]
