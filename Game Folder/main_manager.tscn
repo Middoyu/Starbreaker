@@ -26,7 +26,7 @@ func _display_load_visuals(level_list):
 
 func load_level(level_path : StringName):
 	if ResourceLoader.has_cached(level_path):
-		print(\"Already has path cached in memory.\")
+		print_debug(\"Already has path cached in memory.\")
 		_hide_load_visuals(ResourceLoader.load_threaded_get(level_path))
 	else:
 		path_loading = level_path
@@ -36,13 +36,15 @@ func _physics_process(_delta: float) -> void:
 	loading_status = ResourceLoader.load_threaded_get_status(path_loading)
 	match loading_status:
 		0:
-			pass
+			print(path_loading)
 		1:
 			ResourceLoader.load_threaded_get_status(path_loading)
+			print(path_loading)
 		2:
 			printerr(\"error in loading\")
 		3:
 			_hide_load_visuals(ResourceLoader.load_threaded_get(path_loading))
+			print(path_loading)
 			loading_status = 0
 
 func _hide_load_visuals(loaded_level):

@@ -1,8 +1,8 @@
 [gd_scene load_steps=23 format=3 uid="uid://c8cl1sli3qnjh"]
 
-[ext_resource type="AudioStream" uid="uid://byvjgvcggg4s7" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/MainMenu_Starbreaker.wav" id="1_udanv"]
+[ext_resource type="AudioStream" uid="uid://dffgvv6rgyras" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu WIP.mp3" id="1_di70y"]
 [ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
-[ext_resource type="AudioStream" uid="uid://huf82ig833c" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker_GameOver.wav" id="2_u1td3"]
+[ext_resource type="AudioStream" uid="uid://315id5fccusd" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu (Options ver) WIP.mp3" id="2_pn7a7"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="3_mm2qm"]
 [ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="3_wda5l"]
 [ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
@@ -14,7 +14,6 @@ script/source = "extends Node2D
 @onready var options_menu = $Options
 
 @onready var mm_music: AudioStreamPlayer = $MM_Music
-@onready var o_music: AudioStreamPlayer = $O_Music
 
 @onready var main_camera: Camera2D = $MainCamera
 @onready var options_camera: Camera2D = $OptionsCamera
@@ -24,10 +23,10 @@ func start():
 	main_menu.show()
 	mm_music.get_stream_playback().switch_to_clip(0)
 	$TutorialPrompt.hide()
+	ResourceLoader.load_threaded_request(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\", \"\", false)
 
 
 func _ready() -> void:
-	ResourceLoader.load_threaded_request(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\", \"\", true)
 	start()
 
 func play_pressed() -> void:
@@ -63,10 +62,10 @@ color = Color(1, 1, 1, 0.00784314)
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_2vl67"]
 clip_count = 3
 clip_0/name = &"main_music"
-clip_0/stream = ExtResource("1_udanv")
+clip_0/stream = ExtResource("1_di70y")
 clip_0/auto_advance = 0
 clip_1/name = &"options_music"
-clip_1/stream = ExtResource("2_u1td3")
+clip_1/stream = ExtResource("2_pn7a7")
 clip_1/auto_advance = 0
 clip_2/name = &"Transistion_audio"
 clip_2/stream = ExtResource("3_wda5l")
@@ -74,14 +73,14 @@ clip_2/auto_advance = 0
 _transitions = {
 Vector2i(0, 1): {
 "fade_beats": 1,
-"fade_mode": 3,
-"from_time": 0,
+"fade_mode": 4,
+"from_time": 1,
 "to_time": 0
 },
 Vector2i(1, 0): {
 "fade_beats": 1,
-"fade_mode": 3,
-"from_time": 0,
+"fade_mode": 4,
+"from_time": 1,
 "to_time": 0
 }
 }

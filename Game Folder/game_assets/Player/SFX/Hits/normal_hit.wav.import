@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c7b1r3nn8qhhg"
+path="res://.godot/imported/normal_hit.wav-f338a1e112fbaff7a359dc37e4b0a52f.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav"
+dest_files=["res://.godot/imported/normal_hit.wav-f338a1e112fbaff7a359dc37e4b0a52f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

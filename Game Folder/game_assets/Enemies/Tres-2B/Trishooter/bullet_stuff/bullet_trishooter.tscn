@@ -456,6 +456,7 @@ animations = [{
 radius = 8.0
 
 [node name="BulletTrishooter" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
+z_index = 4096
 script = SubResource("GDScript_qlpno")
 hitbox = NodePath("Hitbox")
 
@@ -476,7 +477,7 @@ parent = NodePath("..")
 team_affiliation = "EnemyTeam"
 damage = 15.0
 knockback_amount = 1500.0
-knockback_stun_duration = 0.5
+knockback_stun_duration = 0.2
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_sdpf7")

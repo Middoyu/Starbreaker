@@ -1,10 +1,13 @@
-[gd_scene load_steps=149 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=156 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://br0858mow1mky" path="res://Game Folder/game_assets/Player/Sprites/playerhitsprite.png" id="2_8hv02"]
 [ext_resource type="Texture2D" uid="uid://xfck8bbqa15o" path="res://Game Folder/game_assets/Player/Sprites/playerdeath.png" id="2_kefrx"]
 [ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_qie6g"]
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
+[ext_resource type="AudioStream" uid="uid://c7b1r3nn8qhhg" path="res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav" id="6_fa8j1"]
+[ext_resource type="AudioStream" uid="uid://frfci036135v" path="res://Game Folder/game_assets/Player/SFX/Hits/final_hit.wav" id="7_uvb5w"]
+[ext_resource type="AudioStream" uid="uid://d37w35fnpn37j" path="res://Game Folder/game_assets/Player/SFX/Hits/dying.wav" id="8_5l6dk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 8.0
@@ -1008,6 +1011,60 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
 radius = 1.0
 
+[sub_resource type="GDScript" id="GDScript_5rul6"]
+script/source = "extends ColorRect
+
+@onready var animation: AnimationPlayer = $Animation
+
+func _ready() -> void:
+	self.hide()
+
+func play():
+	if options.extra_vfx:
+		animation.stop()
+		animation.play(\"GameOver\")
+	else:
+		pass
+"
+
+[sub_resource type="Animation" id="Animation_nr18w"]
+resource_name = "GameOver"
+length = 3.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_gqclk"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cxoen"]
+_data = {
+"GameOver": SubResource("Animation_nr18w"),
+"RESET": SubResource("Animation_gqclk")
+}
+
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_5vafy")
@@ -1036,3 +1093,41 @@ is_knockback_forced_upwards = false
 
 [node name="Collision" type="CollisionShape2D" parent="PlayerHurtbox"]
 shape = SubResource("CircleShape2D_rq3p4")
+
+[node name="GameOverBlack" type="ColorRect" parent="."]
+z_index = 4095
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1367.0
+offset_top = -793.0
+offset_right = 2007.0
+offset_bottom = 1153.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+script = SubResource("GDScript_5rul6")
+
+[node name="Animation" type="AnimationPlayer" parent="GameOverBlack"]
+libraries = {
+"": SubResource("AnimationLibrary_cxoen")
+}
+
+[node name="SFX" type="Node2D" parent="."]
+
+[node name="Normal_Hit" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("6_fa8j1")
+bus = &"SFX"
+
+[node name="Strong_Hit" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("7_uvb5w")
+volume_db = -3.0
+bus = &"SFX"
+
+[node name="Dying_Shatter" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_5l6dk")
+volume_db = -6.0
+mix_target = 1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=14 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
 [ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
 [ext_resource type="PackedScene" uid="uid://ujg1l8k67orr" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Crosshair/BASE/crosshair.tscn" id="6_n0ddg"]
+[ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="7_ld0jn"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
@@ -278,5 +279,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Crosshair" parent="." instance=ExtResource("6_n0ddg")]
+
+[node name="HUD" parent="." instance=ExtResource("7_ld0jn")]
 
 [connection signal="timeout" from="Rapid_Spawning_End" to="." method="rapid_spawning"]

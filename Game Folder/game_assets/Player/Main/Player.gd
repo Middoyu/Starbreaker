@@ -23,6 +23,7 @@ signal PlayerDeath
 @onready var invincibility_override : bool = false
 
 @onready var hurtbox: Databox = $PlayerHurtbox
+@onready var game_over_black: ColorRect = $GameOverBlack
 
 const PRIMARY = preload("res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn")
 const SECONDARY = preload("res://Game Folder/game_assets/Player/Weapons/2. Secondary/Base/secondary.tscn")
@@ -69,7 +70,7 @@ func _physics_process(delta: float) -> void:
 	movement_handler(delta)
 	invincibility_check()
 
-## Experimental
+
 func look_at_mouse():
 	look_at(get_global_mouse_position())
 
@@ -92,23 +93,74 @@ func on_parent_hit(colliding_hitbox, damage_taken) -> void:
 	player_sprite.play("idle")
 
 func hit_vfx():
+	$SFX/Normal_Hit.play()
 	if global.camera:
 		var camera = global.camera as juicycamera_component
 		camera.shake(25.0)
-		camera.freezeframe(0.01, 0.3)
+		camera.freezeframe(0.01, 0.5)
 
-func on_parent_death(colliding_hitbox, damage_taken) -> void:
-	player_sprite.play("death")
-	handle_death()
-	await player_sprite.animation_finished
-	global.main_manager.gameover_sequence()
+func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
+	handle_death(colliding_hitbox.parent)
 
-func handle_death():
+
+func handle_death(finalblow_idenity):
+	sprite.stop()
+	sprite.play("hit")
+	
+	# Shifts the Z-Index of all the death associated parties.
+	self.z_index = 4096
+	finalblow_idenity.z_index = 4096
+	finalblow_idenity.process_mode = Node.PROCESS_MODE_DISABLED
+	finalblow_idenity.velocity = Vector2.ZERO
+	
+	# Repositions the black screen to cover the camera.
+	game_over_black.show()
+	game_over_black.reparent(global.current_stage)
+	game_over_black.global_position = Vector2.ZERO
+	game_over_black.rotation = 0.0
+	game_over_black.play()
+	
+	# Clearing other entities & projectiles.
+	for i in global.current_stage.get_children():
+		if i is Entity:
+			if i != self:
+				if i != finalblow_idenity:
+					i.queue_free()
+		if i is Projectile:
+			if i != finalblow_idenity:
+				i.queue_free()
+	for i in global.get_children():
+		if i is Entity:
+			if i != self:
+				if i != finalblow_idenity:
+					i.queue_free()
+		if i is Projectile:
+			if i != finalblow_idenity:
+				i.queue_free()
+	
+	# Normal effects.
+	global.music_player.stop()
+	global.camera.shake(65.0)
+	$SFX/Strong_Hit.play()
+	
+	# Zero out the player.
 	hurtbox.is_disabled = true
 	invincibility_override = true
 	is_actionable = false
 	is_moveable = false
-	mvt_particles.queue_free()
+	velocity = Vector2.ZERO
+	hurtbox.knockback_direction = Vector2.ZERO
+	hurtbox.knockback_amount = 0.0
+	if options.extra_vfx:
+		mvt_particles.queue_free()
+	
+	# Finish the sequence and pass it off to the main manager.
+	await get_tree().create_timer(1.0).timeout
+	sprite.play("death")
+	$SFX/Dying_Shatter.play()
+	await sprite.animation_finished
+	global.main_manager.gameover_sequence()
+
 
 func invincibility_check():
 	if invincibility_override == false:
