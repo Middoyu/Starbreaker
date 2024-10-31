@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cj7jh88a1txx6"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_42pm1"]
-[ext_resource type="Texture2D" uid="uid://prmbr3dqe8u7" path="res://Game Folder/game_assets/Player/Sprites/Player.png" id="2_reuk2"]
+[ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="2_atf3f"]
 
 [sub_resource type="GDScript" id="GDScript_y1aru"]
 script/source = "extends Node2D
@@ -21,7 +21,7 @@ enum states{
 
 func action():
 	if current_state == states.IDLE and is_on_cooldown == false:
-		global.camera.shake(25)
+		global.camera.shake(20)
 		is_on_cooldown = true
 		enter_focus()
 
@@ -132,7 +132,7 @@ disabled = true
 emitting = false
 amount = 50
 process_material = SubResource("ParticleProcessMaterial_v6eu1")
-texture = ExtResource("2_reuk2")
+texture = ExtResource("2_atf3f")
 fixed_fps = 240
 draw_order = 0
 trail_lifetime = 0.7

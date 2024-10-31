@@ -72,7 +72,8 @@ func _physics_process(delta: float) -> void:
 
 
 func look_at_mouse():
-	look_at(get_global_mouse_position())
+	if is_actionable:
+		look_at(get_global_mouse_position())
 
 func movement_handler(delta):
 	if is_moveable:
@@ -98,6 +99,8 @@ func hit_vfx():
 		var camera = global.camera as juicycamera_component
 		camera.shake(25.0)
 		camera.freezeframe(0.01, 0.5)
+	if options.extra_vfx:
+		global.camera.flash()
 
 func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
 	handle_death(colliding_hitbox.parent)
@@ -137,6 +140,7 @@ func handle_death(finalblow_idenity):
 		if i is Projectile:
 			if i != finalblow_idenity:
 				i.queue_free()
+	global.crosshair.queue_free()
 	
 	# Normal effects.
 	global.music_player.stop()
@@ -153,13 +157,16 @@ func handle_death(finalblow_idenity):
 	hurtbox.knockback_amount = 0.0
 	if options.extra_vfx:
 		mvt_particles.queue_free()
+		$Sprite/DeathEffects.emitting = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	sprite.play("death")
 	
 	# Finish the sequence and pass it off to the main manager.
 	await get_tree().create_timer(1.0).timeout
-	sprite.play("death")
 	$SFX/Dying_Shatter.play()
 	await sprite.animation_finished
 	global.main_manager.gameover_sequence()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func invincibility_check():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=15 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
@@ -13,6 +13,7 @@ script/source = "extends StageBase
 @onready var black: ColorRect = $Black
 
 func start():
+	global.is_pausable = true
 	super()
 	var i = create_tween().bind_node(black).set_ease(Tween.EASE_IN_OUT)
 	i.tween_property(black, \"color\", Color(0,0,0,0), 0.5)
@@ -77,6 +78,10 @@ func _ready() -> void:
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn\")
 	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
+	if options.extra_vfx == false:
+		$Background.queue_free()
+		$Gas_Background.queue_free()
+		$Clouds_Background.queue_free()
 	start()
 
 
@@ -194,6 +199,15 @@ glow_enabled = true
 glow_bloom = 0.2
 adjustment_enabled = true
 
+[sub_resource type="GDScript" id="GDScript_rp1j6"]
+script/source = "extends WorldEnvironment
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	self.environment.glow_bloom = options.bloom
+"
+
 [node name="Tres-2b" type="Node2D"]
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
@@ -214,7 +228,6 @@ limit_top = -45
 limit_right = 660
 limit_bottom = 380
 position_smoothing_speed = 109.5
-initial_zoom_value = 1.0
 
 [node name="Background" type="Parallax2D" parent="."]
 z_index = -4096
@@ -260,6 +273,7 @@ texture = SubResource("NoiseTexture2D_que5d")
 
 [node name="Graphics & Tone" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_t5cpe")
+script = SubResource("GDScript_rp1j6")
 
 [node name="Rapid_Spawning_End" type="Timer" parent="."]
 process_callback = 0

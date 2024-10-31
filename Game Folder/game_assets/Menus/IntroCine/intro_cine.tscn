@@ -6,6 +6,7 @@
 script/source = "extends Control
 
 func _ready() -> void:
+	global.is_pausable = false
 	ResourceLoader.load_threaded_request(\"res://Game Folder/main_manager.tscn\", \"\", true)
 
 func fade_animation_finished(_anim_name: StringName) -> void:

@@ -1,15 +1,38 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://b1rbffoke0vnr"]
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://b1rbffoke0vnr"]
 
 [ext_resource type="FontFile" uid="uid://cohq7acthuyhd" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf" id="1_c6gth"]
-[ext_resource type="Texture2D" uid="uid://c0v5q1fgdsek2" path="res://Game Folder/game_assets/Menus/Themes/Sprite-0002.png" id="2_vofbu"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gw2cn"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jmitd"]
-texture = ExtResource("2_vofbu")
-axis_stretch_horizontal = 2
-axis_stretch_vertical = 2
-region_rect = Rect2(29, 17, 49, 37)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s2yv1"]
+bg_color = Color(1, 1, 1, 0)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_imm4e"]
+bg_color = Color(0.811765, 0.352941, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1tibs"]
+bg_color = Color(0.184314, 0, 0.227451, 1)
+skew = Vector2(1.5, 0)
+corner_radius_top_left = 10
+corner_radius_bottom_right = 10
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mwcig"]
+bg_color = Color(0, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+shadow_size = 5
+anti_aliasing = false
 
 [resource]
 default_font = ExtResource("1_c6gth")
@@ -20,7 +43,10 @@ Button/constants/outline_size = 0
 Button/font_sizes/font_size = 15
 Button/fonts/font = ExtResource("1_c6gth")
 Button/styles/disabled_mirrored = SubResource("StyleBoxTexture_gw2cn")
-Button/styles/normal = SubResource("StyleBoxTexture_jmitd")
+Button/styles/focus = SubResource("StyleBoxFlat_s2yv1")
+Button/styles/hover = SubResource("StyleBoxFlat_imm4e")
+Button/styles/normal = SubResource("StyleBoxFlat_1tibs")
+Button/styles/pressed = SubResource("StyleBoxFlat_mwcig")
 Label/colors/font_outline_color = Color(0, 0, 0, 0)
 Label/constants/outline_size = -910
 Label/font_sizes/font_size = 20

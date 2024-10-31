@@ -4,6 +4,7 @@ extends Node
 
 var screenshake_enabled : bool = true
 var extra_vfx : bool = true
+var bloom = 0.5
 
 var displaydamage_enabled : bool = false
 

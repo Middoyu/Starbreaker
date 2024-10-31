@@ -1,10 +1,9 @@
 [gd_scene load_steps=23 format=3 uid="uid://c8cl1sli3qnjh"]
 
-[ext_resource type="AudioStream" uid="uid://dffgvv6rgyras" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu WIP.mp3" id="1_di70y"]
-[ext_resource type="Texture2D" uid="uid://d38sar1je8rdt" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="2_leuxi"]
-[ext_resource type="AudioStream" uid="uid://315id5fccusd" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu (Options ver) WIP.mp3" id="2_pn7a7"]
+[ext_resource type="AudioStream" uid="uid://ywmkyecy71eq" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu.ogg" id="1_stns8"]
+[ext_resource type="AudioStream" uid="uid://nh5h3dkqfcca" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu (Options ver).ogg" id="2_25itb"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="3_mm2qm"]
-[ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="3_wda5l"]
+[ext_resource type="Texture2D" uid="uid://cs6s2641cjjdq" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="3_wslbo"]
 [ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
 
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
@@ -44,6 +43,7 @@ func options_pressed():
 	options_camera.enabled = true
 
 
+
 func quit_pressed() -> void:
 	get_tree().quit(0)
 
@@ -60,27 +60,24 @@ gravity = Vector3(0, 0, 0)
 color = Color(1, 1, 1, 0.00784314)
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_2vl67"]
-clip_count = 3
+clip_count = 2
 clip_0/name = &"main_music"
-clip_0/stream = ExtResource("1_di70y")
+clip_0/stream = ExtResource("1_stns8")
 clip_0/auto_advance = 0
 clip_1/name = &"options_music"
-clip_1/stream = ExtResource("2_pn7a7")
+clip_1/stream = ExtResource("2_25itb")
 clip_1/auto_advance = 0
-clip_2/name = &"Transistion_audio"
-clip_2/stream = ExtResource("3_wda5l")
-clip_2/auto_advance = 0
 _transitions = {
 Vector2i(0, 1): {
 "fade_beats": 1,
-"fade_mode": 4,
-"from_time": 1,
+"fade_mode": 0,
+"from_time": 2,
 "to_time": 0
 },
 Vector2i(1, 0): {
 "fade_beats": 1,
-"fade_mode": 4,
-"from_time": 1,
+"fade_mode": 0,
+"from_time": 2,
 "to_time": 0
 }
 }
@@ -127,7 +124,11 @@ func pressed():
 script/source = "extends CustomButton
 
 
-func _process(delta: float) -> void:
+func _ready() -> void:
+	button_pressed = options.screenshake_enabled
+
+func _physics_process(delta: float) -> void:
+	super(delta)
 	match button_pressed:
 		true:
 			text = \"Screenshake : ON\"
@@ -140,9 +141,11 @@ func _process(delta: float) -> void:
 [sub_resource type="GDScript" id="GDScript_faceb"]
 script/source = "extends CustomButton
 
+func _ready() -> void:
+	button_pressed = options.extra_vfx
 
-
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	super(delta)
 	match button_pressed:
 		true:
 			text = \"Extra VFX : ON\"
@@ -176,7 +179,7 @@ script/source = "extends HSlider
 
 
 func _ready() -> void:
-	value = db_to_linear(AudioServer.get_bus_volume_db(_bus))
+	value = db_to_linear(AudioServer.get_bus_volume_db(1))
 
 func _on_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(1, linear_to_db(value))
@@ -191,10 +194,22 @@ script/source = "extends HSlider
 
 
 func _ready() -> void:
-	value = db_to_linear(AudioServer.get_bus_volume_db(_bus))
+	value = db_to_linear(AudioServer.get_bus_volume_db(2))
 
 func _on_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(2, linear_to_db(value))
+"
+
+[sub_resource type="GDScript" id="GDScript_w84vj"]
+script/source = "extends HSlider
+
+
+func _ready() -> void:
+	value = $\"../../../Environment\".environment.glow_bloom
+
+func value_changed(value: float) -> void:
+	$\"../../../Environment\".environment.glow_bloom = value
+	options.bloom = value
 "
 
 [sub_resource type="GDScript" id="GDScript_fs3n1"]
@@ -219,7 +234,7 @@ tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/path = NodePath("Black:self_modulate")
-tracks/0/interp = 0
+tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.55),
@@ -304,16 +319,10 @@ _data = {
 "RESET": SubResource("Animation_igopm")
 }
 
-[sub_resource type="Environment" id="Environment_8qy31"]
+[sub_resource type="Environment" id="Environment_5lcc6"]
 background_mode = 3
-ambient_light_source = 1
-reflected_light_source = 1
 glow_enabled = true
-glow_intensity = 0.25
-glow_bloom = 0.05
-glow_blend_mode = 0
-adjustment_enabled = true
-adjustment_saturation = 8.0
+glow_bloom = 0.25
 
 [node name="MainMenu" type="Node2D"]
 script = SubResource("GDScript_cf4c7")
@@ -333,6 +342,7 @@ visibility_rect = Rect2(-348, -25, 686.5, 387)
 [node name="MainCamera" type="Camera2D" parent="."]
 anchor_mode = 0
 ignore_rotation = false
+process_callback = 0
 
 [node name="OptionsCamera" type="Camera2D" parent="."]
 position = Vector2(896, 0)
@@ -341,7 +351,6 @@ ignore_rotation = false
 
 [node name="MM_Music" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_2vl67")
-volume_db = -16.0
 bus = &"Music"
 
 [node name="MainMenu" type="Control" parent="."]
@@ -355,7 +364,7 @@ layout_mode = 0
 offset_top = -140.0
 offset_right = 640.0
 offset_bottom = 452.0
-texture = ExtResource("2_leuxi")
+texture = ExtResource("3_wslbo")
 
 [node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
 libraries = {
@@ -421,10 +430,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -128.0
+offset_top = -52.0
+offset_right = 24.0
+offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -498,6 +507,19 @@ layout_mode = 2
 max_value = 2.0
 step = 0.1
 script = SubResource("GDScript_n2lrk")
+
+[node name="Bloom_Text" type="Label" parent="Options/Container"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+text = "Bloom"
+horizontal_alignment = 1
+
+[node name="Bloom" type="HSlider" parent="Options/Container"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+max_value = 1.0
+step = 0.1
+script = SubResource("GDScript_w84vj")
 
 [node name="TutorialPrompt" type="Control" parent="."]
 visible = false
@@ -590,8 +612,8 @@ libraries = {
 }
 autoplay = "Fade"
 
-[node name="Visual Effects" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_8qy31")
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5lcc6")
 
 [connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
@@ -599,5 +621,6 @@ environment = SubResource("Environment_8qy31")
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/Music Vol" to="Options/Container/Music Vol" method="_on_value_changed"]
+[connection signal="value_changed" from="Options/Container/Bloom" to="Options/Container/Bloom" method="value_changed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]

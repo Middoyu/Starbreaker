@@ -2287,22 +2287,25 @@ script/source = "extends State
 
 func enter():
 	fire()
-	$firing_timer.start(1.0)
+	$firing_timer.start()
 
 func physics_update(_delta):
 	if global.camera:
 		global.camera.shake(1.5)
+	parent.global_rotation_degrees += parent.rotation_speed
 
 func fire():
 	sprite.play(\"Firing\")
 	parent.lzr_spr.show()
-	parent.particles.show()
-	parent.particles.emitting = true
+	if options.extra_vfx:
+		parent.particles.show()
+		parent.particles.emitting = true
 	parent.hitbox.is_disabled = false
 
 func exit():
 	parent.lzr_spr.hide()
-	parent.particles.emitting = false
+	if options.extra_vfx:
+		parent.particles.emitting = false
 	parent.hitbox.is_disabled = true
 
 
@@ -2471,7 +2474,7 @@ sprite = NodePath("../../spr")
 
 [node name="firing_timer" type="Timer" parent="StateMachine/firing"]
 process_callback = 0
-wait_time = 2.5
+wait_time = 10.0
 
 [node name="leave" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
 script = SubResource("GDScript_geu3j")

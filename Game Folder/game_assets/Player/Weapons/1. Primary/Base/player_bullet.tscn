@@ -49,6 +49,7 @@ func effects():
 func VFX():
 	camera.shake(10.0)
 	camera.freezeframe(0.1, 0.05)
+	camera.impact_zoom(0.0003, Vector2(320, 181), 0.01)
 	hit_particles.global_position = self.global_position
 	hit_particles.emitting = true
 	hit_particles_2.global_position = self.global_position

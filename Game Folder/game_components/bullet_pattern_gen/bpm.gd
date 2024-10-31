@@ -53,7 +53,7 @@ func shoot():
 		var bullet = bulletpath.instantiate()
 		
 		
-		global.add_child(bullet)
+		global.current_stage.add_child(bullet)
 		bullet.global_position = s.global_position
 		bullet.rotation = s.global_rotation
 		s.queue_free()

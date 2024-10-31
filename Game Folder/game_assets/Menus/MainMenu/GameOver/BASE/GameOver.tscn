@@ -35,6 +35,7 @@ func begin_gameover_sequence():
 	gameover_camera.call(\"tween_camera_upwards\")
 
 func end_gameover_sequence():
+	return_button.queue_free()
 	music.fade()
 	gameover_camera.call(\"tween_camera_downwards\")
 	tween_timer.start(1.0)
