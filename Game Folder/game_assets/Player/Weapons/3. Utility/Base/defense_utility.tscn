@@ -120,7 +120,7 @@ func can_1_value_changed(value: float) -> void:
 
 [node name="DefenseUtility" type="Node"]
 script = SubResource("GDScript_0bcgs")
-currently_active_utility = 0
+currently_active_utility = 2
 
 [node name="Shine_Utility" type="Node2D" parent="."]
 

@@ -1511,7 +1511,7 @@ func make_path():
 
 func physics_update(_delta):
 	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
-	var intended_velocity = dir * 3750 * _delta
+	var intended_velocity = dir * 3950 * _delta
 	pathfinding.set_velocity(intended_velocity)
 	make_path()
 

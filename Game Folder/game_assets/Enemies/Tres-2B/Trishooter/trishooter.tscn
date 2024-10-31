@@ -509,7 +509,7 @@ shape = SubResource("CircleShape2D_h8hjc")
 
 [node name="PatternGenerator" parent="." instance=ExtResource("5_kbe1e")]
 bulletpath = ExtResource("6_xr2sy")
-firerate = 1.5
+firerate = 1.7
 rotation_speed = 175
 bullet_points = 3
 shoot_at_player = true
@@ -535,6 +535,7 @@ sprite = NodePath("../../Sprite")
 
 [node name="move" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
 script = SubResource("GDScript_cnuky")
+speed = 4075
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 

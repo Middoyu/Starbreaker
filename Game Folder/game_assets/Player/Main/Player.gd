@@ -44,7 +44,7 @@ func load_local_data():
 	invincibility_timer.autostart = false
 	invincibility_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	# Weapon Load
-	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), D_UTILITY.instantiate(), BREAKER.instantiate(), MOVEMENT_UTILITY.instantiate()]
+	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), BREAKER.instantiate(), MOVEMENT_UTILITY.instantiate()] # Missing D_UTILITY.instantiate()
 	for weapon in weapon_list:
 		add_child(weapon, true)
 		weapon.player = self

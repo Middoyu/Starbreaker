@@ -22,7 +22,7 @@ script/source = "extends Entity
 @onready var player_x_position : float = 0.0
 
 func _ready() -> void:
-	spawning()
+	queue_free()
 
 func spawning():
 	if global.player:

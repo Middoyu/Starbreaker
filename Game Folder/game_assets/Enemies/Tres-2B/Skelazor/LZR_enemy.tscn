@@ -2439,7 +2439,6 @@ script = ExtResource("2_vt4o6")
 parent = NodePath("..")
 team_affiliation = "EnemyTeam"
 databox_type = "Hurtbox"
-max_health = 1
 recieves_knockback = false
 is_knockback_forced_upwards = false
 armor_multiplier = 0.0
