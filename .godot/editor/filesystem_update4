@@ -6,3 +6,5 @@ res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
 res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn
+res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.gd

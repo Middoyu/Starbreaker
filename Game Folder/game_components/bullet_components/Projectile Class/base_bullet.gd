@@ -12,6 +12,7 @@ func _ready():
 
 func setup_screen_notifier():
 	self.add_child(view_detector)
+	view_detector.rect = Rect2(Vector2(-100, -100), Vector2(200, 200))
 	view_detector.screen_exited.connect(remove_from_tree)
 
 func remove_from_tree():
