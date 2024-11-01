@@ -2384,6 +2384,7 @@ func enter():
 	sprite.stop()
 	sprite.play(\"Death\")
 	parent.hurtbox.queue_free()
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sfx_death.ogg\", -12, true)
 
 func animation_finished() -> void:
 	if sprite.get_animation() == \"Death\":

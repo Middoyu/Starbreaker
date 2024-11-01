@@ -1548,7 +1548,7 @@ func enter():
 	parent.hitbox.queue_free()
 	sprite.stop()
 	sprite.play(\"death\")
-	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Primary/Audio/sfx_death.ogg\", -12, true)
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sfx_death.ogg\", -12, true)
 	await sprite.animation_finished
 	parent.queue_free()
 
