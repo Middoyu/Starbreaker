@@ -81,6 +81,6 @@ func freezeframe(amount, duration):
 
 #region Flash
 func flash():
-	if options.extra_vfx:
+	if options.screen_flash:
 		$Flash/Flash_Event.play("Flash")
 #endregion

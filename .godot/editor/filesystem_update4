@@ -1,11 +1,14 @@
 res://z_Export/default_bus_layout.tres
-res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn
+res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
 res://Game Folder/game_assets/Menus/Themes/THEME.tres
-res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
-res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn
-res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.gd
+res://Game Folder/game_components/entity_components/State Machine/state_base.gd
+res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn
+res://Game Folder/game_assets/Stages/00 - BASE/base_stage_script.gd
+res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn
+res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls/wall_collisions.tscn
 res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
+res://Game Folder/game_components/global_components/Scripts/options.gd
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn
+res://Game Folder/game_components/entity_components/Entity/boss_base.gd

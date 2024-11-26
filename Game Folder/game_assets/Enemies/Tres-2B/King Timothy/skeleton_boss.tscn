@@ -101,13 +101,8 @@ func spawn_hit_particles(colliding_hitbox):
 
 #endregion
 
-func orb_spawning():
-	spawn_charge_orb(1)
-	spawn_xp_orb(1)
-
 func on_parent_hit(colliding_hitbox):
 	hit_effects(colliding_hitbox)
-	orb_spawning()
 
 func on_parent_death(colliding_hitbox):
 	if state_machine.current_state.has_method(\"reset_tweens\") == true:

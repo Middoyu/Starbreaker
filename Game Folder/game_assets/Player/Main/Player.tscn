@@ -1,4 +1,4 @@
-[gd_scene load_steps=191 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=190 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
@@ -1230,19 +1230,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="GDScript" id="GDScript_pjip1"]
-script/source = "extends AnimatedSprite2D
-@onready var player = get_parent() as Player
-
-func direct_scale():
-	var direction = player.hurtbox.knockback_direction
-	scale = direction * 1.5
-
-func _physics_process(delta: float) -> void:
-	if scale != Vector2.ONE:
-		scale = lerp(scale, Vector2.ONE, 10.0 * delta)
-"
-
 [sub_resource type="Curve" id="Curve_na574"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
@@ -1271,13 +1258,13 @@ radius = 1.0
 [sub_resource type="GDScript" id="GDScript_5rul6"]
 script/source = "extends ColorRect
 
-@onready var animation: AnimationPlayer = $Animation
 
 func _ready() -> void:
 	self.hide()
 
 func play():
-	if options.extra_vfx:
+	var animation = $Animation
+	if options.screen_flash:
 		animation.stop()
 		animation.play(\"GameOver\")
 	else:
@@ -1340,9 +1327,6 @@ rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_wirgs")
 animation = &"death"
 autoplay = "idle"
-frame = 155
-frame_progress = 1.0
-script = SubResource("GDScript_pjip1")
 
 [node name="DeathEffects" type="GPUParticles2D" parent="Sprite"]
 z_index = 4096
@@ -1400,3 +1384,4 @@ bus = &"SFX"
 stream = ExtResource("8_5l6dk")
 volume_db = -6.0
 mix_target = 1
+bus = &"SFX"

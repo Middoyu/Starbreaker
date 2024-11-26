@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=14 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
-[ext_resource type="AudioStream" uid="uid://bdu0sxw8iwlpk" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav" id="1_4se7a"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
 [ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
 [ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
@@ -211,7 +210,8 @@ func _ready() -> void:
 [node name="Tres-2b" type="Node2D"]
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
-default_music_WAV = ExtResource("1_4se7a")
+TOKONEMU_MUSIC = "res://Game Folder/game_assets/Stages/0 - ProtoZone/Music/protozone_theme.wav"
+MIDDOYU_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
 player_starting_position = Vector2(320, 288)
 
 [node name="Score" parent="." instance=ExtResource("2_rnqcw")]

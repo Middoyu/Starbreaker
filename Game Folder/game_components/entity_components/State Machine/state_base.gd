@@ -24,7 +24,6 @@ func cancel_action_to_death():
 				i.stop()
 
 
-
 func enter():
 	pass
 

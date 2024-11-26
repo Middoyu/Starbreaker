@@ -38,9 +38,3 @@ static func is_mouse_hidden(_is_mouse_hidden : bool): # Hides the mouse if value
 
 func get_mouse_pos():
 	return global.current_stage.get_global_mouse_position()
-
-func display_damage(amount : int, target : Node2D):
-	var damagedisplay = load("res://Game Folder/game_components/global_components/Damage Display/DamageDisplay.tscn") as PackedScene
-	var dd_int = damagedisplay.instantiate() as Label
-	dd_int.text = str(amount)
-	target.add_child(dd_int)

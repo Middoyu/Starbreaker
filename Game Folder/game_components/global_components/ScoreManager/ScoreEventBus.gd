@@ -35,3 +35,9 @@ func _physics_process(delta: float) -> void:
 func _process(_delta: float) -> void:
 	if is_instance_valid(score_display):
 		score_display.text = str(score)
+
+func display_damage(amount : int, target : Node2D):
+	var damagedisplay = load("res://Game Folder/game_components/global_components/Damage Display/DamageDisplay.tscn") as PackedScene
+	var dd_int = damagedisplay.instantiate() as Label
+	dd_int.text = str(amount)
+	target.add_child(dd_int)

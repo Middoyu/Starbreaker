@@ -1,10 +1,14 @@
 extends Node
 
 
+# Music Options
+@export_enum("Middoyu", "Tokonemu") var ost_selection := "Tokonemu"
+
 
 var screenshake_enabled : bool = true
 var extra_vfx : bool = true
 var bloom = 0.5
+var screen_flash : bool = true
 
 var displaydamage_enabled : bool = false
 

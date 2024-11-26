@@ -119,8 +119,6 @@ func area_entered(area: Area2D) -> void:
 
 func take_damage(colliding_hitbox : Databox):
 	var damage_taken = colliding_hitbox.damage
-	if is_locked_in:
-		damage_taken *= 1.5
 	health = clamp(health - damage_taken, 0, max_health)
 	calculate_knockback(colliding_hitbox)
 	if !parent.has_method("on_parent_hit"):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=217 format=3 uid="uid://dfepk5fmqyutd"]
+[gd_scene load_steps=216 format=3 uid="uid://dfepk5fmqyutd"]
 
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/death.png" id="2_3ivxn"]
@@ -6,31 +6,34 @@
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_lgqps"]
 [ext_resource type="Texture2D" uid="uid://0giwyh1og78x" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/hit.png" id="2_vrino"]
 [ext_resource type="Texture2D" uid="uid://cipnnf6ne6or4" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/spawn.png" id="3_kvhsi"]
-[ext_resource type="Script" path="res://Game Folder/game_components/entity_components/State Machine/state_base.gd" id="7_hkllg"]
 
 [sub_resource type="GDScript" id="GDScript_vvde2"]
 script/source = "extends Enemy
+#region Nodes
 @onready var hurtbox: Databox = $Hurtbox
 @onready var hitbox: Databox = $Hitbox
 @onready var sprite: AnimatedSprite2D = $Sprite
 @onready var state_machine = $StateMachine
+#endregion
+@export var movement_speed = 4000.0
 
 func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 #region Interaction Handlers
 func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
-	score_event.update_score(roundi(damage_taken))
 	events.enemy_damaged.emit(self)
-	utility.display_damage(damage_taken, self)
+	score_event.update_score(OnHit_score)
+	score_event.display_damage(OnHit_score, self)
+	
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 
 func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
-	score_event.update_score(roundi(damage_taken))
 	events.enemy_killed.emit(self)
-	utility.display_damage(damage_taken, self)
+	score_event.update_score(OnDeath_score)
+	score_event.display_damage(OnDeath_score, self)
+	
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
-	sprite.rotation -= global_position.angle_to_point(global.player.global_position)
 
 func pteam_hurtbox_entered(area):
 	area.take_damage(hitbox)
@@ -1483,13 +1486,14 @@ script/source = "extends State
 func enter():
 	parent.hurtbox.is_disabled = true
 	parent.hitbox.is_disabled = true
+	
 	sprite.play(\"spawn\")
 	await sprite.animation_finished
-	Transistioned.emit(self, \"chase\")
-
-func exit():
+	
 	parent.hurtbox.is_disabled = false
 	parent.hitbox.is_disabled = false
+	
+	Transistioned.emit(self, \"chase\")
 "
 
 [sub_resource type="GDScript" id="GDScript_5wiu6"]
@@ -1511,7 +1515,7 @@ func make_path():
 
 func physics_update(_delta):
 	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
-	var intended_velocity = dir * 3950 * _delta
+	var intended_velocity = dir * parent.movement_speed * _delta
 	pathfinding.set_velocity(intended_velocity)
 	make_path()
 
@@ -1526,6 +1530,7 @@ script/source = "extends State
 
 func enter():
 	sprite.offset = Vector2(1, 0)
+	
 	sprite.stop()
 	sprite.play(\"hit\")
 
@@ -1540,36 +1545,41 @@ func _on_hurtbox_is_taking_knockback(duration: float) -> void:
 [sub_resource type="GDScript" id="GDScript_2nrcc"]
 resource_name = "death_state"
 script/source = "extends State
-@onready var camera = global.camera as juicycamera_component
 
 func enter():
-	sprite.rotate(randi_range(-180, 180))
 	parent.hurtbox.queue_free()
 	parent.hitbox.queue_free()
+	
+	sprite.rotate(randi_range(-180, 180))
+	sprite.rotation -= parent.global_position.angle_to_point(global.player.global_position)
+	
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sfx_death.ogg\", -6, true)
+	
 	sprite.stop()
 	sprite.play(\"death\")
-	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sfx_death.ogg\", -12, true)
+	
 	await sprite.animation_finished
+	
 	parent.queue_free()
 
-func update(_delta):
+func physics_update(_delta):
 	parent.velocity = Vector2.ZERO
 "
 
 [node name="Enemy" type="CharacterBody2D"]
 motion_mode = 1
 script = SubResource("GDScript_vvde2")
-
-[node name="Pathfinding" type="NavigationAgent2D" parent="."]
-avoidance_enabled = true
-debug_enabled = true
+OnHit_score = 500
+OnDeath_score = 1000
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"hit"
+animation = &"chase"
 autoplay = "chase"
-frame = 59
-frame_progress = 1.0
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_3n1ei")
+disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("2_7osdy")
@@ -1591,6 +1601,10 @@ knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_el4kx")
+
+[node name="Pathfinding" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+debug_enabled = true
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("2_lgqps")]
 parent = NodePath("..")
@@ -1618,14 +1632,9 @@ script = SubResource("GDScript_2nrcc")
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 
-[node name="shoot" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
-script = ExtResource("7_hkllg")
-parent = NodePath("../..")
-sprite = NodePath("../../Sprite")
-
-[connection signal="velocity_computed" from="Pathfinding" to="StateMachine/chase" method="pathfinding_velocity_computed"]
 [connection signal="sprite_frames_changed" from="Sprite" to="StateMachine/hit" method="sprite_frames_changed"]
 [connection signal="is_taking_knockback" from="Hurtbox" to="StateMachine/hit" method="_on_hurtbox_is_taking_knockback"]
 [connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
 [connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
 [connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="velocity_computed" from="Pathfinding" to="StateMachine/chase" method="pathfinding_velocity_computed"]

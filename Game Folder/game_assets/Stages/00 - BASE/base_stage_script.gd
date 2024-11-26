@@ -1,18 +1,43 @@
 extends Node2D
 class_name StageBase
 
-const LVL_MANAGER = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/lvl_manager.tscn")
+# Collisions & Obstacles
 const WALL_COLLISIONS = preload("res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls/wall_collisions.tscn")
 
-# Music variables
-@export var default_music_WAV : AudioStreamWAV
-@export var hardmode_music_WAV : AudioStreamWAV
+
+# Music
 @onready var music_player = AudioStreamPlayer.new()
 var audio_time = null
 
+@export var TOKONEMU_MUSIC = ""
+@export var MIDDOYU_MUSIC = ""
+
+func load_stage_theme(): # Picks the song based on the OST Selection.
+	match options.ost_selection:
+		"Middoyu":
+			#Insert Hardmode Code
+			load_music_player(load(MIDDOYU_MUSIC) as AudioStreamWAV)
+		"Tokonemu":
+			#Insert Hardmode Code
+			load_music_player(load(TOKONEMU_MUSIC) as AudioStreamWAV)
+
+func load_music_player(loaded_music : AudioStreamWAV): # Creates a global music player to play the stage music on.
+	global.music_player = music_player
+	self.add_child(music_player)
+	music_player.stream = loaded_music
+	music_player.play()
+
+
+
+
+
+
+
+
+
 # Enemy spawner variables
 @export var enemy_list : Dictionary = {
-	"EnemyScene": "res://Game Folder/game_assets/Enemies/Test_Enemy/enemy.tscn"
+	"EnemyScene": "res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn"
 }
 @export var enemy_spawnpoint_array : PackedVector2Array
 @onready var enemy_spawn_timer = Timer.new()
@@ -30,12 +55,10 @@ func add_wall_collision():
 	add_child(i)
 
 func start():
+	load_stage_theme()
 	add_wall_collision()
 	stage_started = true
 	global.player.global_position = player_starting_position
-	music_setup()
-	var i = LVL_MANAGER
-	i.instantiate()
 	global.current_stage = self
 
 func _ready() -> void:
@@ -43,8 +66,8 @@ func _ready() -> void:
 	pass
 
 func _process(_delta: float) -> void:
-	if is_instance_valid(default_music_WAV):
-		audio_time = music_player.get_playback_position()
+	#audio_time = music_player.get_playback_position()
+	pass
 
 func mainloop_setup():
 	add_child(enemy_spawn_timer)
@@ -76,11 +99,3 @@ func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO, extra
 func sync_music():
 	if audio_time != null:
 		audio_time = round(audio_time * 10) / 10
-
-func music_setup():
-	if is_instance_valid(default_music_WAV):
-		music_player.stream = default_music_WAV
-		music_player.volume_db = -14
-		global.music_player = music_player
-		self.add_child(music_player)
-		music_player.play()

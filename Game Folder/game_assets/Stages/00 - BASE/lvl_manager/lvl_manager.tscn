@@ -1,14 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://dluss20quhs7j"]
+[gd_scene load_steps=2 format=3 uid="uid://cjce8owj17wr7"]
 
 [sub_resource type="GDScript" id="GDScript_p14kw"]
 resource_name = "level_manager"
 script/source = "extends Node
 signal xp_gained(amount)
 signal level_up()
-
-@onready var current_xp = 0.0
-@onready var current_level = 0
-@onready var xp_until_lvlup = 100
 
 @onready var score_timer = Timer.new()
 
@@ -21,17 +17,6 @@ func _ready() -> void:
 	add_child(score_timer)
 	score_timer.connect(\"timeout\", update_score_per_sec)
 
-func add_xp(amount):
-	current_xp += amount
-	xp_gained.emit(amount)
-
-func _process(_delta: float) -> void:
-	if current_xp >= xp_until_lvlup:
-		level_up.emit()
-		xp_until_lvlup *= 2
-		global.player_gui.level_progressbar.max_value = xp_until_lvlup
-		global.player_gui.level_progressbar.value = 0
-		current_xp = 0
 
 func update_score_per_sec():
 	if is_instance_valid(global.current_stage):

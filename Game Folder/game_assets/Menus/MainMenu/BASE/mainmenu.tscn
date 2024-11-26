@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=24 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://ywmkyecy71eq" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu.ogg" id="1_stns8"]
 [ext_resource type="AudioStream" uid="uid://nh5h3dkqfcca" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Starbreaker - Menu (Options ver).ogg" id="2_25itb"]
@@ -138,6 +138,23 @@ func _physics_process(delta: float) -> void:
 			options.screenshake_enabled = false
 "
 
+[sub_resource type="GDScript" id="GDScript_xuveb"]
+script/source = "extends CustomButton
+
+func _ready() -> void:
+	button_pressed = options.screen_flash
+
+func _physics_process(delta: float) -> void:
+	super(delta)
+	match button_pressed:
+		true:
+			text = \"Screen-Flashing : ON\"
+			options.screen_flash = true
+		false:
+			text = \"Screen-Flashing : OFF\"
+			options.screen_flash = false
+"
+
 [sub_resource type="GDScript" id="GDScript_faceb"]
 script/source = "extends CustomButton
 
@@ -202,13 +219,15 @@ func _on_value_changed(value: float) -> void:
 
 [sub_resource type="GDScript" id="GDScript_w84vj"]
 script/source = "extends HSlider
+@onready var environment: WorldEnvironment = $\"../../../Environment\"
 
 
 func _ready() -> void:
-	value = $\"../../../Environment\".environment.glow_bloom
+	environment.environment.glow_bloom = options.bloom
+	value = environment.environment.glow_bloom
 
 func value_changed(value: float) -> void:
-	$\"../../../Environment\".environment.glow_bloom = value
+	environment.environment.glow_bloom = value
 	options.bloom = value
 "
 
@@ -446,6 +465,14 @@ shortcut_feedback = false
 shortcut_in_tooltip = false
 text = "Screenshake : "
 script = SubResource("GDScript_a4pt7")
+
+[node name="Screen Flashing" type="Button" parent="Options/OptionsContainer"]
+layout_mode = 2
+theme = ExtResource("3_mm2qm")
+toggle_mode = true
+button_pressed = true
+text = "Screen Flashing"
+script = SubResource("GDScript_xuveb")
 
 [node name="Extra Particles" type="Button" parent="Options/OptionsContainer"]
 layout_mode = 2
