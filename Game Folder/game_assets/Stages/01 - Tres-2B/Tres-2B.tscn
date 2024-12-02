@@ -1,180 +1,22 @@
-[gd_scene load_steps=14 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=13 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
 [ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
 [ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
-[ext_resource type="PackedScene" uid="uid://ujg1l8k67orr" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Crosshair/BASE/crosshair.tscn" id="6_n0ddg"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="7_ld0jn"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
-@onready var black: ColorRect = $Black
-
-func start():
-	global.is_pausable = true
-	super()
-	var i = create_tween().bind_node(black).set_ease(Tween.EASE_IN_OUT)
-	i.tween_property(black, \"color\", Color(0,0,0,0), 0.5)
-	await i.finished
-	black.queue_free()
-	global.player.is_actionable = true
-
-# Indicates whether enemies are currently spawning
-var is_spawning = true
-
-# Handles the spawning of enemies based on the provided pattern
-func spawn_enemies_pattern(pattern: int) -> void:
-	# Set is_spawning to false to prevent immediate respawning
-	is_spawning = false
-	
-	match pattern:
-		0:
-			# Spawn enemies at a specific position with a given scene
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(128, -16))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(320, -16))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(512, -16))
-		1:
-			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", Vector2(320, -16))
-			spawn_enemies(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
-		2:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(-16, 192))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", Vector2(320, 376))
-		3:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(512, 64), -90, -0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(128, 64), 90, 0.3)
-		4:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(656, 192))
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\", Vector2(-16, 192))
-		5:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(256, 16), 180, 0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(384, 16), 180, -0.3)
-		6:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(624, 192), 90, 0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(16, 192), -90, -0.3)
-		7:
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(624, 192), 90, 0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(16, 192), -90, -0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(256, 16), 0, -0.3)
-			spawn_enemies(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", Vector2(384, 16), 0, 0.3)
-	
-	# Wait for 0.15 seconds before allowing spawning again
-	await get_tree().create_timer(0.15, true, true, false).timeout
-	
-	# Re-enable spawning
-	is_spawning = true
-
-# Called every physics frame
-func _physics_process(delta: float) -> void:
-	sync_music()
 
 func _ready() -> void:
-	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn\")
-	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\")
-	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn\")
-	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\")
-	cache.load_in_cache(\"res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn\")
-	cache.load_in_cache(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn\")
-	if options.extra_vfx == false:
-		$Background.queue_free()
-		$Gas_Background.queue_free()
-		$Clouds_Background.queue_free()
-	start()
+	start_stage()
 
-
-# Syncs music timing with enemy spawning
-func sync_music() -> void:
-	super()
-	
-	if is_spawning:
-		match audio_time:
-			2.6:
-				spawn_enemies_pattern(0)
-			5.2:
-				spawn_enemies_pattern(1)
-			7.9:
-				spawn_enemies_pattern(2)
-			10.0:
-				spawn_enemies_pattern(4)
-			13.0:
-				spawn_enemies_pattern(0)
-			15.7:
-				spawn_enemies_pattern(2)
-			18.3:
-				spawn_enemies_pattern(3)
-			21.0:
-				spawn_enemies_pattern(5)
-			26.0:
-				spawn_enemies_pattern(1)
-			29.0:
-				spawn_enemies_pattern(6)
-			31.0:
-				spawn_enemies_pattern(0)
-			33.8:
-				spawn_enemies_pattern(2)
-			36.5:
-				spawn_enemies_pattern(6)
-			37.0:
-				spawn_enemies_pattern(1)
-			39.0:
-				spawn_enemies_pattern(3)
-			41.0:
-				spawn_enemies_pattern(0)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(0)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(1)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(0)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(2)
-			49.4:
-				spawn_enemies_pattern(6)
-			52.0:
-				spawn_enemies_pattern(3)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(6)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(1)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(0)
-				await get_tree().create_timer(0.5, false, true, false).timeout
-				spawn_enemies_pattern(2)
-			59.8:
-				spawn_enemies_pattern(7)
-			65.0:
-				spawn_enemies_pattern(0)
-			67.5:
-				spawn_enemies_pattern(5)
-			72.5:
-				spawn_enemies_pattern(2)
-			75.4:
-				spawn_enemies_pattern(1)
-			80.6:
-				spawn_enemies_pattern(1)
-			83.1:
-				# Begin rapid spawns.
-				$Rapid_Spawning_End.start()
-			124.7:
-				$Rapid_Spawning_End.stop()
-				pass
-			134.0:
-				global.main_manager.gameover_sequence(false)
-	else:
-		# No action needed when not spawning
-		pass
-
-
-func rapid_spawning() -> void:
-	spawn_enemies_pattern(randi_range(0, 4))
+# Called every frame.
+func _process(delta: float) -> void:
+	super(delta)
+	sync_music()
 "
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_1nr6p"]
-vertices = PackedVector2Array(694.109, 437.813, -53.8828, 438.008, -54.0234, -117.977, 693.969, -118.18)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-64.0339, -127.983, 703.966, -128.187, 704.119, 447.813, -63.8813, 448.017, -64.0339, -127.983)])
 
 [sub_resource type="Gradient" id="Gradient_e8xxh"]
 interpolation_mode = 2
@@ -190,6 +32,11 @@ seamless = true
 seamless_blend_skirt = 1.0
 color_ramp = SubResource("Gradient_e8xxh")
 noise = SubResource("FastNoiseLite_s3au4")
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1nr6p"]
+vertices = PackedVector2Array(694.109, 437.813, -53.8828, 438.008, -54.0234, -117.977, 693.969, -118.18)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-64.0339, -127.983, 703.966, -128.187, 704.119, 447.813, -63.8813, 448.017, -64.0339, -127.983)])
 
 [sub_resource type="Environment" id="Environment_t5cpe"]
 background_mode = 3
@@ -208,18 +55,70 @@ func _ready() -> void:
 "
 
 [node name="Tres-2b" type="Node2D"]
+editor_description = "Stage 1 Of Starbreaker, it's suppose to be simple and easy for beginners to get through without much hassle but have a learning curve to get the S rank."
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
-TOKONEMU_MUSIC = "res://Game Folder/game_assets/Stages/0 - ProtoZone/Music/protozone_theme.wav"
-MIDDOYU_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
-player_starting_position = Vector2(320, 288)
-
-[node name="Score" parent="." instance=ExtResource("2_rnqcw")]
-
-[node name="Nav" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_1nr6p")
-
-[node name="Player" parent="." instance=ExtResource("2_8fgom")]
+TOKONEMU_STAGE_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
+TOKONEMU_BOSS_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
+spawn_times = {
+0: 2.6,
+1: 5.2,
+2: 7.9,
+3: 10.0,
+4: 13.0,
+5: 15.7,
+6: 18.3,
+7: 21.0,
+8: 26.0,
+9: 29.0,
+10: 31.0,
+11: 33.8,
+12: 36.5,
+13: 37.0,
+14: 39.0,
+15: 41.0,
+16: 49.4,
+17: 52.0,
+18: 59.8,
+19: 65.0,
+20: 67.5,
+21: 72.5,
+22: 75.4,
+23: 80.6,
+24: 83.1,
+25: 124.7,
+26: 134.0
+}
+spawn_patterns = {
+0: 0.0,
+1: 0,
+2: 0,
+3: 0,
+4: 0,
+5: 0,
+6: 0.0,
+7: 0.0,
+8: 0.0,
+9: 0.0,
+10: 0.0,
+11: 0.0,
+12: 0.0,
+13: 0.0,
+14: 0.0,
+15: 0.0,
+16: 0.0,
+17: 0.0,
+18: 0.0,
+19: 0.0,
+20: 0.0,
+21: 0.0,
+22: 0.0,
+23: 0.0,
+24: 0.0,
+25: 0.0,
+26: 1.0
+}
+player_starting_position = Vector2(320, 290)
 
 [node name="Camera" parent="." instance=ExtResource("1_3cjne")]
 position = Vector2(320, 181)
@@ -229,7 +128,14 @@ limit_right = 660
 limit_bottom = 380
 position_smoothing_speed = 109.5
 
-[node name="Background" type="Parallax2D" parent="."]
+[node name="Player" parent="." instance=ExtResource("2_8fgom")]
+
+[node name="Score" parent="." instance=ExtResource("2_rnqcw")]
+
+[node name="VFX & Backgrounds" type="Node2D" parent="."]
+visible = false
+
+[node name="Background" type="Parallax2D" parent="VFX & Backgrounds"]
 z_index = -4096
 scroll_scale = Vector2(0, 0.5)
 repeat_size = Vector2(1166, 720)
@@ -237,47 +143,46 @@ autoscroll = Vector2(0, 175)
 repeat_times = 100
 ignore_camera_scroll = true
 
-[node name="Sprite" type="Sprite2D" parent="Background"]
+[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Background"]
 self_modulate = Color(1, 0, 0, 0.054902)
 position = Vector2(320, 184)
 scale = Vector2(2, 2)
 texture = ExtResource("4_npuxh")
 
-[node name="Gas_Background" type="Parallax2D" parent="."]
+[node name="Gas_Background" type="Parallax2D" parent="VFX & Backgrounds"]
 z_index = -4096
 scroll_scale = Vector2(0, 0.5)
 repeat_size = Vector2(512, 512)
 autoscroll = Vector2(0, 87)
 repeat_times = 5
 
-[node name="Sprite" type="Sprite2D" parent="Gas_Background"]
+[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Gas_Background"]
 self_modulate = Color(1, 0, 0, 0.054902)
 z_index = -4090
 position = Vector2(320, 184)
 scale = Vector2(2, 2)
 texture = SubResource("NoiseTexture2D_que5d")
 
-[node name="Clouds_Background" type="Parallax2D" parent="."]
+[node name="Clouds_Background" type="Parallax2D" parent="VFX & Backgrounds"]
 z_index = -4093
 scroll_scale = Vector2(0, 0.5)
 repeat_size = Vector2(512, 512)
 autoscroll = Vector2(0, 43)
 repeat_times = 5
 
-[node name="Sprite" type="Sprite2D" parent="Clouds_Background"]
+[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Clouds_Background"]
 self_modulate = Color(1, 1, 1, 0.054902)
 z_index = -4090
 position = Vector2(320.049, 183.915)
 scale = Vector2(2, 2)
 texture = SubResource("NoiseTexture2D_que5d")
 
+[node name="Navigation Space" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_1nr6p")
+
 [node name="Graphics & Tone" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_t5cpe")
 script = SubResource("GDScript_rp1j6")
-
-[node name="Rapid_Spawning_End" type="Timer" parent="."]
-process_callback = 0
-wait_time = 0.75
 
 [node name="Black" type="ColorRect" parent="."]
 z_index = 4096
@@ -292,8 +197,4 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Crosshair" parent="." instance=ExtResource("6_n0ddg")]
-
 [node name="HUD" parent="." instance=ExtResource("7_ld0jn")]
-
-[connection signal="timeout" from="Rapid_Spawning_End" to="." method="rapid_spawning"]

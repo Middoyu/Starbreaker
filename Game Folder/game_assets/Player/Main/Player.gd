@@ -190,7 +190,7 @@ func death_sequence(finalblow_idenity):
 		if i is Projectile:
 			if i != finalblow_idenity:
 				i.queue_free()
-	global.crosshair.queue_free()
+	#global.crosshair.queue_free()
 	
 	# Repositions the black screen to cover the camera.
 	game_over_black.show()

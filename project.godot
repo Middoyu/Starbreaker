@@ -14,8 +14,7 @@ config/name="STARBREAKER"
 config/tags=PackedStringArray("starbreaker")
 run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-run/max_fps=240
-run/low_processor_mode_sleep_usec=11195
+run/max_fps=320
 boot_splash/show_image=false
 boot_splash/use_filter=false
 
