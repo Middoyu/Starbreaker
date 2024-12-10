@@ -62,6 +62,8 @@ stream_0/stream = ExtResource("1_bqieh")
 
 [node name="Primary" type="Node"]
 script = SubResource("GDScript_4ckef")
+right_pos = Vector2(2, -8)
+left_pos = Vector2(2, 8)
 
 [node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamRandomizer_pnshu")

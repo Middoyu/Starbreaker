@@ -2,7 +2,7 @@ class_name Projectile
 extends CharacterBody2D
 
 @onready var parent = Node2D
-@export var hitbox : Databox
+@export var hitbox : HitboxComponent
 @onready var view_detector : VisibleOnScreenNotifier2D = VisibleOnScreenNotifier2D.new()
 
 func _ready():

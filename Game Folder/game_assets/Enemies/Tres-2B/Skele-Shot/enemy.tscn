@@ -1,17 +1,21 @@
-[gd_scene load_steps=216 format=3 uid="uid://dfepk5fmqyutd"]
+[gd_scene load_steps=219 format=3 uid="uid://dfepk5fmqyutd"]
 
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/death.png" id="2_3ivxn"]
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_7osdy"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_lgqps"]
 [ext_resource type="Texture2D" uid="uid://0giwyh1og78x" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/hit.png" id="2_vrino"]
 [ext_resource type="Texture2D" uid="uid://cipnnf6ne6or4" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/spawn.png" id="3_kvhsi"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_alwm2"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="6_w1j0l"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="8_ueg8n"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="9_sjgo5"]
 
 [sub_resource type="GDScript" id="GDScript_vvde2"]
 script/source = "extends Enemy
 #region Nodes
-@onready var hurtbox: Databox = $Hurtbox
-@onready var hitbox: Databox = $Hitbox
+@onready var hurtbox: HurtboxComponent = $HurtboxComponent
+@onready var hitbox: HitboxComponent = $HitboxComponent
+
 @onready var sprite: AnimatedSprite2D = $Sprite
 @onready var state_machine = $StateMachine
 #endregion
@@ -21,24 +25,15 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 #region Interaction Handlers
-func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
-	events.enemy_damaged.emit(self)
-	score_event.update_score(OnHit_score)
-	score_event.display_damage(OnHit_score, self)
-	
+func on_hit(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 
-func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
-	events.enemy_killed.emit(self)
-	score_event.update_score(OnDeath_score)
-	score_event.display_damage(OnDeath_score, self)
-	
+func on_death(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
-
-func pteam_hurtbox_entered(area):
-	area.take_damage(hitbox)
 #endregion
 "
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0qntg"]
 atlas = ExtResource("1_vsosa")
@@ -1475,8 +1470,6 @@ animations = [{
 "speed": 60.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_el4kx"]
 radius = 9.0
 
@@ -1537,7 +1530,7 @@ func enter():
 func exit():
 	sprite.offset = Vector2(0, 0)
 
-func _on_hurtbox_is_taking_knockback(duration: float) -> void:
+func is_taking_knockback(duration: float) -> void:
 	await get_tree().create_timer(duration * 1.2).timeout
 	Transistioned.emit(self, \"chase\")
 "
@@ -1547,8 +1540,10 @@ resource_name = "death_state"
 script/source = "extends State
 
 func enter():
-	parent.hurtbox.queue_free()
-	parent.hitbox.queue_free()
+	if parent.hurtbox:
+		parent.hurtbox.queue_free()
+	if parent.hitbox:
+		parent.hitbox.queue_free()
 	
 	sprite.rotate(randi_range(-180, 180))
 	sprite.rotation -= parent.global_position.angle_to_point(global.player.global_position)
@@ -1566,40 +1561,47 @@ func physics_update(_delta):
 	parent.velocity = Vector2.ZERO
 "
 
-[node name="Enemy" type="CharacterBody2D"]
+[node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 motion_mode = 1
 script = SubResource("GDScript_vvde2")
 OnHit_score = 500
 OnDeath_score = 1000
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("8_ueg8n")
+
+[node name="KnockbackComponent" type="Node2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("9_sjgo5")
+parent = NodePath("..")
+is_knockback_forced_upwards = false
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_3n1ei")
+disabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
 animation = &"chase"
 autoplay = "chase"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["enemy"]]
+script = ExtResource("5_alwm2")
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+knockback = NodePath("../KnockbackComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_3n1ei")
 disabled = true
 
-[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("2_7osdy")
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
+script = ExtResource("6_w1j0l")
 parent = NodePath("..")
-team_affiliation = "EnemyTeam"
-databox_type = "Hurtbox"
-is_knockback_forced_upwards = false
-
-[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
-shape = SubResource("CircleShape2D_3n1ei")
-
-[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("2_7osdy")
-parent = NodePath("..")
-team_affiliation = "EnemyTeam"
-damage = 16.7
-knockback_amount = 45000.0
+damage = -25.0
+knockback_amount = 1115.0
 knockback_stun_duration = 0.3
 
-[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
 shape = SubResource("CircleShape2D_el4kx")
 
 [node name="Pathfinding" type="NavigationAgent2D" parent="."]
@@ -1632,9 +1634,8 @@ script = SubResource("GDScript_2nrcc")
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="health_modified" from="HealthComponent" to="." method="on_hit"]
+[connection signal="is_taking_knockback" from="KnockbackComponent" to="StateMachine/hit" method="is_taking_knockback"]
 [connection signal="sprite_frames_changed" from="Sprite" to="StateMachine/hit" method="sprite_frames_changed"]
-[connection signal="is_taking_knockback" from="Hurtbox" to="StateMachine/hit" method="_on_hurtbox_is_taking_knockback"]
-[connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
-[connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
-[connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]
 [connection signal="velocity_computed" from="Pathfinding" to="StateMachine/chase" method="pathfinding_velocity_computed"]

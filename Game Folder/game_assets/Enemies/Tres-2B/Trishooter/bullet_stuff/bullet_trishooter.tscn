@@ -15,13 +15,6 @@ func timeout() -> void:
 	if is_instance_valid(global.player):
 		look_at(global.player.global_position)
 		speed *= 5
-
-func pteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(hitbox)
-
-func eteam_hurtbox_entered(area: Databox) -> void:
-	if hitbox.team_affiliation == \"PlayerTeam\":
-		area.take_damage(hitbox)
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1tab7"]

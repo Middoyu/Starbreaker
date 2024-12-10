@@ -31,7 +31,8 @@ const MVT_PARTICLES = preload("res://Game Folder/game_assets/Player/VFX/Movement
 #endregion
 
 #region Collision Variables
-@onready var hurtbox: Databox = $PlayerHurtbox
+@onready var hurtbox: HurtboxComponent = $HurtboxComponent
+
 #endregion
 
 #region Weapons
@@ -110,56 +111,6 @@ func movement_handler(delta):
 		velocity = direction * movement_speed * delta
 	move_and_slide()
 
-func on_parent_hit(colliding_hitbox, damage_taken) -> void:
-	# If they have a parent connected to the hitbox.
-	if colliding_hitbox.parent:
-		var attacker = colliding_hitbox.parent
-		# Can insert custom hints on the death screen.
-		print_debug(attacker)
-		# Damage taken, can modify if wanted.
-		print_debug(damage_taken)
-	
-	# Resets the player's animation before starting the hit animation.
-	player_sprite.stop()
-	player_sprite.play("hit")
-	
-	# Gives the player invincibility time.
-	invincibility_timer.start(hit_invincibility_duration)
-	
-	# Audio effects.
-	normal_hit.play()
-	
-	# Visual effects.
-	if global.camera:
-		var camera = global.camera as juicycamera_component
-		camera.shake(25.0)
-		camera.freezeframe(0.01, 0.5)
-		camera.flash()
-	
-	# Waits for the player sprite to finish it's animation before returning to idle.
-	await player_sprite.animation_finished
-	player_sprite.play("idle")
-
-func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
-	# Zero out the player.
-	player_sprite.stop()
-	hurtbox.is_disabled = true
-	invincibility_override = true
-	is_actionable = false
-	is_moveable = false
-	velocity = Vector2.ZERO
-	hurtbox.knockback_direction = Vector2.ZERO
-	hurtbox.knockback_amount = 0.0
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	
-	
-	
-	
-	
-	
-	
-	
-	death_sequence(colliding_hitbox)
 
 
 func death_sequence(finalblow_idenity):
@@ -218,6 +169,49 @@ func death_sequence(finalblow_idenity):
 	global.main_manager.gameover_sequence()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
+
+func on_hit(damage_taken, colliding_hitbox) -> void:
+	# If they have a parent connected to the hitbox.
+	if colliding_hitbox.parent:
+		var attacker = colliding_hitbox.parent
+		# Can insert custom hints on the death screen.
+		print_debug(attacker)
+		# Damage taken, can modify if wanted.
+		print_debug(damage_taken)
+	
+	# Resets the player's animation before starting the hit animation.
+	player_sprite.stop()
+	player_sprite.play("hit")
+	
+	# Gives the player invincibility time.
+	invincibility_timer.start(hit_invincibility_duration)
+	
+	# Audio effects.
+	normal_hit.play()
+	
+	# Visual effects.
+	if global.camera:
+		var camera = global.camera as juicycamera_component
+		camera.shake(25.0)
+		camera.freezeframe(0.01, 0.5)
+		camera.flash()
+	
+	# Waits for the player sprite to finish it's animation before returning to idle.
+	await player_sprite.animation_finished
+	player_sprite.play("idle")
+
+
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	# Zero out the player.
+	player_sprite.stop()
+	hurtbox.is_disabled = true
+	invincibility_override = true
+	is_actionable = false
+	is_moveable = false
+	velocity = Vector2.ZERO
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	
+	death_sequence(colliding_hitbox)
 
 func invincibility_check():
 	if invincibility_override == false:

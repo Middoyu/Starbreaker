@@ -1,10 +1,11 @@
-[gd_scene load_steps=190 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=191 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_shqxk"]
 [ext_resource type="Texture2D" uid="uid://bga6dk4a4ifp5" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_hit_42x37_42x37.png" id="3_ahd3f"]
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="4_42uin"]
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="4_sp8mo"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_g3r5p"]
 [ext_resource type="AudioStream" uid="uid://c7b1r3nn8qhhg" path="res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav" id="6_fa8j1"]
 [ext_resource type="AudioStream" uid="uid://frfci036135v" path="res://Game Folder/game_assets/Player/SFX/Hits/final_hit.wav" id="7_uvb5w"]
 [ext_resource type="AudioStream" uid="uid://d37w35fnpn37j" path="res://Game Folder/game_assets/Player/SFX/Hits/dying.wav" id="8_5l6dk"]
@@ -1309,7 +1310,7 @@ _data = {
 "RESET": SubResource("Animation_gqclk")
 }
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 z_index = 4096
 motion_mode = 1
 script = ExtResource("1_5vafy")
@@ -1317,16 +1318,18 @@ max_movement_speed = 12250.0
 acceleration = 127500.0
 friction = 127500.0
 
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_shqxk")
+
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("CircleShape2D_23pmm")
-disabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_wirgs")
-animation = &"death"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="DeathEffects" type="GPUParticles2D" parent="Sprite"]
@@ -1337,14 +1340,12 @@ process_material = SubResource("ParticleProcessMaterial_rjiyg")
 one_shot = true
 fixed_fps = 60
 
-[node name="PlayerHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("4_42uin")
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health") groups=["player"]]
+script = ExtResource("5_g3r5p")
 parent = NodePath("..")
-team_affiliation = "PlayerTeam"
-databox_type = "Hurtbox"
-is_knockback_forced_upwards = false
+health = NodePath("../HealthComponent")
 
-[node name="Collision" type="CollisionShape2D" parent="PlayerHurtbox"]
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_rq3p4")
 
 [node name="GameOverBlack" type="ColorRect" parent="."]
@@ -1386,3 +1387,6 @@ stream = ExtResource("8_5l6dk")
 volume_db = -6.0
 mix_target = 1
 bus = &"SFX"
+
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="health_modified" from="HealthComponent" to="." method="on_hit"]

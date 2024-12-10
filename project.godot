@@ -68,6 +68,11 @@ folder_colors={
 
 import/blender/enabled=false
 
+[global_group]
+
+player=""
+enemy=""
+
 [importer_defaults]
 
 animation_library={

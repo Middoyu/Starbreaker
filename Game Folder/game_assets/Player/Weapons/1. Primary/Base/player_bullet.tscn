@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://ln88vbvxsas4"]
 
-[ext_resource type="Texture2D" uid="uid://cnm0sw6ir0dyf" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet.png" id="1_4t60k"]
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_ae56v"]
+[ext_resource type="Texture2D" uid="uid://bxu4vpyreyq67" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet1.png" id="1_lm31s"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_xfx0c"]
 [ext_resource type="PackedScene" uid="uid://dlq8my4bamdlh" path="res://Game Folder/game_assets/Player/VFX/Action Particles/Hit Particles.tscn" id="3_nso23"]
 [ext_resource type="AudioStream" uid="uid://brao2bap7hjx" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sp_hit.ogg" id="4_qh70t"]
 
@@ -26,16 +26,9 @@ script/source = "extends Projectile
 func _ready() -> void:
 	super()
 
-#region Interactions
-func eteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(hitbox)
+func area_entered(area: Area2D) -> void:
 	effects()
 	queue_free()
-
-func nteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(hitbox)
-	queue_free()
-#endregion
 
 func _physics_process(delta: float) -> void:
 	velocity = direction * speed * delta
@@ -55,8 +48,8 @@ func VFX():
 	hit_particles_2.global_position = self.global_position
 "
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_c4qqr"]
-radius = 5.09902
+[sub_resource type="CircleShape2D" id="CircleShape2D_gdh8w"]
+radius = 6.0
 
 [sub_resource type="Animation" id="Animation_se65j"]
 resource_name = "spawn-anim"
@@ -117,30 +110,32 @@ stream_0/stream = ExtResource("4_qh70t")
 [node name="test_ubullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
 motion_mode = 1
 script = SubResource("GDScript_4ywsl")
-hitbox = NodePath("Hitbox")
+hitbox = NodePath("")
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+script = ExtResource("1_xfx0c")
+parent = NodePath("..")
+damage = -35.0
+knockback_amount = -5115.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_gdh8w")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture_filter = 1
-texture = ExtResource("1_4t60k")
-
-[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("2_ae56v")
-parent = NodePath("..")
-team_affiliation = "PlayerTeam"
-damage = 33.3
-knockback_amount = -8400.0
-knockback_stun_duration = 0.3
-
-[node name="Collision" type="CollisionShape2D" parent="Hitbox"]
-shape = SubResource("CircleShape2D_c4qqr")
+texture = ExtResource("1_lm31s")
 
 [node name="Spawn_anim" type="AnimationPlayer" parent="."]
+callback_mode_process = 0
 libraries = {
 "": SubResource("AnimationLibrary_ysol4")
 }
 autoplay = "spawn-anim"
+speed_scale = 0.5
 
 [node name="Timer" type="Timer" parent="."]
+process_callback = 0
 wait_time = 0.1
 autostart = true
 
@@ -165,6 +160,5 @@ max_polyphony = 3
 bus = &"SFX"
 playback_type = 2
 
-[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
-[connection signal="NeutralTeamHurtbox_entered" from="Hitbox" to="." method="nteam_hurtbox_entered"]
+[connection signal="area_entered" from="HitboxComponent" to="." method="area_entered"]
 [connection signal="timeout" from="Timer" to="." method="timer_timeout"]

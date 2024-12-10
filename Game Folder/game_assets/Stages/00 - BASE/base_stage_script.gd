@@ -47,6 +47,7 @@ func load_stage_music(loaded_music : AudioStreamWAV): # Creates a global music p
 	self.add_child(stage_music_player, true)
 	stage_music_player.stream = loaded_music
 	stage_music_player.name = "STAGE_MUSICPLAYER"
+	stage_music_player.volume_db = -10
 
 func load_boss_music(loaded_music : AudioStreamWAV): # Creates a global music player to play the stage music on.
 	self.add_child(boss_music_player, true)
