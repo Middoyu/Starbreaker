@@ -27,8 +27,11 @@ func _ready() -> void:
 	super()
 
 func area_entered(area: Area2D) -> void:
-	effects()
-	queue_free()
+	if area.get_groups().has(\"enemy\"):
+		effects()
+		queue_free()
+	else:
+		pass
 
 func _physics_process(delta: float) -> void:
 	velocity = direction * speed * delta
@@ -107,10 +110,9 @@ random_pitch = 1.2
 streams_count = 1
 stream_0/stream = ExtResource("4_qh70t")
 
-[node name="test_ubullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
+[node name="test_ubullet" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
 script = SubResource("GDScript_4ywsl")
-hitbox = NodePath("")
 
 [node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
 script = ExtResource("1_xfx0c")

@@ -118,6 +118,7 @@ script = SubResource("GDScript_85053")
 
 [node name="GameOver_Camera" type="Camera2D" parent="."]
 offset = Vector2(0, 390)
+zoom = Vector2(3, 3)
 script = SubResource("GDScript_d3b08")
 
 [node name="GUI_Controller" type="Control" parent="."]

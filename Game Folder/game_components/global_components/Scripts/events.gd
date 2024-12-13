@@ -5,6 +5,7 @@ extends Node
 #region Player Action/Reaction Signals
 signal charge_updated(new_value)
 signal player_damaged(new_value)
+signal player_healed(new_value)
 signal player_death
 #endregion
 

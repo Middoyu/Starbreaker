@@ -1635,7 +1635,7 @@ parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 
 [connection signal="death" from="HealthComponent" to="." method="on_death"]
-[connection signal="health_modified" from="HealthComponent" to="." method="on_hit"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
 [connection signal="is_taking_knockback" from="KnockbackComponent" to="StateMachine/hit" method="is_taking_knockback"]
 [connection signal="sprite_frames_changed" from="Sprite" to="StateMachine/hit" method="sprite_frames_changed"]
 [connection signal="velocity_computed" from="Pathfinding" to="StateMachine/chase" method="pathfinding_velocity_computed"]

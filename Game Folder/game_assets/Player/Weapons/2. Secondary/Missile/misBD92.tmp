@@ -78,6 +78,9 @@ func explosion(position := Vector2.ZERO):
 	ph_spr.hide()
 	explosion_hitbox.is_disabled = false
 	wait(0.5, queue_free)
+
+func eteam_hurtbox_entered(area: Databox) -> void:
+	pass
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k43y"]

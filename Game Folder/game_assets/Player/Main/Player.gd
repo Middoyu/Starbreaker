@@ -32,6 +32,7 @@ const MVT_PARTICLES = preload("res://Game Folder/game_assets/Player/VFX/Movement
 
 #region Collision Variables
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent
+@onready var health: HealthComponent = $HealthComponent
 
 #endregion
 
@@ -96,6 +97,8 @@ func _physics_process(delta: float) -> void:
 	look_at_mouse()
 	movement_handler(delta)
 	invincibility_check()
+	if Input.is_action_just_pressed("secondary"):
+		health.modify_health(25, null)
 
 func look_at_mouse():
 	if is_moveable:
@@ -169,8 +172,8 @@ func death_sequence(finalblow_idenity):
 	global.main_manager.gameover_sequence()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-
 func on_hit(damage_taken, colliding_hitbox) -> void:
+	events.emit_signal("player_damaged", health.current_health)
 	# If they have a parent connected to the hitbox.
 	if colliding_hitbox.parent:
 		var attacker = colliding_hitbox.parent
@@ -200,6 +203,8 @@ func on_hit(damage_taken, colliding_hitbox) -> void:
 	await player_sprite.animation_finished
 	player_sprite.play("idle")
 
+func on_heal(healing_taken):
+	events.emit_signal("player_healed", health.current_health)
 
 func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	# Zero out the player.

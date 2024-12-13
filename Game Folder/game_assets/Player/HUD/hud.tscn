@@ -1,15 +1,125 @@
-[gd_scene load_steps=3 format=3 uid="uid://5lh8eipbj0c6"]
+[gd_scene load_steps=8 format=3 uid="uid://5lh8eipbj0c6"]
 
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_80i7q"]
 
-[sub_resource type="GDScript" id="GDScript_x8ion"]
-script/source = "extends Label
+[sub_resource type="GDScript" id="GDScript_i3wa4"]
+script/source = "extends Control
+@onready var health_rect_texture: TextureRect = $HealthRectTexture
+@onready var health_text: RichTextLabel = $HealthRectTexture/Health
+@onready var health_display_duration: Timer = $HealthRectTexture/HealthDisplay_Duration
 
 
-func _physics_process(delta: float) -> void:
-	if global.player:
-		text = str(global.player.hurtbox.health)
+
+func _ready() -> void:
+	health_display_duration.start(3.5)
+	health_rect_texture.self_modulate.a = 1.0
+	health_text.self_modulate.a = 1.0
+
+
+
+func healthdisplayduration_timeout() -> void:
+	$HealthRectTexture/DisplayFade.play(\"fade\")
+
+
+func healthrect_mouse_entered() -> void:
+	health_rect_texture.hide()
+
+func healthrect_mouse_exited() -> void:
+	health_rect_texture.show()
+	
 "
+
+[sub_resource type="GDScript" id="GDScript_x8ion"]
+script/source = "extends RichTextLabel
+@export var gradient = Gradient.new()
+
+
+func _ready() -> void:
+	if global.player:
+		update_health(global.player.health.maximum_health)
+		events.connect(\"player_damaged\", update_health, 1)
+		events.connect(\"player_healed\", update_health, 1)
+
+func update_health(new_health):
+	self.self_modulate.a = 1.0
+	$\"..\".self_modulate.a = 1.0
+	if global.player:
+		clear()
+		add_text(\"HP: \")
+		push_color(gradient.sample((global.player.health.current_health - 0) / (global.player.health.maximum_health - 0)))
+		if global.player.health.current_health <= 30:
+			append_text(\"[shake rate=75.0 level=15 connected=1]\" + str(global.player.health.current_health) + \"[/shake]\")
+			$\"../HealthDisplay_Duration\".stop()
+		else:
+			$\"../HealthDisplay_Duration\".start(5.5)
+			append_text(str(global.player.health.current_health))
+		pop_all()
+"
+
+[sub_resource type="Gradient" id="Gradient_65hgk"]
+colors = PackedColorArray(1, 0, 0.435294, 1, 0, 1, 1, 1)
+metadata/_snap_count = 100
+
+[sub_resource type="Animation" id="Animation_hv130"]
+resource_name = "fade"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Health:self_modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
+}
+
+[sub_resource type="Animation" id="Animation_0brx7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Health:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_te7ff"]
+_data = {
+"RESET": SubResource("Animation_0brx7"),
+"fade": SubResource("Animation_hv130")
+}
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -20,13 +130,46 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 theme = ExtResource("1_80i7q")
+script = SubResource("GDScript_i3wa4")
 
-[node name="Health" type="Label" parent="."]
+[node name="HealthRectTexture" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 107.0
+offset_bottom = 40.0
+
+[node name="Health" type="RichTextLabel" parent="HealthRectTexture"]
 layout_mode = 1
-offset_right = 54.0
-offset_bottom = 25.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.5
+offset_top = -12.5
+offset_right = 50.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 1
-text = "100"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme = ExtResource("1_80i7q")
+theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
+theme_override_constants/outline_size = 10
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 script = SubResource("GDScript_x8ion")
+gradient = SubResource("Gradient_65hgk")
+
+[node name="HealthDisplay_Duration" type="Timer" parent="HealthRectTexture"]
+process_callback = 0
+wait_time = 3.5
+one_shot = true
+
+[node name="DisplayFade" type="AnimationPlayer" parent="HealthRectTexture"]
+libraries = {
+"": SubResource("AnimationLibrary_te7ff")
+}
+
+[connection signal="mouse_entered" from="HealthRectTexture" to="." method="healthrect_mouse_entered"]
+[connection signal="mouse_exited" from="HealthRectTexture" to="." method="healthrect_mouse_exited"]
+[connection signal="timeout" from="HealthRectTexture/HealthDisplay_Duration" to="." method="healthdisplayduration_timeout"]

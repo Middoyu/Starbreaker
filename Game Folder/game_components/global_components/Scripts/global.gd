@@ -1,6 +1,6 @@
 extends Node
 
-var player = null
+var player = Player
 var crosshair = null
 var player_gui = null
 var camera = null

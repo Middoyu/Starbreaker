@@ -361,12 +361,14 @@ visibility_rect = Rect2(-348, -25, 686.5, 387)
 [node name="MainCamera" type="Camera2D" parent="."]
 anchor_mode = 0
 ignore_rotation = false
+zoom = Vector2(3, 3)
 process_callback = 0
 
 [node name="OptionsCamera" type="Camera2D" parent="."]
 position = Vector2(896, 0)
 anchor_mode = 0
 ignore_rotation = false
+zoom = Vector2(3, 3)
 
 [node name="MM_Music" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_2vl67")

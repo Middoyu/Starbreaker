@@ -1,16 +1,25 @@
-res://z_Export/default_bus_layout.tres
-res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
+res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
 res://Game Folder/game_assets/Menus/Themes/THEME.tres
-res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd
-res://Game Folder/game_components/0. Entity Components/Health/health_component.gd
-res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.tscn
-res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.gd
-res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
-res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn
-res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd
-res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd
-res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
-res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_assets/Player/HUD/hud.tscn
+res://Game Folder/game_components/global_components/Scripts/global.gd
 res://Game Folder/game_assets/Player/Main/Player.gd
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_components/0. Entity Components/Hitbox/Hitbox.tscn
+res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd
+res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn
+res://Game Folder/game_components/bullet_components/Projectile Class/base_bullet.gd
+res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-Dash.tscn
+res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn
+res://Game Folder/game_components/0. Entity Components/Health/health_component.gd
+res://Game Folder/game_components/global_components/Scripts/events.gd
+res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
+res://Game Folder/game_assets/Player/Weapons/3. Utility/BioticField/biotic_field.tscn
+res://Game Folder/game_assets/Player/Weapons/4. Breaker/LZR/l_zr.tscn
+res://Game Folder/game_assets/Player/Weapons/4. Breaker/breaker.tscn
+res://Game Folder/game_assets/Player/Weapons/3. Utility/Base/defense_utility.tscn
+res://Game Folder/game_assets/Player/Weapons/0. Base/WeaponBase.gd

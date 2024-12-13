@@ -1,28 +1,29 @@
 [gd_scene load_steps=4 format=3 uid="uid://bct00pdxdpfri"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_fe2nl"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_kfl4r"]
 
 [sub_resource type="GDScript" id="GDScript_boodj"]
 script/source = "extends Node2D
-@onready var hitbox: Databox = $Hitbox
+@onready var hitbox: HitboxComponent = $Hitbox
 @onready var internal_cooldown: Timer = $\"Internal Cooldown\"
 @onready var tick_timer: Timer = $Tick
 @onready var duration_timer: Timer = $Duration
 
 
+func _ready() -> void:
+	for i in self.get_groups():
+		remove_from_group(i)
+	add_to_group(\"player\")
+
 func action():
-	pass
-	#if internal_cooldown.time_left <= 0:
-		#tick_timer.start()
-		#duration_timer.start()
+	if internal_cooldown.time_left <= 0:
+		tick_timer.start()
+		duration_timer.start()
 
 
 func _physics_process(delta: float) -> void:
 	self.look_at(get_global_mouse_position())
 	self.global_position = global.player.global_position
-
-func eteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(hitbox)
 
 func duration_timeout() -> void:
 	internal_cooldown.start()
@@ -36,26 +37,25 @@ func tick() -> void:
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_emyy3"]
 size = Vector2(174, 1053)
 
-[node name="L-ZR" type="Node2D"]
+[node name="L-ZR" type="Node2D" groups=["player"]]
 script = SubResource("GDScript_boodj")
 
-[node name="Hitbox" type="Area2D" parent="."]
-rotation = 1.5708
-script = ExtResource("1_fe2nl")
-team_affiliation = "PlayerTeam"
+[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+script = ExtResource("1_kfl4r")
+parent = NodePath("..")
 is_disabled = true
-damage = 35.0
-knockback_amount = 500.0
-knockback_stun_duration = 0.3
+damage = -15.0
+knockback_stun_duration = 0.5
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2(0, -516.5)
+position = Vector2(516.5, 0.00186972)
+rotation = 1.5708
 shape = SubResource("RectangleShape2D_emyy3")
 debug_color = Color(0.936566, 1.59794e-05, 0.631667, 0.42)
 
 [node name="Internal Cooldown" type="Timer" parent="."]
 process_callback = 0
-wait_time = 10.0
+wait_time = 2.0
 one_shot = true
 
 [node name="Tick" type="Timer" parent="."]
@@ -67,6 +67,5 @@ process_callback = 0
 wait_time = 1.5
 one_shot = true
 
-[connection signal="EnemyTeamHurtbox_entered" from="Hitbox" to="." method="eteam_hurtbox_entered"]
 [connection signal="timeout" from="Tick" to="." method="tick"]
 [connection signal="timeout" from="Duration" to="." method="duration_timeout"]

@@ -1389,4 +1389,5 @@ mix_target = 1
 bus = &"SFX"
 
 [connection signal="death" from="HealthComponent" to="." method="on_death"]
-[connection signal="health_modified" from="HealthComponent" to="." method="on_hit"]
+[connection signal="on_heal" from="HealthComponent" to="." method="on_heal"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
