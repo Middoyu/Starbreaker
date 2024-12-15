@@ -1,10 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://5lh8eipbj0c6"]
+[gd_scene load_steps=13 format=3 uid="uid://5lh8eipbj0c6"]
 
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_80i7q"]
 
 [sub_resource type="GDScript" id="GDScript_i3wa4"]
 script/source = "extends Control
-@onready var health_rect_texture: TextureRect = $HealthRectTexture
+@onready var health_rect_texture: Control = $HealthRectTexture
 @onready var health_text: RichTextLabel = $HealthRectTexture/Health
 @onready var health_display_duration: Timer = $HealthRectTexture/HealthDisplay_Duration
 
@@ -60,34 +60,6 @@ func update_health(new_health):
 colors = PackedColorArray(1, 0, 0.435294, 1, 0, 1, 1, 1)
 metadata/_snap_count = 100
 
-[sub_resource type="Animation" id="Animation_hv130"]
-resource_name = "fade"
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:self_modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Health:self_modulate")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
-}
-
 [sub_resource type="Animation" id="Animation_0brx7"]
 length = 0.001
 tracks/0/type = "value"
@@ -115,48 +87,137 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_hv130"]
+resource_name = "fade"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Health:self_modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_te7ff"]
 _data = {
 "RESET": SubResource("Animation_0brx7"),
 "fade": SubResource("Animation_hv130")
 }
 
+[sub_resource type="GDScript" id="GDScript_6ot1m"]
+script/source = "extends RichTextLabel
+@onready var display_fade_score: AnimationPlayer = $\"../DisplayFadeScore\"
+@onready var score_display_duration: Timer = $\"../ScoreDisplay_Duration\"
+@onready var score: RichTextLabel = $\".\"
+
+
+func _ready() -> void:
+	get_parent().global_position.x = 470
+	score_event.connect(\"score_update\", update_score, 1)
+
+func update_score(amount):
+	text = \"SCORE: \" + str(score_event.score).pad_zeros(7)
+	if amount >= 10000:
+		display_fade_score.play_backwards(\"fade\")
+		score_display_duration.start(3.5)
+
+func ScoreDisplayDuration_timeout() -> void:
+	display_fade_score.play()
+"
+
+[sub_resource type="Animation" id="Animation_li85b"]
+resource_name = "DisplayFade"
+
+[sub_resource type="Animation" id="Animation_12egj"]
+resource_name = "fade"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Score:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
+}
+
+[sub_resource type="Animation" id="Animation_oulbm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Score:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.0980392)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t0f2q"]
+_data = {
+"DisplayFade": SubResource("Animation_li85b"),
+"RESET": SubResource("Animation_oulbm"),
+"fade": SubResource("Animation_12egj")
+}
+
 [node name="HUD" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_right = 0.333
+anchor_bottom = 0.334
+offset_right = 0.640015
+offset_bottom = 0.279968
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 theme = ExtResource("1_80i7q")
 script = SubResource("GDScript_i3wa4")
 
-[node name="HealthRectTexture" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 107.0
+[node name="HealthRectTexture" type="Control" parent="."]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 0
+offset_right = 115.0
 offset_bottom = 40.0
 
 [node name="Health" type="RichTextLabel" parent="HealthRectTexture"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -47.5
-offset_top = -12.5
-offset_right = 50.5
-offset_bottom = 13.5
-grow_horizontal = 2
-grow_vertical = 2
+clip_contents = false
+layout_direction = 1
+layout_mode = 2
+offset_left = 10.5
+offset_right = 104.5
+offset_bottom = 40.0
 mouse_filter = 1
 theme = ExtResource("1_80i7q")
 theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
 theme_override_constants/outline_size = 10
 bbcode_enabled = true
+text = "HP: 100"
 fit_content = true
 scroll_active = false
+autowrap_mode = 0
+shortcut_keys_enabled = false
 script = SubResource("GDScript_x8ion")
 gradient = SubResource("Gradient_65hgk")
 
@@ -170,6 +231,57 @@ libraries = {
 "": SubResource("AnimationLibrary_te7ff")
 }
 
+[node name="ScoreRectTexture" type="Control" parent="."]
+self_modulate = Color(1, 1, 1, 0.0980392)
+custom_minimum_size = Vector2(115, 0)
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -170.0
+offset_right = -55.0
+offset_bottom = 40.0
+grow_horizontal = 0
+tooltip_text = "SCORE: 000000"
+
+[node name="Score" type="RichTextLabel" parent="ScoreRectTexture"]
+self_modulate = Color(1, 1, 1, 0.0980392)
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.5
+offset_right = 47.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_80i7q")
+theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
+theme_override_constants/outline_size = 10
+text = "SCORE: 0000000"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = SubResource("GDScript_6ot1m")
+
+[node name="DisplayFadeScore" type="AnimationPlayer" parent="ScoreRectTexture"]
+libraries = {
+"": SubResource("AnimationLibrary_t0f2q")
+}
+
+[node name="ScoreDisplay_Duration" type="Timer" parent="ScoreRectTexture"]
+process_callback = 0
+wait_time = 3.5
+one_shot = true
+autostart = true
+
+[node name="CameraRef" type="Camera2D" parent="."]
+position = Vector2(320, 181)
+enabled = false
+zoom = Vector2(3, 3)
+
 [connection signal="mouse_entered" from="HealthRectTexture" to="." method="healthrect_mouse_entered"]
 [connection signal="mouse_exited" from="HealthRectTexture" to="." method="healthrect_mouse_exited"]
 [connection signal="timeout" from="HealthRectTexture/HealthDisplay_Duration" to="." method="healthdisplayduration_timeout"]
+[connection signal="timeout" from="ScoreRectTexture/ScoreDisplay_Duration" to="ScoreRectTexture/Score" method="ScoreDisplayDuration_timeout"]

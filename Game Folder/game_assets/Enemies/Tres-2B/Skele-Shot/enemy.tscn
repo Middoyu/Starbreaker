@@ -27,9 +27,11 @@ func _physics_process(_delta: float) -> void:
 #region Interaction Handlers
 func on_hit(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
+	score_event.update_score(10)
 
 func on_death(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
+	score_event.update_score(25)
 #endregion
 "
 
