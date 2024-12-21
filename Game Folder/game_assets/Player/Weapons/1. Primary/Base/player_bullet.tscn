@@ -111,10 +111,14 @@ streams_count = 1
 stream_0/stream = ExtResource("4_qh70t")
 
 [node name="test_ubullet" type="CharacterBody2D" groups=["player"]]
+collision_layer = 8
+collision_mask = 5
 motion_mode = 1
 script = SubResource("GDScript_4ywsl")
 
 [node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+collision_layer = 8
+collision_mask = 5
 script = ExtResource("1_xfx0c")
 parent = NodePath("..")
 damage = -35.0

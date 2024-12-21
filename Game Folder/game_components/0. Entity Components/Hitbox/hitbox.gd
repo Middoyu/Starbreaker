@@ -8,6 +8,7 @@ var hitbox_data := HitboxData.new() as HitboxData
 @export var knockback_amount := 0.0
 @export var knockback_stun_duration : float = 0.0
 
+
 #region Base Functions
 
 func _physics_process(delta: float) -> void:

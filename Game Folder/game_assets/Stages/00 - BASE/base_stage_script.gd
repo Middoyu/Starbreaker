@@ -119,7 +119,7 @@ func spawn_enemies_pattern(pattern: int) -> void:
 	match pattern:
 		0:
 			# Spawn enemies at a specific position with a given scene
-			spawn_enemies(enemy_list["Skeleshot"], Vector2(128, -16))
+			spawn_enemies(enemy_list["Skelazor"], Vector2(128, 64))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(320, -16))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(512, -16))
 		1:

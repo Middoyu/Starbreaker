@@ -5,8 +5,6 @@ class_name HurtboxComponent
 @export var knockback : KnockbackComponent
 @export var is_disabled := false
 
-
-
 #region Base Functions
 func _ready() -> void:
 	connect("area_entered", area_entered, 1)
@@ -46,7 +44,6 @@ func set_groups():
 func area_entered(area: Area2D) -> void:
 	if area is HitboxComponent:
 		if area.get_groups() != get_groups():
-			print(area.get_groups())
 			health_reaction(area)
 			knockback_reaction(area)
 		if area.get_groups() == get_groups():

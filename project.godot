@@ -203,6 +203,14 @@ ctrl={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Environment-Projectile"
+2d_physics/layer_2="Player-Hurtboxes"
+2d_physics/layer_3="Enemy-Hurtboxes"
+2d_physics/layer_4="Player-Projectile"
+2d_physics/layer_5="Enemy-Projectile"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

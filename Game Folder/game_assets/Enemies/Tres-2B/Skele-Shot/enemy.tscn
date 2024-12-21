@@ -1564,6 +1564,7 @@ func physics_update(_delta):
 "
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_vvde2")
 OnHit_score = 500
@@ -1585,8 +1586,11 @@ disabled = true
 sprite_frames = SubResource("SpriteFrames_bk3gu")
 animation = &"chase"
 autoplay = "chase"
+frame_progress = 0.533456
 
 [node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["enemy"]]
+collision_layer = 4
+collision_mask = 8
 script = ExtResource("5_alwm2")
 parent = NodePath("..")
 health = NodePath("../HealthComponent")
@@ -1597,6 +1601,8 @@ shape = SubResource("CircleShape2D_3n1ei")
 disabled = true
 
 [node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
+collision_layer = 16
+collision_mask = 2
 script = ExtResource("6_w1j0l")
 parent = NodePath("..")
 damage = -25.0
@@ -1605,6 +1611,7 @@ knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
 shape = SubResource("CircleShape2D_el4kx")
+debug_color = Color(1, 0, 0, 0.1)
 
 [node name="Pathfinding" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true

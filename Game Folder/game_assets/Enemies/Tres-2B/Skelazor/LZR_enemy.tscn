@@ -1,7 +1,9 @@
-[gd_scene load_steps=331 format=3 uid="uid://2kuv342uj1hh"]
+[gd_scene load_steps=333 format=3 uid="uid://2kuv342uj1hh"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_vt4o6"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_bqkrg"]
+[ext_resource type="PackedScene" uid="uid://cadhurax76sxf" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/HurtboxComponent.tscn" id="2_1smco"]
 [ext_resource type="Texture2D" uid="uid://cv6llxenkgbte" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/charging_anim.png" id="2_winjy"]
+[ext_resource type="PackedScene" uid="uid://duhmfhxqltebm" path="res://Game Folder/game_components/0. Entity Components/Health/HealthComponent.tscn" id="3_d24t2"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_kxo5a"]
 [ext_resource type="Texture2D" uid="uid://ck31hjtmh31lx" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/death_anim.png" id="3_p813r"]
 [ext_resource type="Texture2D" uid="uid://8qx08ci5568s" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/firing_anim.png" id="4_1j3qv"]
@@ -11,29 +13,28 @@
 
 [sub_resource type="GDScript" id="GDScript_iesie"]
 script/source = "extends Enemy
-@onready var hitbox: Databox = $Hitbox
-@onready var collision: CollisionPolygon2D = $Hitbox/Collision
-@onready var lzr_spr: Polygon2D = $Hitbox/lzr_Spr
-@onready var particles: GPUParticles2D = $Hitbox/Particles
-@onready var hurtbox: Databox = $Hurtbox
+@onready var hitbox: HitboxComponent = $HitboxComponent
+@onready var collision: CollisionPolygon2D = $HitboxComponent/Collision
+@onready var lzr_spr: Polygon2D = $HitboxComponent/lzr_Spr
+
+@onready var particles: GPUParticles2D = $HitboxComponent/Particles
+
+@onready var hurtbox: HurtboxComponent = $HurtboxComponent
+
 @onready var state_machine = $StateMachine
 
 @export var spawn_rotation = 0.0
 @export var rotation_speed = 0.3
 @export var charging_time = 1.5
-
-func pteam_hurtbox_entered(area: Databox) -> void:
-	area.take_damage(hitbox)
-
 #region Interaction Handlers
-func on_parent_hit(colliding_hitbox : Databox, damage_taken) -> void:
+
+
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	events.enemy_damaged.emit(self)
-	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 
-func on_parent_death(colliding_hitbox : Databox, damage_taken) -> void:
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	events.enemy_killed.emit(self)
-	utility.display_damage(damage_taken, self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 "
 
@@ -108,6 +109,9 @@ func _ready() -> void:
 	else:
 		queue_free()
 "
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_63qk6"]
+size = Vector2(14, 18)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nfhe3"]
 atlas = ExtResource("2_winjy")
@@ -2250,9 +2254,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_dauox"]
-radius = 12.8571
-
 [sub_resource type="GDScript" id="GDScript_lnf8h"]
 resource_name = "spawn"
 script/source = "extends State
@@ -2287,7 +2288,6 @@ script/source = "extends State
 
 func enter():
 	fire()
-	$firing_timer.start()
 
 func physics_update(_delta):
 	if global.camera:
@@ -2391,36 +2391,39 @@ func animation_finished() -> void:
 		parent.queue_free()
 "
 
-[node name="LzrEnemy" type="CharacterBody2D"]
+[node name="LzrEnemy" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_iesie")
 
-[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("2_vt4o6")
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_bqkrg")
 parent = NodePath("..")
-team_affiliation = "EnemyTeam"
 is_disabled = true
-damage = 30.0
-knockback_amount = 1750.0
-knockback_stun_duration = 0.5
+damage = -35.0
+knockback_amount = 1115.0
+knockback_stun_duration = 0.3
 
-[node name="lzr_Spr" type="Polygon2D" parent="Hitbox"]
+[node name="lzr_Spr" type="Polygon2D" parent="HitboxComponent"]
 z_index = 1
 position = Vector2(0, 2)
 polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 script = SubResource("GDScript_80y0f")
 
-[node name="lzr_outline_Spr" type="Polygon2D" parent="Hitbox/lzr_Spr"]
+[node name="lzr_outline_Spr" type="Polygon2D" parent="HitboxComponent/lzr_Spr"]
 show_behind_parent = true
 position = Vector2(0, -2.22222)
 scale = Vector2(1.11111, 1.11111)
 color = Color(1, 0, 0, 1)
 polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 
-[node name="Collision" type="CollisionPolygon2D" parent="Hitbox"]
+[node name="Collision" type="CollisionPolygon2D" parent="HitboxComponent"]
 polygon = PackedVector2Array(-8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
+disabled = true
 
-[node name="Particles" type="GPUParticles2D" parent="Hitbox"]
+[node name="Particles" type="GPUParticles2D" parent="HitboxComponent"]
 material = SubResource("CanvasItemMaterial_g3l1p")
 emitting = false
 amount = 250
@@ -2429,24 +2432,24 @@ texture = SubResource("NoiseTexture2D_ae8fw")
 trail_lifetime = 0.1
 script = SubResource("GDScript_i8l3u")
 
+[node name="HurtboxComponent" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"] instance=ExtResource("2_1smco")]
+collision_layer = 4
+collision_mask = 8
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_63qk6")
+
+[node name="HealthComponent" parent="." instance=ExtResource("3_d24t2")]
+maximum_health = 25.0
+
 [node name="spr" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_32irs")
 animation = &"Spawn"
 frame = 59
 frame_progress = 1.0
-
-[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("2_vt4o6")
-parent = NodePath("..")
-team_affiliation = "EnemyTeam"
-databox_type = "Hurtbox"
-recieves_knockback = false
-is_knockback_forced_upwards = false
-armor_multiplier = 0.0
-
-[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
-scale = Vector2(0.7, -0.8)
-shape = SubResource("CircleShape2D_dauox")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("3_kxo5a")]
 parent = NodePath("..")
@@ -2500,11 +2503,10 @@ parent = NodePath("../..")
 is_state_cancelable = false
 sprite = NodePath("../../spr")
 
-[connection signal="PlayerTeamHurtbox_entered" from="Hitbox" to="." method="pteam_hurtbox_entered"]
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
 [connection signal="animation_finished" from="spr" to="StateMachine/spawn" method="animation_finished"]
 [connection signal="animation_finished" from="spr" to="StateMachine/hit" method="animation_finished"]
 [connection signal="animation_finished" from="spr" to="StateMachine/death" method="animation_finished"]
-[connection signal="on_parent_death" from="Hurtbox" to="." method="on_parent_death"]
-[connection signal="on_parent_hit" from="Hurtbox" to="." method="on_parent_hit"]
 [connection signal="timeout" from="StateMachine/charging/charging_timer" to="StateMachine/charging" method="charging_timer_timeout"]
 [connection signal="timeout" from="StateMachine/firing/firing_timer" to="StateMachine/firing" method="timeout"]
