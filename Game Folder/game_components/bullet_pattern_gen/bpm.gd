@@ -24,7 +24,7 @@ func _physics_process(delta):
 		rotate_rotater(delta)
 
 func timersetup():
-	add_child(firerate_timer);
+	add_child(firerate_timer, true);
 	firerate_timer.one_shot = true;
 	firerate_timer.wait_time = firerate;
 	while !firerate_timer.is_connected("timeout", shoot):
@@ -32,7 +32,7 @@ func timersetup():
 		bulletsetup()
 		break
 
-func rotatersetup(): add_child(rotater)
+func rotatersetup(): add_child(rotater, true)
 
 func bulletsetup():
 	var step = 2 * PI / bullet_points
@@ -41,24 +41,23 @@ func bulletsetup():
 		var pos = Vector2(bullet_spawn_radius, 0).rotated(step * i)
 		spawn_point.global_position = pos
 		spawn_point.rotation = pos.angle()
-		rotater.add_child(spawn_point)
+		rotater.add_child(spawn_point, true)
 	
 	firerate_timer.wait_time = firerate
 	if automatically_fire: firerate_timer.start()
 	emit_signal("recharging")
 
 func shoot():
-	bulletsetup()
 	for s in rotater.get_children():
 		var bullet = bulletpath.instantiate()
 		
-		
-		global.current_stage.add_child(bullet)
 		bullet.global_position = s.global_position
 		bullet.rotation = s.global_rotation
 		s.queue_free()
-	bulletsetup()
+		global.current_stage.add_child(bullet, true)
 	emit_signal("shooting")
+	bulletsetup()
+
 
 func rotate_rotater(delta):
 	var new_rotation = rotater.rotation_degrees + rotation_speed * delta

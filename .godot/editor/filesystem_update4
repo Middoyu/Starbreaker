@@ -1,13 +1,11 @@
-res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
 res://Game Folder/game_assets/Menus/Themes/THEME.tres
-res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd
 res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
 res://Game Folder/game_assets/Stages/00 - BASE/base_stage_script.gd
-res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
-res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
-res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd
+res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn
+res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-Dash.tscn
 res://Game Folder/game_assets/Player/Main/Player.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn
+res://Game Folder/game_components/bullet_pattern_gen/bpm.gd
+res://Game Folder/game_components/bullet_pattern_gen/bpm.tscn

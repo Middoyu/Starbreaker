@@ -1,8 +1,10 @@
-[gd_scene load_steps=68 format=3 uid="uid://bmehsjqlfnqij"]
+[gd_scene load_steps=71 format=3 uid="uid://bmehsjqlfnqij"]
 
-[ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites/shoot.png" id="1_c1kin"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_8w56e"]
+[ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_c1kin"]
 [ext_resource type="Texture2D" uid="uid://ibjey310ja1h" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites/trishooter_hit_45x45.png" id="2_7mlk3"]
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_4xhks"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="2_igsfb"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="3_hgvv4"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_mtath"]
 [ext_resource type="Texture2D" uid="uid://cj28c6xg6lr1k" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Trishooter_Spawning_62x40.png" id="4_cjcrx"]
 [ext_resource type="PackedScene" uid="uid://vf8atn3god1g" path="res://Game Folder/game_components/bullet_pattern_gen/bpm.tscn" id="5_kbe1e"]
@@ -20,14 +22,20 @@ func _physics_process(delta: float) -> void:
 func rotate_sprite():
 	sprite.global_rotation_degrees += 15
 
-func on_parent_hit(colliding_hitbox : Databox, damage_taken : int) -> void:
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 	events.enemy_damaged.emit(self)
 
-func on_parent_death(colliding_hitbox : Databox, damage_taken : int) -> void:
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	events.enemy_killed.emit(self)
 "
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2fj5c"]
+radius = 15.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bgvpu"]
+radius = 17.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ee266"]
 atlas = ExtResource("2_7mlk3")
@@ -426,9 +434,6 @@ animations = [{
 "speed": 60.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_h8hjc"]
-radius = 20.025
-
 [sub_resource type="GDScript" id="GDScript_a3ye7"]
 script/source = "extends State
 
@@ -478,7 +483,8 @@ func enter():
 
 [sub_resource type="GDScript" id="GDScript_fsgqf"]
 script/source = "extends State
-@onready var hurtbox: Databox = $\"../../Hurtbox\"
+@onready var hurtbox: HurtboxComponent = $\"../../HurtboxComponent\"
+
 
 func enter():
 	sprite.play_backwards(\"Spawn\")
@@ -487,25 +493,42 @@ func enter():
 	parent.queue_free()
 "
 
-[node name="Trishooter" type="CharacterBody2D"]
+[node name="Trishooter" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_4qk1k")
+OnHit_score = 15
+OnDeath_score = 15
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_8w56e")
+parent = NodePath("..")
+damage = 5.0
+knockback_amount = 1115.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_2fj5c")
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"]]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("2_igsfb")
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_bgvpu")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_hgvv4")
+maximum_health = 150.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_qohad")
-animation = &"Spawn"
-
-[node name="Hurtbox" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-script = ExtResource("3_4xhks")
-parent = NodePath("..")
-team_affiliation = "EnemyTeam"
-databox_type = "Hurtbox"
-max_health = 300
-recieves_knockback = false
-is_knockback_forced_upwards = false
-
-[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
-shape = SubResource("CircleShape2D_h8hjc")
+animation = &"Idle"
 
 [node name="PatternGenerator" parent="." instance=ExtResource("5_kbe1e")]
 bulletpath = ExtResource("6_xr2sy")
@@ -524,7 +547,7 @@ radius = 15.0
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("3_mtath")]
 parent = NodePath("..")
-intial_state = NodePath("move")
+intial_state = NodePath("spawn")
 hit_state = NodePath("hit")
 death_state = NodePath("death")
 
@@ -549,5 +572,7 @@ script = SubResource("GDScript_fsgqf")
 parent = NodePath("../..")
 sprite = NodePath("../../Sprite")
 
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
 [connection signal="target_reached" from="Pathfinding" to="StateMachine/move" method="_on_pathfinding_target_reached"]
 [connection signal="velocity_computed" from="Pathfinding" to="StateMachine/move" method="pathfinding_velocity_computed"]

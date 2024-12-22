@@ -1,5 +1,7 @@
 CollisionShape2D
 HitboxComponent
+HealthComponent
+HurtboxComponent
 Timer
 AnimationPlayer
 Control
@@ -10,5 +12,3 @@ FlowContainer
 HFlowContainer
 RichTextLabel
 Label
-TextureRect
-Area2D

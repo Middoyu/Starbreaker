@@ -137,6 +137,8 @@ trail_lifetime = 0.7
 script = SubResource("GDScript_evom7")
 
 [node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+collision_layer = 8
+collision_mask = 4
 script = ExtResource("2_p6yc2")
 parent = NodePath("..")
 is_disabled = true

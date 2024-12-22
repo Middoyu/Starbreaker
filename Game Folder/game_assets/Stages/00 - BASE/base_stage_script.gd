@@ -84,7 +84,7 @@ var is_boss_active = false
 	# Placeholder Enemies
 	"NULL_Placeholder": "res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn",
 	# Tres-2B Enemies
-	"Skeleshot": "res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn",
+	"Skeleshot": "res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn",
 	"Skelazor": "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn",
 	"Trishooter": "res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn",
 	"Faider": "res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn"
@@ -119,14 +119,14 @@ func spawn_enemies_pattern(pattern: int) -> void:
 	match pattern:
 		0:
 			# Spawn enemies at a specific position with a given scene
-			spawn_enemies(enemy_list["Skelazor"], Vector2(128, 64))
+			spawn_enemies(enemy_list["Trishooter"], Vector2(128, 64))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(320, -16))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(512, -16))
 		1:
 			global.main_manager.gameover_sequence(false)
 
 func placeholder_cacheload():
-	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/enemy.tscn")
+	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn")
