@@ -487,6 +487,7 @@ script/source = "extends State
 
 
 func enter():
+	$\"../../PatternGenerator\".firerate_timer.stop()
 	sprite.play_backwards(\"Spawn\")
 	hurtbox.queue_free()
 	await sprite.animation_finished

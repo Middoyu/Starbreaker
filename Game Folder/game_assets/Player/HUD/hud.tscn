@@ -139,26 +139,11 @@ func update_score(amount):
 		score_display_duration.start(3.5)
 
 func ScoreDisplayDuration_timeout() -> void:
-	display_fade_score.play()
+	display_fade_score.play(\"fade\")
 "
 
 [sub_resource type="Animation" id="Animation_li85b"]
 resource_name = "DisplayFade"
-
-[sub_resource type="Animation" id="Animation_12egj"]
-resource_name = "fade"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Score:self_modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
-}
 
 [sub_resource type="Animation" id="Animation_oulbm"]
 length = 0.001
@@ -173,6 +158,21 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0.0980392)]
+}
+
+[sub_resource type="Animation" id="Animation_12egj"]
+resource_name = "fade"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Score:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_t0f2q"]
@@ -232,7 +232,6 @@ libraries = {
 }
 
 [node name="ScoreRectTexture" type="Control" parent="."]
-self_modulate = Color(1, 1, 1, 0.0980392)
 custom_minimum_size = Vector2(115, 0)
 layout_direction = 1
 layout_mode = 1
@@ -274,7 +273,6 @@ libraries = {
 process_callback = 0
 wait_time = 3.5
 one_shot = true
-autostart = true
 
 [node name="CameraRef" type="Camera2D" parent="."]
 position = Vector2(320, 181)

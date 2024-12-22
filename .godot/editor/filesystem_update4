@@ -9,3 +9,5 @@ res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-D
 res://Game Folder/game_assets/Player/Main/Player.tscn
 res://Game Folder/game_components/bullet_pattern_gen/bpm.gd
 res://Game Folder/game_components/bullet_pattern_gen/bpm.tscn
+res://Game Folder/game_assets/Player/HUD/hud.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn
