@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cmo53j3sow4hg"
+path="res://.godot/imported/tokonemu_tres2b.wav-82d6c438d4de345ea9bd90dc3a6088e5.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav"
+dest_files=["res://.godot/imported/tokonemu_tres2b.wav-82d6c438d4de345ea9bd90dc3a6088e5.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

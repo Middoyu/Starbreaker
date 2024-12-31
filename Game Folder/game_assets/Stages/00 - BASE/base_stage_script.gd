@@ -8,7 +8,7 @@ func intro():
 	var i = create_tween().bind_node(black).set_ease(Tween.EASE_IN_OUT)
 	i.tween_property(black, "color", Color(0,0,0,0), 0.5)
 	await i.finished
-	black.queue_free()
+	black.hide()
 #endregion
 
 #region Collisions
@@ -61,12 +61,15 @@ func sync_music():
 	
 	if is_spawning and current_audio_time != audio_time: # If the zone is spawning, starting matching the music time.
 		current_audio_time = audio_time
-		if audio_time == spawn_times[clamp(spawn_interval, 0, spawn_times.size() - 1)]:
-			spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
-			spawn_interval += 1
-	else:
-		# No action needed when not spawning
-		pass
+		match options.ost_selection:
+			"Tokonemu":
+				if audio_time == tokonemu_spawn_times[clamp(spawn_interval, 0, tokonemu_spawn_times.size() - 1)]:
+					spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
+					spawn_interval += 1
+			"Middoyu":
+				if audio_time == middoyu_spawn_times[clamp(spawn_interval, 0, middoyu_spawn_times.size() - 1)]:
+					spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
+					spawn_interval += 1
 
 
 #endregion
@@ -91,7 +94,10 @@ var is_boss_active = false
 }
 
 var spawn_interval = 0
-@export var spawn_times = {
+@export var tokonemu_spawn_times = {
+	0: 1.0
+}
+@export var middoyu_spawn_times = {
 	0: 1.0
 }
 @export var spawn_patterns = {

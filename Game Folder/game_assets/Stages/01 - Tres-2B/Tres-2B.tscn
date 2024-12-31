@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=25 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
@@ -18,6 +18,260 @@ func _process(delta: float) -> void:
 	sync_music()
 "
 
+[sub_resource type="GDScript" id="GDScript_e4ttt"]
+script/source = "extends Node2D
+@onready var graphics___tone: WorldEnvironment = $\"../Graphics & Tone\"
+
+func _ready() -> void:
+	$\"../Graphics & Tone\".environment.glow_enabled = false
+	$\"../Graphics & Tone\".environment.set_adjustment_enabled(false)
+	tokonemu_intro_fadein()
+	await get_tree().create_timer(0.62, false, true, false)
+	$\"../Graphics & Tone\".environment.glow_enabled = true
+	$\"../Graphics & Tone\".environment.set_adjustment_enabled(true)
+
+func tokonemu_intro_fadein():
+	if options.ost_selection == \"Tokonemu\":
+		$Fade.play(\"Tokonemu_FadeIn\")
+"
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1sgdk"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(309, -75, 0)
+emission_shape_scale = Vector3(554.5, 0, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, 0, 0)
+spread = 0.0
+gravity = Vector3(0, 100, 0)
+linear_accel_min = -100.0
+linear_accel_max = 100.0
+radial_accel_min = -2.23517e-06
+radial_accel_max = -2.23517e-06
+scale_min = 0.0
+scale_max = 0.2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ck7t2"]
+noise_type = 2
+seed = -202
+frequency = 0.0001
+fractal_octaves = 10
+fractal_lacunarity = 1486.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tugfv"]
+width = 1
+noise = SubResource("FastNoiseLite_ck7t2")
+
+[sub_resource type="GDScript" id="GDScript_ub2jc"]
+script/source = "extends GPUParticles2D
+
+
+func _ready() -> void:
+	process_material.gravity = Vector3(0, 0, 0)
+	amount = 0
+	$\"Speedline Amount\".play(\"Speedlinesfade\")
+	await $\"Speedline Amount\".animation_finished
+	amount = 1250
+"
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p536e"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(309, -75, 0)
+emission_shape_scale = Vector3(554.5, 0, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, 0, 0)
+spread = 0.0
+gravity = Vector3(0, 9999, 0)
+linear_accel_min = -100.0
+linear_accel_max = 100.0
+radial_accel_min = -2.23517e-06
+radial_accel_max = -2.23517e-06
+scale_min = 0.0
+scale_max = 0.2
+
+[sub_resource type="Animation" id="Animation_rh8eu"]
+resource_name = "Speedlinesfade"
+length = 6.21
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:process_material")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [SubResource("ParticleProcessMaterial_1sgdk"), SubResource("ParticleProcessMaterial_p536e")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.0431373)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Background:autoscroll")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, 175), Vector2(0, 350)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Gas_Background:autoscroll")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, 87), Vector2(0, 174)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Clouds_Background:autoscroll")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, 43), Vector2(0, 86)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../../Black:color")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 5.4, 5.8, 6.1, 6.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../../Black:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(5.3, 5.4, 5.9, 6, 6.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [false, true, true, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_jmtsh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:process_material")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("ParticleProcessMaterial_1sgdk")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.0196078)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Background:autoscroll")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 175)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Gas_Background:autoscroll")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 87)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Clouds_Background:autoscroll")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 43)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../../Black:color")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../../Black:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sa4x2"]
+_data = {
+"RESET": SubResource("Animation_jmtsh"),
+"Speedlinesfade": SubResource("Animation_rh8eu")
+}
+
 [sub_resource type="Gradient" id="Gradient_e8xxh"]
 interpolation_mode = 2
 colors = PackedColorArray(0, 0, 0, 0.0235294, 1, 1, 0, 0.67451)
@@ -33,6 +287,43 @@ seamless_blend_skirt = 1.0
 color_ramp = SubResource("Gradient_e8xxh")
 noise = SubResource("FastNoiseLite_s3au4")
 
+[sub_resource type="Animation" id="Animation_ll1yi"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_8fy6b"]
+resource_name = "Tokonemu_FadeIn"
+step = 0.02
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.62),
+"transitions": PackedFloat32Array(1.36604, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0hi5d"]
+_data = {
+"RESET": SubResource("Animation_ll1yi"),
+"Tokonemu_FadeIn": SubResource("Animation_8fy6b")
+}
+
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1nr6p"]
 vertices = PackedVector2Array(694.109, 437.813, -53.8828, 438.008, -54.0234, -117.977, 693.969, -118.18)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
@@ -44,6 +335,7 @@ tonemap_mode = 3
 glow_enabled = true
 glow_bloom = 0.2
 adjustment_enabled = true
+adjustment_saturation = 1.5
 
 [sub_resource type="GDScript" id="GDScript_rp1j6"]
 script/source = "extends WorldEnvironment
@@ -58,66 +350,10 @@ func _ready() -> void:
 editor_description = "Stage 1 Of Starbreaker, it's suppose to be simple and easy for beginners to get through without much hassle but have a learning curve to get the S rank."
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
-TOKONEMU_STAGE_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
-TOKONEMU_BOSS_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Trestuby.wav"
-spawn_times = {
-0: 2.6,
-1: 5.2,
-2: 7.9,
-3: 10.0,
-4: 13.0,
-5: 15.7,
-6: 18.3,
-7: 21.0,
-8: 26.0,
-9: 29.0,
-10: 31.0,
-11: 33.8,
-12: 36.5,
-13: 37.0,
-14: 39.0,
-15: 41.0,
-16: 49.4,
-17: 52.0,
-18: 59.8,
-19: 65.0,
-20: 67.5,
-21: 72.5,
-22: 75.4,
-23: 80.6,
-24: 83.1,
-25: 124.7,
-26: 134.0
-}
-spawn_patterns = {
-0: 0.0,
-1: 0,
-2: 0,
-3: 0,
-4: 0,
-5: 0,
-6: 0.0,
-7: 0.0,
-8: 0.0,
-9: 0.0,
-10: 0.0,
-11: 0.0,
-12: 0.0,
-13: 0.0,
-14: 0.0,
-15: 0.0,
-16: 0.0,
-17: 0.0,
-18: 0.0,
-19: 0.0,
-20: 0.0,
-21: 0.0,
-22: 0.0,
-23: 0.0,
-24: 0.0,
-25: 0.0,
-26: 1.0
-}
+TOKONEMU_STAGE_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav"
+TOKONEMU_BOSS_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav"
+MIDDOYU_STAGE_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/middoyu_tres2b.wav"
+MIDDOYU_BOSS_MUSIC = "res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/middoyu_tres2b.wav"
 player_starting_position = Vector2(320, 290)
 
 [node name="Camera" parent="." instance=ExtResource("1_3cjne")]
@@ -135,6 +371,23 @@ initial_zoom_value = 3.0
 [node name="Score" parent="." instance=ExtResource("2_rnqcw")]
 
 [node name="VFX & Backgrounds" type="Node2D" parent="."]
+script = SubResource("GDScript_e4ttt")
+
+[node name="Speedlines" type="GPUParticles2D" parent="VFX & Backgrounds"]
+self_modulate = Color(1, 1, 1, 0.0196078)
+z_index = 4096
+amount = 2800
+process_material = SubResource("ParticleProcessMaterial_1sgdk")
+texture = SubResource("NoiseTexture2D_tugfv")
+lifetime = 3.5
+fixed_fps = 144
+script = SubResource("GDScript_ub2jc")
+
+[node name="Speedline Amount" type="AnimationPlayer" parent="VFX & Backgrounds/Speedlines"]
+libraries = {
+"": SubResource("AnimationLibrary_sa4x2")
+}
+playback_default_blend_time = 1.0
 
 [node name="Background" type="Parallax2D" parent="VFX & Backgrounds"]
 z_index = -4096
@@ -177,6 +430,12 @@ z_index = -4090
 position = Vector2(320.049, 183.915)
 scale = Vector2(2, 2)
 texture = SubResource("NoiseTexture2D_que5d")
+
+[node name="Fade" type="AnimationPlayer" parent="VFX & Backgrounds"]
+callback_mode_process = 0
+libraries = {
+"": SubResource("AnimationLibrary_0hi5d")
+}
 
 [node name="Navigation Space" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_1nr6p")

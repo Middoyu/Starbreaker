@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://c26v2faggef5y"]
 
-[ext_resource type="AudioStream" uid="uid://5d2twp6ej6g2" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over 1.mp3" id="1_cdovi"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_ns363"]
+[ext_resource type="AudioStream" uid="uid://cem4aaklv0lae" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over.mp3" id="1_xouxq"]
 [ext_resource type="Script" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
 [ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="2_xv7wk"]
 
@@ -106,7 +106,7 @@ adjustment_saturation = 8.0
 script = SubResource("GDScript_83bpk")
 
 [node name="Gameover_Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_cdovi")
+stream = ExtResource("1_xouxq")
 volume_db = -16.0
 bus = &"Music"
 script = SubResource("GDScript_jdbvu")

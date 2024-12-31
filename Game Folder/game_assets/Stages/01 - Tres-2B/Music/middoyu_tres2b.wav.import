@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bdu0sxw8iwlpk"
+path="res://.godot/imported/middoyu_tres2b.wav-f053b1267bee7a1c9914c19844ed8702.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/middoyu_tres2b.wav"
+dest_files=["res://.godot/imported/middoyu_tres2b.wav-f053b1267bee7a1c9914c19844ed8702.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=true
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
