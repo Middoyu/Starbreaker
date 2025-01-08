@@ -1,14 +1,25 @@
 extends Node2D
 class_name StageBase
+@onready var music: AudioStreamPlayer = $Music
+@onready var tutorial_music: AudioStreamPlayer = $Tutorial_Music
+@onready var tutorial_transisition: AudioStreamPlayer = $Tutorial_Music/Tutorial_Transisition
 
 #region Fade From Black
 @onready var black: ColorRect = $Black
 
 func intro():
+	placeholder_cacheload()
+	global.current_stage = self
+	global.player.global_position = player_starting_position
+	add_wall_collision()
 	var i = create_tween().bind_node(black).set_ease(Tween.EASE_IN_OUT)
 	i.tween_property(black, "color", Color(0,0,0,0), 0.5)
 	await i.finished
 	black.hide()
+	
+	if global.has_viewed_tutorial == false:
+		tutorial_music.play()
+
 #endregion
 
 #region Collisions
@@ -25,22 +36,6 @@ func add_wall_collision():
 @onready var boss_music_player = AudioStreamPlayer.new()
 var audio_time = 0.0
 var current_audio_time = 0.0
-
-@export var TOKONEMU_STAGE_MUSIC = ""
-@export var TOKONEMU_BOSS_MUSIC = ""
-@export var MIDDOYU_STAGE_MUSIC = ""
-@export var MIDDOYU_BOSS_MUSIC = ""
-
-func load_music(): # Picks the song based on the OST Selection.
-	match options.ost_selection:
-		"Middoyu":
-			#Insert Hardmode Code
-			load_stage_music(load(MIDDOYU_STAGE_MUSIC) as AudioStreamWAV)
-			load_boss_music(load(MIDDOYU_BOSS_MUSIC) as AudioStreamWAV)
-		"Tokonemu":
-			#Insert Hardmode Code
-			load_stage_music(load(TOKONEMU_STAGE_MUSIC) as AudioStreamWAV)
-			load_boss_music(load(TOKONEMU_BOSS_MUSIC) as AudioStreamWAV)
 
 func load_stage_music(loaded_music : AudioStreamWAV): # Creates a global music player to play the stage music on.
 	global.music_player = stage_music_player
@@ -61,15 +56,9 @@ func sync_music():
 	
 	if is_spawning and current_audio_time != audio_time: # If the zone is spawning, starting matching the music time.
 		current_audio_time = audio_time
-		match options.ost_selection:
-			"Tokonemu":
-				if audio_time == tokonemu_spawn_times[clamp(spawn_interval, 0, tokonemu_spawn_times.size() - 1)]:
-					spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
-					spawn_interval += 1
-			"Middoyu":
-				if audio_time == middoyu_spawn_times[clamp(spawn_interval, 0, middoyu_spawn_times.size() - 1)]:
-					spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
-					spawn_interval += 1
+		if audio_time == tokonemu_spawn_times[clamp(spawn_interval, 0, tokonemu_spawn_times.size() - 1)]:
+			spawn_enemies_pattern(spawn_patterns[clamp(spawn_interval, 0, spawn_patterns.size() - 1)])
+			spawn_interval += 1
 
 
 #endregion
@@ -94,15 +83,8 @@ var is_boss_active = false
 }
 
 var spawn_interval = 0
-@export var tokonemu_spawn_times = {
-	0: 1.0
-}
-@export var middoyu_spawn_times = {
-	0: 1.0
-}
-@export var spawn_patterns = {
-	0: 0
-}
+@export var tokonemu_spawn_times = {0: 1.0}
+@export var spawn_patterns = {0: 0}
 
 
 func spawn_enemies(enemy_path : String, forced_spawnpoint := Vector2.ZERO, extra_arg_1 := 0.0, extra_arg_2 := 0.3):
@@ -125,8 +107,8 @@ func spawn_enemies_pattern(pattern: int) -> void:
 	match pattern:
 		0:
 			# Spawn enemies at a specific position with a given scene
-			spawn_enemies(enemy_list["Trishooter"], Vector2(128, 64))
-			spawn_enemies(enemy_list["Skeleshot"], Vector2(320, -16))
+			spawn_enemies(enemy_list["Skeleshot"], Vector2(128, 64))
+			spawn_enemies(enemy_list["Trishooter"], Vector2(320, -16))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(512, -16))
 		1:
 			global.main_manager.gameover_sequence(false)
@@ -138,6 +120,7 @@ func placeholder_cacheload():
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/skeleton_boss.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn")
+	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn")
 
 #endregion
 
@@ -145,21 +128,20 @@ func placeholder_cacheload():
 @export var player_starting_position := Vector2()
 
 func start_stage():
-	placeholder_cacheload()
-	
-	add_wall_collision()
-	
-	load_music()
-	stage_music_player.play()
-	
-	global.current_stage = self
-	global.player.global_position = player_starting_position
-	
-	intro()
-	
 	stage_started = true
 	global.is_pausable = true
-	global.player.is_actionable = true
+	
+	if global.has_viewed_tutorial == false: # If Player hasn't seen the tutorial.
+		tutorial_transisition.play()
+		tutorial_music.stop()
+		await tutorial_transisition.finished
+		tutorial_music.queue_free()
+		music.play()
+		events.emit_signal("stage_started")
+	if global.has_viewed_tutorial == true: # If Player has seen the tutorial.
+		tutorial_music.queue_free()
+		music.play()
+		events.emit_signal("stage_started")
 
 func _process(_delta: float) -> void:
-	audio_time = stage_music_player.get_playback_position()
+	audio_time = music.get_playback_position()

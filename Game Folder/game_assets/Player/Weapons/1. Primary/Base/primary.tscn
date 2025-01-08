@@ -18,15 +18,15 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/1. 
 
 
 func _physics_process(delta: float) -> void:
-	if Input.is_action_pressed(\"primary\") and player.is_actionable:
+	if Input.is_action_pressed(\"primary\") and player.weapons.is_actionable:
 		shoot()
 
 # Overrides WeaponBase's function to allowing switching of the position.
 func spawn_projectile(projectile_path):
 	var proj_int = PLAYER_BULLET.instantiate()
-	proj_int.global_position = global.player.global_position
+	proj_int.global_position = player.global_position
 	switch_bullet_pos(proj_int)
-	global.current_stage.add_child(proj_int)
+	global.add_child(proj_int)
 
 
 # Shoots the projectile and starts the cooldown.

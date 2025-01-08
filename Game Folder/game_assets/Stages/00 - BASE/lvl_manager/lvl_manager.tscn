@@ -24,6 +24,59 @@ func update_score_per_sec():
 
 func _exit_tree() -> void:
 	global.lvl_manager = null
+
+func death_sequence(finalblow_idenity):
+	# Checks if the final attacker has a parent and reassigns the effects to the parent if so.
+	if finalblow_idenity.parent:
+		finalblow_idenity = finalblow_idenity.parent
+	
+	# Shifts the Z-Index of all the death associated parties.
+	self.z_index = 4096
+	finalblow_idenity.z_index = 4096
+	finalblow_idenity.process_mode = Node.PROCESS_MODE_DISABLED
+	finalblow_idenity.velocity = Vector2.ZERO
+	
+	# Clearing other entities & projectiles.
+	for i in global.current_stage.get_children():
+		if i is Entity:
+			if i != self:
+				if i != finalblow_idenity:
+					i.queue_free()
+		if i is Projectile:
+			if i != finalblow_idenity:
+				i.queue_free()
+	for i in global.get_children():
+		if i is Entity:
+			if i != self:
+				if i != finalblow_idenity:
+					i.queue_free()
+		if i is Projectile:
+			if i != finalblow_idenity:
+				i.queue_free()
+	#global.crosshair.queue_free()
+	
+	# Repositions the black screen to cover the camera.
+	#game_over_black.show()
+	#game_over_black.reparent(global.current_stage)
+	#game_over_black.global_position = Vector2.ZERO
+	#game_over_black.rotation = 0.0
+	#game_over_black.play()
+	
+	
+	
+	
+	# Normal effects.
+	global.music_player.stop()
+	global.camera.shake(65.0)
+	$SFX/Strong_Hit.play()
+	if options.extra_vfx:
+		$Sprite/DeathEffects.emitting = true
+	
+	# Finish the sequence and pass it off to the main manager.
+	await get_tree().create_timer(1.0).timeout
+	$SFX/Dying_Shatter.play()
+	global.main_manager.gameover_sequence()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 "
 
 [node name="LVL_MANAGER" type="Node"]

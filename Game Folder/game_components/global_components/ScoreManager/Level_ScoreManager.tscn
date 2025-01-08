@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cgfhxpflb4jti"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.gd" id="1_wwi4c"]
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="2_1q5ti"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="2_1q5ti"]
 
 [node name="ScoreManager" type="Node"]
 script = ExtResource("1_wwi4c")

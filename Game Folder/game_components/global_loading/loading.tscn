@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://c4x1qm6djaif4"]
 
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_n23vh"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_n23vh"]
 [ext_resource type="AudioStream" uid="uid://ccikbbrr1mfeq" path="res://Game Folder/game_components/global_loading/unlock.ogg" id="2_rvmjo"]
 
 [sub_resource type="GDScript" id="GDScript_grgq3"]

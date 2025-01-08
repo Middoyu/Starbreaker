@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bfrqijlkiagie"]
 
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_dgf3v"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_dgf3v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_a5ygm"]
 font_size = 10

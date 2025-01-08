@@ -33,7 +33,7 @@ func get_score_position() -> Vector2:
 
 func _physics_process(delta: float) -> void:
 	if global.paused == false:
-		passive_score_update(100, delta)
+		passive_score_update(250, delta)
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(score_display):

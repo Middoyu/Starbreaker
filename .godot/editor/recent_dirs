@@ -1,3 +1,5 @@
+res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy
+res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites
 res://Game Folder/game_assets/Player/Weapons/3. Utility/BioticField
 C:/Users/bkrbe/Desktop
 res://Game Folder/game_assets/Player/Sprites
@@ -9,13 +11,11 @@ res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites
 res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter
 res://
 res://Game Folder/game_assets/Player/VFX
-res://Game Folder/game_assets/Enemies/Tres-2B/Skele-Shot/Sprites
 res://Game Folder/game_components/global_loading
 res://Game Folder/game_components/button_component
 res://Game Folder/game_assets/Menus/IntroCine
 res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites
 res://Game Folder/game_components/global_components/Scripts
-res://Game Folder/game_assets/Player/HUD/Cooldowns
 res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls
 res://Game Folder/game_assets/Menus/Themes
 res://Game Folder/game_assets/Menus/Themes/TutorialDialogue

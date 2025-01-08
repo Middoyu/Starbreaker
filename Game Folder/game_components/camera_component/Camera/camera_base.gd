@@ -13,6 +13,12 @@ const DEFAULT_ZOOM_DURATION := 0.05
 
 
 func _ready() -> void: 
+	events.camera_shake.connect(shake, 1)
+	events.camera_zoom.connect(impact_zoom, 3)
+	events.camera_freezeframe.connect(freezeframe, 2)
+	events.camera_flash.connect(flash, 0)
+	
+	
 	# Sets the global camera to itself.
 	global.camera = self
 	# Sets the anchor to drag_center for the zoom-in feature to work without a position.

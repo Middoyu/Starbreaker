@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=4 format=3 uid="uid://camn38bni16hy"]
+[gd_resource type="AudioBusLayout" load_steps=6 format=3 uid="uid://camn38bni16hy"]
 
 [sub_resource type="AudioEffectLimiter" id="AudioEffectLimiter_io8sm"]
 resource_name = "Limiter"
@@ -7,6 +7,12 @@ resource_name = "Limiter"
 resource_name = "HardLimiter"
 
 [sub_resource type="AudioEffectLimiter" id="AudioEffectLimiter_3lfxw"]
+resource_name = "Limiter"
+
+[sub_resource type="AudioEffectCompressor" id="AudioEffectCompressor_7myva"]
+resource_name = "Compressor"
+
+[sub_resource type="AudioEffectLimiter" id="AudioEffectLimiter_7a1xv"]
 resource_name = "Limiter"
 
 [resource]
@@ -29,3 +35,13 @@ bus/2/volume_db = -7.63485
 bus/2/send = &"Master"
 bus/2/effect/0/effect = SubResource("AudioEffectLimiter_3lfxw")
 bus/2/effect/0/enabled = true
+bus/3/name = &"Player-SFX"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = 0.0
+bus/3/send = &"SFX"
+bus/3/effect/0/effect = SubResource("AudioEffectCompressor_7myva")
+bus/3/effect/0/enabled = false
+bus/3/effect/1/effect = SubResource("AudioEffectLimiter_7a1xv")
+bus/3/effect/1/enabled = true

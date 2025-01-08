@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://y4ga4anlwqmc"]
 
 [ext_resource type="PackedScene" uid="uid://c4x1qm6djaif4" path="res://Game Folder/game_components/global_loading/loading.tscn" id="1_onr71"]
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="2_pfq0i"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="2_pfq0i"]
 
 [sub_resource type="GDScript" id="GDScript_essvl"]
 resource_name = "mainscene_manager"
@@ -44,12 +44,10 @@ func _physics_process(_delta: float) -> void:
 			pass
 		1:
 			ResourceLoader.load_threaded_get_status(path_loading)
-			print_debug(path_loading)
 		2:
-			printerr(\"error in loading\")
+			print_debug(\"Loading error.\")
 		3:
 			_hide_load_visuals(ResourceLoader.load_threaded_get(path_loading))
-			print_debug(path_loading)
 			loading_status = 0
 
 func _hide_load_visuals(loaded_level):
@@ -80,6 +78,7 @@ func gameover_sequence(is_true_gameover := true):
 		go_i.music = go_i.victory_music
 		go_i.music.play()
 	events.emit_signal(\"GameOver\", int(score_event.score))
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func clear_entities():
 	for i in get_children():
@@ -181,7 +180,7 @@ z_index = 4096
 layout_mode = 0
 offset_right = 325.0
 offset_bottom = 25.0
-scale = Vector2(0.7, 0.7)
+scale = Vector2(0.4, 0.4)
 mouse_filter = 1
 theme = ExtResource("2_pfq0i")
 text = "Hold \"Left Click\" to forfeit the stage."
@@ -191,10 +190,10 @@ script = SubResource("GDScript_vty5i")
 self_modulate = Color(1, 1, 1, 0.356863)
 z_index = 4096
 layout_mode = 1
-offset_left = 344.0
-offset_right = 398.0
-offset_bottom = 53.0
-scale = Vector2(0.7, 0.7)
+offset_left = 296.0
+offset_right = 350.0
+offset_bottom = 63.0
+scale = Vector2(0.4, 0.4)
 mouse_filter = 1
 theme = ExtResource("2_pfq0i")
 text = "0

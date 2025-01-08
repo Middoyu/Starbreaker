@@ -1,17 +1,24 @@
-[gd_scene load_steps=191 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=190 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_shqxk"]
 [ext_resource type="Texture2D" uid="uid://bga6dk4a4ifp5" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_hit_42x37_42x37.png" id="3_ahd3f"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="4_pp5h7"]
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="4_sp8mo"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_g3r5p"]
-[ext_resource type="AudioStream" uid="uid://c7b1r3nn8qhhg" path="res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav" id="6_fa8j1"]
-[ext_resource type="AudioStream" uid="uid://frfci036135v" path="res://Game Folder/game_assets/Player/SFX/Hits/final_hit.wav" id="7_uvb5w"]
-[ext_resource type="AudioStream" uid="uid://d37w35fnpn37j" path="res://Game Folder/game_assets/Player/SFX/Hits/dying.wav" id="8_5l6dk"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
-radius = 8.0
+[sub_resource type="GDScript" id="GDScript_q03yt"]
+script/source = "extends Polygon2D
+@export var max_radius = 65.0
+
+func _physics_process(delta: float) -> void:
+	if get_global_mouse_position().distance_to(owner.global_position) <= max_radius:
+		global_position = get_global_mouse_position()
+	else:
+		var angle = owner.global_position.angle_to_point(get_global_mouse_position())
+		global_position.x = owner.global_position.x + cos(angle) * max_radius
+		global_position.y = owner.global_position.y + sin(angle) * max_radius
+"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vs24j"]
 atlas = ExtResource("2_a6fo3")
@@ -1231,6 +1238,14 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="GDScript" id="GDScript_w5s08"]
+script/source = "extends AnimatedSprite2D
+
+func _ready() -> void:
+	events.player_damaged.connect(func(current_health, damage_taken, colliding_hitbox): stop(); play(\"hit\"), 3)
+	events.player_death.connect(func(damage_taken, colliding_hitbox): stop(); play(\"death\"), 2)
+"
+
 [sub_resource type="Curve" id="Curve_na574"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
@@ -1253,78 +1268,147 @@ tangential_accel_max = 100.0
 scale_curve = SubResource("CurveTexture_h3sh4")
 turbulence_enabled = true
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
+radius = 12.0
+
+[sub_resource type="GDScript" id="GDScript_u1yyx"]
+script/source = "extends HurtboxComponent
+
+func _ready() -> void:
+	super()
+	events.connect(\"player_death\", func(damage_taken, colliding_hitbox): is_disabled = true, 2)
+"
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
 radius = 1.0
 
-[sub_resource type="GDScript" id="GDScript_5rul6"]
-script/source = "extends ColorRect
+[sub_resource type="GDScript" id="GDScript_itgeb"]
+script/source = "extends Node  # Inherit from the base Node class
+@onready var player: Player = $\"..\"
 
+@export var allows_input := false  # Flag to control input
+@export var is_movement_disabled := false  # Flag to control movement
+@onready var movement_speed : float  # Initial movement speed, should be set up in the editor
+@export var max_movement_speed : float  # Maximum movement speed
+@export var acceleration : float  # Acceleration rate
+@export var friction : float  # Friction rate
 
+# Called when the node is ready
 func _ready() -> void:
-	self.hide()
+	# Connect signals to handle player death and tutorial completion
+	events.connect(\"player_death\", func(damage_taken, colliding_hitbox):
+		allows_input = false  # Disable input on player death
+		owner.velocity = Vector2.ZERO  # Stop player movement
+	, 2)
+	events.connect(\"stage_started\", func():
+		is_movement_disabled = false  # Re-enable movement after tutorial completion
+	)
 
-func play():
-	var animation = $Animation
-	if options.screen_flash:
-		animation.stop()
-		animation.play(\"GameOver\")
-	else:
-		pass
+# Called every physics frame
+func _physics_process(delta: float) -> void:
+	look_at_mouse()  # Make the player look at the mouse position
+	movement_handler(delta)  # Handle player movement
+
+# Rotate player to face the mouse cursor
+func look_at_mouse():
+	if allows_input:
+		owner.look_at(player.crosshair.global_position)  # Face the mouse if input is allowed
+
+# Handle player movement
+func movement_handler(delta):
+	if allows_input and not is_movement_disabled:
+		var direction = Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\").normalized()
+		
+		# Apply acceleration if there is a direction
+		if direction:
+			movement_speed += acceleration * delta
+		
+		# Apply friction if there is no input direction
+		if not direction:
+			movement_speed -= friction * delta
+		
+		# Clamp the movement speed to be within the allowed range
+		movement_speed = clamp(movement_speed, 0.0, max_movement_speed)
+		
+		# Apply the velocity to move the player
+		owner.velocity = direction * movement_speed * delta
+		
+	owner.move_and_slide()  # Ensure physics-based movement
 "
 
-[sub_resource type="Animation" id="Animation_nr18w"]
-resource_name = "GameOver"
-length = 3.0
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:color")
-tracks/0/interp = 0
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
-}
+[sub_resource type="GDScript" id="GDScript_xpxrt"]
+script/source = "extends Node
 
-[sub_resource type="Animation" id="Animation_gqclk"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0, 0, 0, 1)]
-}
+@export var is_actionable = false  # Exported boolean to control whether actions are actionable
+@onready var crosshair: Node2D = $\"../Crosshair\"
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_cxoen"]
-_data = {
-"GameOver": SubResource("Animation_nr18w"),
-"RESET": SubResource("Animation_gqclk")
-}
+const PRIMARY = preload(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn\")  # Preload primary weapon scene
+const SECONDARY = preload(\"res://Game Folder/game_assets/Player/Weapons/2. Secondary/Base/secondary.tscn\")  # Preload secondary weapon scene
+const UTILITY = preload(\"res://Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Base/Movement Utility.tscn\")  # Preload utility weapon scene
+const BREAKER = preload(\"res://Game Folder/game_assets/Player/Weapons/4. Breaker/breaker.tscn\")  # Preload breaker weapon scene
+
+func _ready() -> void:
+	setup_weapons()  # Call setup_weapons when the scene is ready
+
+func setup_weapons():
+	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), BREAKER.instantiate(), UTILITY.instantiate()]  # Create a list of instantiated weapons
+	for weapon in weapon_list:
+		owner.add_child.call_deferred(weapon, true)  # Add each weapon as a child of the owner
+		weapon.player = owner  # Set the player's reference to the weapon's player
+"
+
+[sub_resource type="GDScript" id="GDScript_rdqb0"]
+script/source = "extends Node  # Inherit from Node class
+
+@onready var invincibility_timer := Timer.new()  # Initialize the invincibility timer
+@onready var invincibility_override : bool = false  # Flag to control invincibility override
+@export var hit_invincibility_duration : float = 1.75  # Duration of invincibility after taking damage
+
+# Called when the node is ready
+func _ready() -> void:
+	events.connect(\"player_death\", func(damage_taken, colliding_hitbox):
+		invincibility_override = true  # Enable invincibility override on player death
+	, 2)
+	events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox):
+		invincibility_timer.start(hit_invincibility_duration)  # Start the invincibility timer when damaged
+	, 3)
+	setup_invincibility_timer()  # Initialize the invincibility timer
+
+# Called every physics frame
+func _physics_process(delta: float) -> void:
+	invincibility_check()  # Check the status of invincibility
+
+# Setup the invincibility timer with default properties
+func setup_invincibility_timer():
+	invincibility_timer.one_shot = true  # The timer runs only once
+	invincibility_timer.autostart = false  # The timer doesn't start automatically
+	invincibility_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS  # Use physics process to update
+	add_child.call_deferred(invincibility_timer, true)  # Add the timer as a child with deferred call
+
+# Check if the player is currently invincible
+func invincibility_check():
+	if not invincibility_override:  # If invincibility override is not active
+		match invincibility_timer.time_left:  # Check the timer's remaining time
+			0.0:
+				owner.hurtbox.is_disabled = false  # Disable the hurtbox (player vulnerable)
+			_:
+				owner.hurtbox.is_disabled = true  # Enable the hurtbox (player invincible)
+	else:
+		owner.hurtbox.is_disabled = true  # Always enable hurtbox if invincibility override is active
+"
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 z_index = 4096
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_5vafy")
-max_movement_speed = 12250.0
-acceleration = 127500.0
-friction = 127500.0
 
-[node name="HealthComponent" type="Node" parent="."]
-script = ExtResource("2_shqxk")
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 2)
-shape = SubResource("CircleShape2D_23pmm")
+[node name="Crosshair" type="Polygon2D" parent="."]
+top_level = true
+scale = Vector2(3, 3)
+color = Color(0, 1, 1, 1)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+script = SubResource("GDScript_q03yt")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
@@ -1332,6 +1416,7 @@ rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_wirgs")
 animation = &"idle"
 autoplay = "idle"
+script = SubResource("GDScript_w5s08")
 
 [node name="DeathEffects" type="GPUParticles2D" parent="Sprite"]
 z_index = 4096
@@ -1341,56 +1426,44 @@ process_material = SubResource("ParticleProcessMaterial_rjiyg")
 one_shot = true
 fixed_fps = 60
 
-[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health") groups=["player"]]
+[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_23pmm")
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["player"]]
 collision_layer = 2
 collision_mask = 17
-script = ExtResource("5_g3r5p")
+script = SubResource("GDScript_u1yyx")
 parent = NodePath("..")
-health = NodePath("../HealthComponent")
+health = NodePath("../Health Manager")
+knockback = NodePath("../KnockbackComponent")
 
 [node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_rq3p4")
 
-[node name="GameOverBlack" type="ColorRect" parent="."]
-visible = false
-z_index = 4095
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1367.0
-offset_top = -793.0
-offset_right = 2007.0
-offset_bottom = 1153.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-color = Color(0, 0, 0, 1)
-script = SubResource("GDScript_5rul6")
+[node name="Health Manager" type="Node" parent="."]
+script = ExtResource("2_shqxk")
 
-[node name="Animation" type="AnimationPlayer" parent="GameOverBlack"]
-libraries = {
-"": SubResource("AnimationLibrary_cxoen")
-}
+[node name="Physics Manager" type="Node" parent="."]
+script = SubResource("GDScript_itgeb")
+allows_input = true
+is_movement_disabled = true
+max_movement_speed = 12250.0
+acceleration = 127500.0
+friction = 127500.0
 
-[node name="SFX" type="Node2D" parent="."]
+[node name="Weapon Manager" type="Node" parent="."]
+script = SubResource("GDScript_xpxrt")
+is_actionable = true
 
-[node name="Normal_Hit" type="AudioStreamPlayer" parent="SFX"]
-stream = ExtResource("6_fa8j1")
-bus = &"SFX"
+[node name="I-Frames Manager" type="Node" parent="."]
+script = SubResource("GDScript_rdqb0")
+hit_invincibility_duration = 1.5
 
-[node name="Strong_Hit" type="AudioStreamPlayer" parent="SFX"]
-stream = ExtResource("7_uvb5w")
-volume_db = -3.0
-bus = &"SFX"
+[node name="KnockbackComponent" type="Node2D" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("4_pp5h7")
+parent = NodePath("..")
+is_knockback_forced_upwards = false
 
-[node name="Dying_Shatter" type="AudioStreamPlayer" parent="SFX"]
-stream = ExtResource("8_5l6dk")
-volume_db = -6.0
-mix_target = 1
-bus = &"SFX"
-
-[connection signal="death" from="HealthComponent" to="." method="on_death"]
-[connection signal="on_heal" from="HealthComponent" to="." method="on_heal"]
-[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
+[connection signal="death" from="Health Manager" to="." method="on_death"]
+[connection signal="on_heal" from="Health Manager" to="." method="on_heal"]
+[connection signal="on_hit" from="Health Manager" to="." method="on_hit"]

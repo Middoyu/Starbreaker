@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://c26v2faggef5y"]
+[gd_scene load_steps=14 format=3 uid="uid://c26v2faggef5y"]
 
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/THEME.tres" id="1_ns363"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_ns363"]
 [ext_resource type="AudioStream" uid="uid://cem4aaklv0lae" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over.mp3" id="1_xouxq"]
 [ext_resource type="Script" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
 [ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="2_xv7wk"]
+[ext_resource type="FontFile" uid="uid://cpqwt7n2r0v1m" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/Pixeloid/ImpactFont.ttf" id="4_hmhld"]
 
 [sub_resource type="GDScript" id="GDScript_83bpk"]
 script/source = "extends Node2D
@@ -80,6 +81,7 @@ func tween_camera_downwards():
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_lkqe1"]
+font = ExtResource("4_hmhld")
 font_size = 50
 
 [sub_resource type="GDScript" id="GDScript_2sjya"]

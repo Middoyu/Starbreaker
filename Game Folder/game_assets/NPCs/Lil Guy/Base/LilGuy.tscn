@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c5ecg2tyq2x43" path="res://Game Folder/game_assets/NPCs/Lil Guy/Sprites/Lil Guy.png" id="1_dwf44"]
 [ext_resource type="AudioStream" uid="uid://k1hr05gvycvx" path="res://Game Folder/game_assets/NPCs/Lil Guy/Music/audio_lilguy_talk.wav" id="2_dguqf"]
-[ext_resource type="FontFile" uid="uid://cohq7acthuyhd" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/PixeloidSansBold-PKnYd.ttf" id="2_k4k30"]
+[ext_resource type="FontFile" uid="uid://cohq7acthuyhd" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/Pixeloid/PixeloidSansBold-PKnYd.ttf" id="2_k4k30"]
 [ext_resource type="AudioStream" uid="uid://c27lbkt2sfyc6" path="res://Game Folder/game_assets/NPCs/Lil Guy/Music/starbreaker_lilguy_theme.wav" id="4_7sv45"]
 [ext_resource type="Texture2D" uid="uid://b52qkf01xivrm" path="res://Game Folder/game_assets/NPCs/Lil Guy/Sprites/textbox.png" id="5_fttqa"]
 

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://o7ikyuwmpnvx"
+path="res://.godot/imported/3.mp3-e8df301aa9dce914ca0d78f7fb64f0eb.mp3str"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/3.mp3"
+dest_files=["res://.godot/imported/3.mp3-e8df301aa9dce914ca0d78f7fb64f0eb.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

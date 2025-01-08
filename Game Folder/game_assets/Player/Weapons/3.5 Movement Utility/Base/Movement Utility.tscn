@@ -15,7 +15,7 @@ func _physics_process(delta: float) -> void:
 	input_detection()
 
 func input_detection():
-	if Input.is_action_just_pressed(\"movement_util\") and global.player.is_actionable:
+	if Input.is_action_just_pressed(\"movement_util\") and player.weapons.is_actionable:
 		action()
 
 

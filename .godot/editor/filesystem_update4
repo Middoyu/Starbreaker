@@ -1,3 +1,9 @@
-res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
-res://Game Folder/game_assets/Menus/Themes/THEME.tres
+res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
+res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
+res://Game Folder/game_assets/Player/Main/Player.gd
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
+res://Game Folder/main_manager.tscn
+res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn

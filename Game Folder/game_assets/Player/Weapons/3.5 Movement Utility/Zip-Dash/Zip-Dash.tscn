@@ -9,10 +9,10 @@ script/source = "extends Node2D
 @onready var player = global.player as Player
 @onready var velocity_vector = Vector2.ZERO
 @onready var release_vector = Vector2.ZERO
-@onready var is_on_cooldown = false
+@onready var is_on_cooldown = true
 @onready var afterimage: GPUParticles2D = $Afterimage
 
-enum states{
+enum states {
 	IDLE,
 	FOCUS,
 	RELEASE
@@ -20,6 +20,7 @@ enum states{
 @onready var current_state = states.IDLE
 
 func _ready() -> void:
+	events.connect(\"stage_started\", func(): is_on_cooldown = false, 0)
 	for i in self.get_groups():
 		remove_from_group(i)
 	add_to_group(\"player\")
@@ -32,41 +33,49 @@ func action():
 
 func enter_focus():
 	$Hitbox.is_disabled = false
-	player.invincibility_override = true
+	player.i_frames.invincibility_override = true
 	current_state = states.FOCUS
+	await get_tree().create_timer(0.01, true, true, true).timeout
 	velocity_vector = Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\").normalized()
 	release(velocity_vector)
 
 func release(direction := Vector2.ZERO):
 	current_state = states.RELEASE
 	player.velocity = Vector2.ZERO
-	player.is_moveable = false
-	player.is_actionable = false
+	player.physics.is_movement_disabled = true
+	player.weapons.is_actionable = false
 	if direction == Vector2.ZERO:
 		direction = player.global_position.direction_to(get_global_mouse_position())
 	release_vector = direction
 	$Timer.start(0.15)
 
 func _physics_process(delta: float) -> void:
-	print(get_groups())
 	global_position = player.global_position
 	if current_state == states.RELEASE:
-		player.velocity = release_vector * delta * 55000
+		var speed = 2500.0  # Dash speed
+		var deceleration = 10.0  # Deceleration factor
+		var target_velocity = release_vector * speed
+		
+		# Apply a smoothing factor using custom logic
+		var velocity_diff = target_velocity - player.velocity
+		var smooth_velocity = player.velocity + velocity_diff * (deceleration * delta)
+		
+		player.velocity = smooth_velocity
+	   
+			
 		if options.extra_vfx:
 			afterimage.emitting = true
 
 func timer_timeout() -> void:
 	current_state = states.IDLE
-	player.is_moveable = true
-	player.is_actionable = true
+	player.physics.is_movement_disabled = false
+	player.weapons.is_actionable = true
 	if options.extra_vfx:
 		afterimage.emitting = false
 	$Hitbox.is_disabled = true
-	player.invincibility_override = false
-	player.invincibility_timer.start(0.3)
+	player.i_frames.invincibility_override = false
+	player.i_frames.invincibility_timer.start(0.3)
 	$\"Internal Cooldown\".start(0.65)
-
-
 
 func internal_cooldown_timeout() -> void:
 	is_on_cooldown = false
@@ -74,6 +83,7 @@ func internal_cooldown_timeout() -> void:
 
 func area_entered(area: Area2D) -> void:
 	if area.get_groups().has(\"enemy\"):
+		# Optional: apply some additional logic for enemy-specific interaction
 		pass
 "
 
@@ -101,9 +111,9 @@ alpha_curve = SubResource("CurveTexture_cedcx")
 script/source = "extends GPUParticles2D
 
 func _ready() -> void:
-	reparent(global.player)
 	if options.extra_vfx == false:
 		queue_free()
+	reparent(owner)
 
 func _process(delta: float) -> void:
 	process_material.set(\"angle\", global.player.global_rotation)

@@ -19,9 +19,7 @@ script/source = "extends Projectile
 @onready var hit_particles: GPUParticles2D = $hit_particles
 @onready var hit_particles_2: CPUParticles2D = $hit_particles2
 @onready var sfx_hit: AudioStreamPlayer = $sfx_hit
-
-
-@onready var direction = global_position.direction_to(get_global_mouse_position()).normalized()
+@onready var direction = global_position.direction_to(global.player.crosshair.global_position).normalized()
 
 func _ready() -> void:
 	super()
