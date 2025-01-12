@@ -9,7 +9,7 @@
 
 [sub_resource type="GDScript" id="GDScript_q03yt"]
 script/source = "extends Polygon2D
-@export var max_radius = 65.0
+@export var max_radius = 165.0
 
 func _physics_process(delta: float) -> void:
 	if get_global_mouse_position().distance_to(owner.global_position) <= max_radius:

@@ -5,7 +5,12 @@
 
 [sub_resource type="GDScript" id="GDScript_qlpno"]
 script/source = "extends Projectile
-var speed = 3000
+var speed = 6000
+
+func _ready() -> void:
+	super()
+	look_at(global.player.global_position)
+	speed *= 5
 
 func _physics_process(delta: float) -> void:
 	velocity = transform.x * delta * speed
@@ -13,7 +18,7 @@ func _physics_process(delta: float) -> void:
 
 func timeout() -> void:
 	if is_instance_valid(global.player):
-		look_at(global.player.global_position)
+		look_at(get_global_mouse_position())
 		speed *= 5
 "
 
@@ -457,7 +462,6 @@ hitbox = NodePath("HitboxComponent")
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
-autostart = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 light_mask = 0

@@ -1,0 +1,72 @@
+[gd_scene load_steps=6 format=3 uid="uid://d2k6dxwe5v7l1"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="1_6hnih"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_jg0yl"]
+
+[sub_resource type="GDScript" id="GDScript_eqsky"]
+script/source = "extends Enemy
+
+func look_at_target():
+	self.look_at(global.player.global_position)
+
+func _physics_process(delta: float) -> void:
+	look_at_target()
+
+func timeout() -> void:
+	$Action.shoot_at_target()
+
+func death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_olad7"]
+
+[sub_resource type="GDScript" id="GDScript_7nf4q"]
+script/source = "extends Node
+@export var shot_burst = 3
+const BULLET_TRISHOOTER = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn\")
+
+func shoot_at_target():
+	for i in shot_burst:
+		i = BULLET_TRISHOOTER.instantiate()
+		await get_tree().create_timer(0.2).timeout
+		global.add_child(i)
+		i.global_position = owner.global_position
+"
+
+[node name="Enemy" type="CharacterBody2D"]
+script = SubResource("GDScript_eqsky")
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health")]
+collision_layer = 5
+collision_mask = 9
+script = ExtResource("1_6hnih")
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_olad7")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_jg0yl")
+maximum_health = 175.0
+
+[node name="Sprite" type="Polygon2D" parent="."]
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(0, 8, -8, 0, 0, -8, 8, 0)
+
+[node name="Turret" type="Polygon2D" parent="."]
+position = Vector2(0, 8)
+polygon = PackedVector2Array(0, 0, 0, -16, 16, -8)
+
+[node name="Action" type="Node" parent="."]
+script = SubResource("GDScript_7nf4q")
+shot_burst = 5
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+autostart = true
+
+[connection signal="death" from="HealthComponent" to="." method="death"]
+[connection signal="timeout" from="Timer" to="." method="timeout"]

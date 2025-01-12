@@ -1,11 +1,11 @@
 [gd_scene load_steps=28 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
+[ext_resource type="AudioStream" uid="uid://cmo53j3sow4hg" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav" id="1_6vs1r"]
 [ext_resource type="AudioStream" uid="uid://dm04h5kj66vst" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/1.mp3" id="1_u5x7w"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
 [ext_resource type="AudioStream" uid="uid://kpd61ipwb0xy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/2.mp3" id="2_dst4g"]
 [ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
-[ext_resource type="AudioStream" uid="uid://o7ikyuwmpnvx" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/3.mp3" id="3_28j6h"]
 [ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="7_ld0jn"]
 
@@ -288,7 +288,7 @@ script = SubResource("GDScript_sy80a")
 player_starting_position = Vector2(320, 290)
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_28j6h")
+stream = ExtResource("1_6vs1r")
 bus = &"Music"
 
 [node name="Tutorial_Music" type="AudioStreamPlayer" parent="."]

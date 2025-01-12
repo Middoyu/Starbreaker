@@ -17,6 +17,8 @@ signal PlayerDeath  # Signal emitted when the player dies
 func _ready() -> void:
 	# Set up the player when the scene is ready
 	setup_player()
+	# Hide the mouse when the player enters.
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func setup_player():
 	global.player = self  # Set this player instance as the global player
