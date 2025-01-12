@@ -9,3 +9,6 @@ res://Game Folder/game_components/entity_components/State Machine/stagemachine_p
 res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/E.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn
+res://Game Folder/game_assets/Stages/00 - BASE/base_stage_script.gd

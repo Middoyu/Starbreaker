@@ -80,7 +80,8 @@ var is_boss_active = false
 	"Skelazor": "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn",
 	"Trishooter": "res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn",
 	"Faider": "res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn",
-	"Cosma-Turret": "res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn"
+	"Cosma-Turret": "res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn",
+	"Absorbio": "res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn"
 }
 
 var spawn_interval = 0
@@ -109,7 +110,7 @@ func spawn_enemies_pattern(pattern: int) -> void:
 		0:
 			# Spawn enemies at a specific position with a given scene
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(128, 64))
-			spawn_enemies(enemy_list["Cosma-Turret"], Vector2(128, 64))
+			spawn_enemies(enemy_list["Absorbio"], Vector2(128, 64))
 			spawn_enemies(enemy_list["Skeleshot"], Vector2(512, -16))
 		1:
 			global.main_manager.gameover_sequence(false)
@@ -123,6 +124,7 @@ func placeholder_cacheload():
 	cache.load_in_cache("res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Gas Comets/Base/Gas Comets.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn")
 	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn")
+	cache.load_in_cache("res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn")
 
 #endregion
 

@@ -1,0 +1,140 @@
+[gd_scene load_steps=11 format=3 uid="uid://c4it8uhwa4evo"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="1_gcoxo"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="1_ne3wu"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="2_q2che"]
+[ext_resource type="Script" path="res://Game Folder/game_components/entity_components/State Machine/state_base.gd" id="2_rq7qx"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="3_l0epk"]
+
+[sub_resource type="GDScript" id="GDScript_q3hpd"]
+script/source = "extends Enemy
+@export var movement_speed = 1000.0
+@export var max_scale = 2.5
+@onready var state_machine: Node = $StateMachine
+
+func _physics_process(delta: float) -> void:
+	move_and_slide()
+
+
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	scale += Vector2(0.1 * (damage_taken / 1000), 0.1 * (damage_taken / 1000))
+	scale = scale.clamp(Vector2.ONE, Vector2.ONE * max_scale)
+	movement_speed -= 0.2 * (damage_taken / 1000)
+
+
+func reward_timeout() -> void:
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2my7v"]
+radius = 40.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_q7oh3"]
+radius = 30.98
+height = 80.0
+
+[sub_resource type="GDScript" id="GDScript_f77i3"]
+script/source = "extends State
+@onready var pathfinding: NavigationAgent2D = $\"../../Pathfinding\"
+@onready var state_machine = $\"..\"
+
+
+func enter():
+	pass
+
+func make_path():
+	if global.player:
+		pathfinding.target_position = global.player.global_position
+	else:
+		pathfinding.target_position = parent.get_global_mouse_position()
+
+func physics_update(_delta):
+	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
+	var intended_velocity = dir * parent.movement_speed * _delta
+	pathfinding.set_velocity(intended_velocity)
+	make_path()
+
+func velocity_computed(safe_velocity: Vector2) -> void:
+	if state_machine.current_state == self:
+		parent.velocity = safe_velocity
+"
+
+[sub_resource type="GDScript" id="GDScript_drgmp"]
+script/source = "extends State
+
+func enter():
+	parent.queue_free()
+"
+
+[node name="Absorbio" type="CharacterBody2D" groups=["enemy"]]
+script = SubResource("GDScript_q3hpd")
+movement_speed = 750.0
+max_scale = 3.0
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("1_gcoxo")
+maximum_health = 1e+07
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"]]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("2_q2che")
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_2my7v")
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("3_l0epk")
+parent = NodePath("..")
+damage = -100.0
+knockback_amount = 7500.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_q7oh3")
+
+[node name="Sprite" type="Node2D" parent="."]
+
+[node name="Orb" type="Polygon2D" parent="Sprite"]
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(40, -8, 40, 8, 32, 24, 16, 32, 0, 32, -16, 32, -32, 24, -40, 8, -40, -8, -32, -24, -16, -32, 0, -32, 16, -32, 32, -24)
+
+[node name="Orb2" type="Polygon2D" parent="Sprite"]
+rotation = 3.14159
+scale = Vector2(0.7, 0.7)
+polygon = PackedVector2Array(40, -8, 40, 8, 32, 24, 16, 32, 0, 32, -16, 32, -32, 24, -40, 8, -40, -8, -32, -24, -16, -32, 0, -32, 16, -32, 32, -24)
+
+[node name="Pathfinding" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "death_state") instance=ExtResource("1_ne3wu")]
+parent = NodePath("..")
+intial_state = NodePath("Idle")
+death_state = NodePath("Reward_Trigger")
+
+[node name="Appear" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = ExtResource("2_rq7qx")
+parent = NodePath("../..")
+
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_f77i3")
+parent = NodePath("../..")
+
+[node name="Reward_Trigger" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_drgmp")
+parent = NodePath("../..")
+
+[node name="Reward_Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
+[connection signal="velocity_computed" from="Pathfinding" to="StateMachine/Idle" method="velocity_computed"]
+[connection signal="timeout" from="Reward_Timer" to="." method="reward_timeout"]
