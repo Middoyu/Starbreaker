@@ -1,41 +1,175 @@
-[gd_scene load_steps=6 format=3 uid="uid://d2k6dxwe5v7l1"]
+[gd_scene load_steps=15 format=3 uid="uid://d2k6dxwe5v7l1"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="1_6hnih"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_jg0yl"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_q665o"]
 
 [sub_resource type="GDScript" id="GDScript_eqsky"]
 script/source = "extends Enemy
 
-func look_at_target():
-	self.look_at(global.player.global_position)
+@export var firerate := 3.0
+@export var shot_burst := 3
+@export var shot_interval := 0.2
 
-func _physics_process(delta: float) -> void:
-	look_at_target()
+@onready var firerate_timer: Timer = $Firerate
+@onready var hurtbox: HurtboxComponent = $HurtboxComponent
+@onready var hit: State = $StateMachine/Hit
+@onready var death: State = $StateMachine/Death
+@onready var state_machine: Node = $StateMachine
+@onready var sprite: Node2D = $Sprite
 
-func timeout() -> void:
-	$Action.shoot_at_target()
 
-func death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
-	queue_free()
+func on_hit(amount, colliding_hitbox) -> void:
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
+	score_event.update_score(10)
+
+func on_death(amount, colliding_hitbox) -> void:
+	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
+	score_event.update_score(25)
 "
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_olad7"]
 
-[sub_resource type="GDScript" id="GDScript_7nf4q"]
-script/source = "extends Node
-@export var shot_burst = 3
-const BULLET_TRISHOOTER = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn\")
+[sub_resource type="GDScript" id="GDScript_jiot5"]
+script/source = "extends State
+
+
+func physics_update(_delta):
+	var target = parent.transform.looking_at(global.player.global_position + (global.player.velocity.normalized() * abs(parent.global_position.distance_to(global.player.global_position)) / 1.25))
+	parent.transform = parent.transform.interpolate_with(target, 20 * _delta)
+
+func animation_finished(anim_name: StringName) -> void:
+	Transistioned.emit(self, $\"../Idle\".name)
+"
+
+[sub_resource type="Animation" id="Animation_npey6"]
+resource_name = "appear"
+length = 0.65
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../../Sprite:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.633333),
+"transitions": PackedFloat32Array(-2, -2),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_chej0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../../Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_n2gnm"]
+_data = {
+"RESET": SubResource("Animation_chej0"),
+"appear": SubResource("Animation_npey6")
+}
+
+[sub_resource type="GDScript" id="GDScript_a1rtw"]
+script/source = "extends State
+
+func enter():
+	await get_tree().create_timer(0.3).timeout
+	parent.firerate_timer.start(owner.firerate)
+	parent.firerate_timer.connect(\"timeout\", firerate_timeout, 0)
+
+func physics_update(_delta):
+	var target = parent.transform.looking_at(global.player.global_position + (global.player.velocity.normalized() * abs(parent.global_position.distance_to(global.player.global_position)) / 1.25))
+	parent.transform = parent.transform.interpolate_with(target, 20 * _delta)
+
+func firerate_timeout():
+	emit_signal(\"Transistioned\", self, $\"../Shoot\".name)
+
+func exit():
+	parent.firerate_timer.stop()
+"
+
+[sub_resource type="GDScript" id="GDScript_btgbj"]
+script/source = "extends State
+
+const BULLET_COSMATURRET = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/Bullet/bullet_cosma-turret.tscn\")
+
+func enter():
+	shoot_at_target()
+
+func physics_update(_delta):
+	var target = parent.transform.looking_at(global.player.global_position + (global.player.velocity.normalized() * abs(parent.global_position.distance_to(global.player.global_position)) / 1.25))
+	parent.transform = parent.transform.interpolate_with(target, 20 * _delta)
 
 func shoot_at_target():
-	for i in shot_burst:
-		i = BULLET_TRISHOOTER.instantiate()
-		await get_tree().create_timer(0.2).timeout
+	for i in owner.shot_burst:
+		i = BULLET_COSMATURRET.instantiate()
+		await get_tree().create_timer(parent.shot_interval).timeout
 		global.add_child(i)
 		i.global_position = owner.global_position
+		i.rotation = parent.transform.get_rotation()
+	emit_signal(\"Transistioned\", self, $\"../Idle\".name)
+"
+
+[sub_resource type="GDScript" id="GDScript_6p5mk"]
+script/source = "extends State
+
+
+func enter():
+	Transistioned.emit(self, $\"../Idle\".name)
+
+func physics_update(_delta):
+	parent.rotation_degrees += 50
+
+func exit():
+	parent.rotation_degrees = 0
+"
+
+[sub_resource type="GDScript" id="GDScript_bfy8o"]
+script/source = "extends State
+
+
+func enter():
+	parent.hurtbox.queue_free()
+	parent.queue_free()
+"
+
+[sub_resource type="GDScript" id="GDScript_1iqck"]
+script/source = "extends Node
+
+# Shield? 5 Bursts & Slower Speed?
 "
 
 [node name="Enemy" type="CharacterBody2D"]
 script = SubResource("GDScript_eqsky")
+
+[node name="Firerate" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="Sprite" type="Node2D" parent="."]
+
+[node name="Sprite" type="Polygon2D" parent="Sprite"]
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(0, 8, -8, 8, -8, 0, -8, -8, 0, -8, 8, 0)
+
+[node name="Turret" type="Polygon2D" parent="Sprite"]
+position = Vector2(0, 8)
+polygon = PackedVector2Array(0, 0, 0, -16, 16, -8)
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_jg0yl")
+maximum_health = 175.0
 
 [node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health")]
 collision_layer = 5
@@ -47,26 +181,42 @@ health = NodePath("../HealthComponent")
 [node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_olad7")
 
-[node name="HealthComponent" type="Node" parent="."]
-script = ExtResource("2_jg0yl")
-maximum_health = 175.0
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("3_q665o")]
+parent = NodePath("..")
+intial_state = NodePath("Appear")
+hit_state = NodePath("Hit")
+death_state = NodePath("Death")
 
-[node name="Sprite" type="Polygon2D" parent="."]
-color = Color(1, 0, 0, 1)
-polygon = PackedVector2Array(0, 8, -8, 0, 0, -8, 8, 0)
+[node name="Appear" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_jiot5")
+parent = NodePath("../..")
 
-[node name="Turret" type="Polygon2D" parent="."]
-position = Vector2(0, 8)
-polygon = PackedVector2Array(0, 0, 0, -16, 16, -8)
+[node name="Animation" type="AnimationPlayer" parent="StateMachine/Appear"]
+libraries = {
+"": SubResource("AnimationLibrary_n2gnm")
+}
+autoplay = "appear"
 
-[node name="Action" type="Node" parent="."]
-script = SubResource("GDScript_7nf4q")
-shot_burst = 5
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_a1rtw")
+parent = NodePath("../..")
 
-[node name="Timer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 3.0
-autostart = true
+[node name="Shoot" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_btgbj")
+parent = NodePath("../..")
 
-[connection signal="death" from="HealthComponent" to="." method="death"]
-[connection signal="timeout" from="Timer" to="." method="timeout"]
+[node name="Hit" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_6p5mk")
+parent = NodePath("../..")
+
+[node name="Death" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_bfy8o")
+parent = NodePath("../..")
+
+[node name="Hardmode" type="Node" parent="."]
+script = SubResource("GDScript_1iqck")
+
+[connection signal="timeout" from="Firerate" to="StateMachine/Idle" method="firerate_timeout"]
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
+[connection signal="animation_finished" from="StateMachine/Appear/Animation" to="StateMachine/Appear" method="animation_finished"]
