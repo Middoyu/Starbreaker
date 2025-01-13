@@ -1,3 +1,5 @@
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone
 res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret
 res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy
 res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites
@@ -18,5 +20,3 @@ res://Game Folder/game_assets/Menus/IntroCine
 res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites
 res://Game Folder/game_components/global_components/Scripts
 res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls
-res://Game Folder/game_assets/Menus/Themes
-res://Game Folder/game_assets/Menus/Themes/TutorialDialogue

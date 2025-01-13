@@ -12,16 +12,29 @@
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
 const TUTORIAL_SKELESHOT = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn\")
+const NULLSPACE_SCRIPT = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/nullspace.tscn\")
 
 func _ready() -> void:
 	intro()
 	events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
+	events.connect(\"enter_nullspace\", enter_nullspace)
 	if global.has_viewed_tutorial == false:
 		var x = TUTORIAL_SKELESHOT.instantiate()
 		x.global_position = Vector2(320, 128)
 		add_child(x)
 	else:
 		start_stage()
+
+func enter_nullspace():
+	# Play Nullspace music.
+	# Spawn Blackhole with debre
+	
+	
+	pass
+
+
+
+
 
 # Called every frame.
 func _process(delta: float) -> void:

@@ -12,17 +12,24 @@ script/source = "extends Enemy
 @export var max_scale = 2.5
 @onready var state_machine: Node = $StateMachine
 
+const BLACKHOLE = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects/blackhole.tscn\")
+
+
+
 func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
 func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
-	scale += Vector2(0.1 * (damage_taken / 1000), 0.1 * (damage_taken / 1000))
+	scale += Vector2(0.3 * (damage_taken / 1000), 0.3 * (damage_taken / 1000))
 	scale = scale.clamp(Vector2.ONE, Vector2.ONE * max_scale)
-	movement_speed -= 0.2 * (damage_taken / 1000)
+	movement_speed -= 0.1 * (damage_taken / 1000)
 
 
 func reward_timeout() -> void:
+	var i = BLACKHOLE.instantiate()
+	global.current_stage.add_child(i)
+	i.global_position = Vector2(320, 40)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 "
 
@@ -63,6 +70,7 @@ func velocity_computed(safe_velocity: Vector2) -> void:
 script/source = "extends State
 
 func enter():
+	events.emit_signal(\"enter_nullspace\")
 	parent.queue_free()
 "
 
@@ -131,7 +139,7 @@ parent = NodePath("../..")
 
 [node name="Reward_Timer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 3.0
+wait_time = 15.0
 one_shot = true
 autostart = true
 

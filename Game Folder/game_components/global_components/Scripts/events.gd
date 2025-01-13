@@ -23,6 +23,7 @@ signal boss_spawning
 signal GameOver(final_score)
 
 # Tres-2B Special Events
+signal enter_nullspace
 signal tutorial_completed
 signal skipped_tutorial
 #endregion

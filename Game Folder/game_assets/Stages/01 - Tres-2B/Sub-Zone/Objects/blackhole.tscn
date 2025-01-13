@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4vjwby0xmwls"]
+
+[sub_resource type="GDScript" id="GDScript_jvw7d"]
+script/source = "extends Node2D
+const CRATE = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects/crate.tscn\")
+
+
+func _physics_process(delta: float) -> void:
+	move_objects_to_origin(delta)
+
+func move_objects_to_origin(delta):
+	for i in global.current_stage.get_children():
+		if i is Entity:
+			var effected_entity = i as CharacterBody2D
+			effected_entity.global_position += effected_entity.global_position.direction_to(self.global_position) * 0.7
+
+
+func timeout() -> void:
+	var i = CRATE.instantiate()
+	i.global_position = global_position + Vector2(400, 0).rotated(2 * randf_range(-2000, 2000))
+	global.current_stage.add_child(i)
+"
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gllop"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(3, 3, 3)
+emission_shape = 2
+emission_sphere_radius = 128.0
+angle_min = -720.0
+angle_max = 1.07288e-05
+radial_velocity_min = -1000.0
+radial_velocity_max = -2.23517e-05
+gravity = Vector3(0, 0, 0)
+
+[node name="Blackhole" type="Node2D"]
+script = SubResource("GDScript_jvw7d")
+
+[node name="Particles" type="GPUParticles2D" parent="."]
+amount = 1000
+process_material = SubResource("ParticleProcessMaterial_gllop")
+fixed_fps = 1000
+
+[node name="Crate_Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 2.0
+autostart = true
+
+[connection signal="timeout" from="Crate_Timer" to="." method="timeout"]

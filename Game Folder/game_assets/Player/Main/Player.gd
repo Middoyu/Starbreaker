@@ -38,9 +38,8 @@ func on_hit(damage_taken, colliding_hitbox) -> void:
 	# Trigger a camera flash effect
 
 # Called when the player heals
-func on_heal(healing_taken):
+func on_heal(healing_taken, _colliding_hitbox):
 	events.emit_signal("player_healed", health.current_health)
-	# Emit a signal for player healing, passing current health
 
 # Called when the player dies
 func on_death(damage_taken, colliding_hitbox) -> void:

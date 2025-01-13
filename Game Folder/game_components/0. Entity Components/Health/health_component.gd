@@ -19,6 +19,7 @@ func modify_health(amount := 0.0, _colliding_hitbox = HitboxComponent) -> void:
 	# Emit appropriate signals based on whether the amount is positive or negative
 	if amount < 0.0 and current_health > 0.0:
 		emit_signal("on_hit", -amount, _colliding_hitbox)  # If damaged, emit "on_hit"
+	
 	elif amount > 0.0 and current_health > 0.0:
 		emit_signal("on_heal", amount, _colliding_hitbox)  # If healed, emit "on_heal"
 	

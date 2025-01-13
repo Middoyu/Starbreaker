@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://j1c6vmbpnhpy"]
+
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_etw0k"]
+
+[sub_resource type="GDScript" id="GDScript_xbbi4"]
+script/source = "extends Entity
+
+func _physics_process(delta: float) -> void:
+	rotate(1.5 * delta)
+	if global.player.health.current_health >= 30:
+		queue_free()
+
+func hitbox(area: Area2D) -> void:
+	if area.get_parent() == global.player:
+		global.player.health.modify_health(15.0)
+		queue_free()
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dpaxu"]
+radius = 8.0
+
+[node name="Health_Capsule" type="CharacterBody2D"]
+motion_mode = 1
+script = SubResource("GDScript_xbbi4")
+
+[node name="PH_Sprite" type="Polygon2D" parent="."]
+color = Color(0, 1, 0, 1)
+polygon = PackedVector2Array(-8, -8, -8, -8, -6, -13, 0, -16, 6, -13, 8, -8, 8, 8, 7, 12, 5, 14, 0, 16, -5, 14, -7, 12, -8, 8)
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_etw0k")
+parent = NodePath("..")
+damage = 15.0
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CapsuleShape2D_dpaxu")
+
+[connection signal="area_entered" from="HitboxComponent" to="." method="hitbox"]

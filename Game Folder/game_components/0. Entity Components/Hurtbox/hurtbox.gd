@@ -60,11 +60,11 @@ func health_reaction(area: Area2D) -> void:
 	if health != null:
 		health.modify_health(area.hitbox_data.damage, area)
 	else:
-		print_debug("Missing Health Component")  # Log if the HealthComponent is missing
+		pass  # Log if the HealthComponent is missing
 
 # Handle knockback reactions
 func knockback_reaction(area: Area2D) -> void:
 	if knockback != null:
 		knockback.calculate_knockback(area)
 	else:
-		print_debug("Missing Knockback Component")  # Log if the KnockbackComponent is missing
+		pass  # Log if the KnockbackComponent is missing

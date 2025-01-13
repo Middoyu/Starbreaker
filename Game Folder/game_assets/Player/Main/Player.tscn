@@ -1431,7 +1431,7 @@ shape = SubResource("CircleShape2D_23pmm")
 
 [node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["player"]]
 collision_layer = 2
-collision_mask = 17
+collision_mask = 16
 script = SubResource("GDScript_u1yyx")
 parent = NodePath("..")
 health = NodePath("../Health Manager")
