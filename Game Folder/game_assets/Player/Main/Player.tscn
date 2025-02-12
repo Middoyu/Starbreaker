@@ -1,24 +1,54 @@
-[gd_scene load_steps=190 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=196 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
+[ext_resource type="Texture2D" uid="uid://0g26oshcb22" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.png" id="2_h5nhg"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_shqxk"]
 [ext_resource type="Texture2D" uid="uid://bga6dk4a4ifp5" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_hit_42x37_42x37.png" id="3_ahd3f"]
+[ext_resource type="Texture2D" uid="uid://dquvjfksile86" path="res://Game Folder/game_assets/Player/Crosshair/extra_air.png" id="3_wj1xj"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="4_pp5h7"]
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="4_sp8mo"]
+[ext_resource type="Texture2D" uid="uid://ceuqf56q32fjj" path="res://Game Folder/game_assets/Player/Crosshair/crosshair tile-export.png" id="5_p52m1"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.gd" id="8_oo2xt"]
 
-[sub_resource type="GDScript" id="GDScript_q03yt"]
-script/source = "extends Polygon2D
-@export var max_radius = 165.0
+[sub_resource type="Animation" id="Animation_k4rei"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
-func _physics_process(delta: float) -> void:
-	if get_global_mouse_position().distance_to(owner.global_position) <= max_radius:
-		global_position = get_global_mouse_position()
-	else:
-		var angle = owner.global_position.angle_to_point(get_global_mouse_position())
-		global_position.x = owner.global_position.x + cos(angle) * max_radius
-		global_position.y = owner.global_position.y + sin(angle) * max_radius
-"
+[sub_resource type="Animation" id="Animation_76val"]
+resource_name = "default"
+length = 3.0
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_57ssm"]
+_data = {
+"RESET": SubResource("Animation_k4rei"),
+"default": SubResource("Animation_76val")
+}
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vs24j"]
 atlas = ExtResource("2_a6fo3")
@@ -1340,7 +1370,7 @@ func movement_handler(delta):
 script/source = "extends Node
 
 @export var is_actionable = false  # Exported boolean to control whether actions are actionable
-@onready var crosshair: Node2D = $\"../Crosshair\"
+
 
 const PRIMARY = preload(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn\")  # Preload primary weapon scene
 const SECONDARY = preload(\"res://Game Folder/game_assets/Player/Weapons/2. Secondary/Base/secondary.tscn\")  # Preload secondary weapon scene
@@ -1403,12 +1433,29 @@ collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_5vafy")
 
-[node name="Crosshair" type="Polygon2D" parent="."]
+[node name="TrueCrosshair" type="Sprite2D" parent="."]
+z_index = 4096
+texture = ExtResource("3_wj1xj")
+script = ExtResource("8_oo2xt")
+
+[node name="MouseCrosshair" type="Sprite2D" parent="TrueCrosshair"]
+show_behind_parent = true
 top_level = true
-scale = Vector2(3, 3)
-color = Color(0, 1, 1, 1)
-polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
-script = SubResource("GDScript_q03yt")
+z_index = 4096
+texture = ExtResource("2_h5nhg")
+hframes = 10
+
+[node name="Animation" type="AnimationPlayer" parent="TrueCrosshair/MouseCrosshair"]
+libraries = {
+"": SubResource("AnimationLibrary_57ssm")
+}
+autoplay = "default"
+
+[node name="CrosshairLine" type="Line2D" parent="TrueCrosshair"]
+texture_filter = 3
+points = PackedVector2Array(0, 0, 130, 0)
+texture = ExtResource("5_p52m1")
+texture_mode = 2
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

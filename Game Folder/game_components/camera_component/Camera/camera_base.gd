@@ -90,3 +90,6 @@ func flash():
 	if options.screen_flash:
 		$Flash/Flash_Event.play("Flash")
 #endregion
+
+func true_freeze(amount):
+	OS.delay_usec(amount)

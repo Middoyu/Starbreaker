@@ -1,29 +1,67 @@
-[gd_scene load_steps=28 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=32 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
 [ext_resource type="AudioStream" uid="uid://cmo53j3sow4hg" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav" id="1_6vs1r"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/T2B-EnemyData.gd" id="1_ljwki"]
 [ext_resource type="AudioStream" uid="uid://dm04h5kj66vst" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/1.mp3" id="1_u5x7w"]
 [ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
 [ext_resource type="AudioStream" uid="uid://kpd61ipwb0xy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/2.mp3" id="2_dst4g"]
+[ext_resource type="Script" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/T2B-PatternData.gd" id="2_o84y5"]
 [ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
 [ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
 [ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="7_ld0jn"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
+
+# Stage-specific Additions #
+@onready var tutorial_music: AudioStreamPlayer = $Tutorial_Music
+@onready var tutorial_transisition: AudioStreamPlayer = $Tutorial_Music/Tutorial_Transisition
 const TUTORIAL_SKELESHOT = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn\")
-const NULLSPACE_SCRIPT = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/nullspace.tscn\")
+const NULLSPACE_SUBSTAGE = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/nullspace.tscn\")
+
 
 func _ready() -> void:
-	intro()
+	super()
+	
 	events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
-	events.connect(\"enter_nullspace\", enter_nullspace)
-	if global.has_viewed_tutorial == false:
+	
+	intro()
+	
+	# If the player has never viewed the tutorial; make them
+	if !global.has_viewed_tutorial:
+		tutorial_music.play()
 		var x = TUTORIAL_SKELESHOT.instantiate()
 		x.global_position = Vector2(320, 128)
-		add_child(x)
+		EntityManager.add_child(x)
+	# Else it'll start the stage without it.
 	else:
 		start_stage()
+
+func intro():
+	var i = create_tween().bind_node($Black).set_ease(Tween.EASE_IN_OUT)
+	i.tween_property($Black, \"color\", Color(0,0,0,0), 0.5)
+	await i.finished
+	$Black.hide()
+
+# Overrides start_stage base and inserts the tutorial sequence.
+func start_stage():
+	stage_started = true
+	global.is_pausable = true
+	
+	if global.has_viewed_tutorial == false: # If Player hasn't seen the tutorial.
+		tutorial_transisition.play()
+		tutorial_music.stop()
+		await tutorial_transisition.finished
+		tutorial_music.queue_free()
+		stage_music.play()
+		events.emit_signal(\"stage_started\")
+	
+	if global.has_viewed_tutorial == true: # If Player has seen the tutorial.
+		tutorial_music.queue_free()
+		stage_music.play()
+		events.emit_signal(\"stage_started\")
+
 
 func enter_nullspace():
 	# Play Nullspace music.
@@ -32,15 +70,34 @@ func enter_nullspace():
 	
 	pass
 
-
-
-
-
 # Called every frame.
 func _process(delta: float) -> void:
 	super(delta)
 	sync_music()
 "
+
+[sub_resource type="Resource" id="Resource_20uvn"]
+script = ExtResource("1_ljwki")
+enemy_list = {
+"Absorbio": "res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn",
+"Cosma-Turret": "res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn",
+"Faider": "res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn",
+"NULL_Placeholder": "res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn",
+"Skelazor": "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn",
+"Skeleshot": "res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn",
+"Trishooter": "res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn"
+}
+
+[sub_resource type="Resource" id="Resource_ryhv8"]
+script = ExtResource("2_o84y5")
+spawn_times = {
+0: 1.5,
+1: 3.0
+}
+spawn_patterns = {
+0: 0,
+1: 1
+}
 
 [sub_resource type="GDScript" id="GDScript_e4ttt"]
 script/source = "extends Node2D
@@ -280,8 +337,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-64.0339, -127.983, 703
 background_mode = 3
 tonemap_mode = 3
 glow_enabled = true
-glow_intensity = 0.46
-glow_bloom = 0.08
+glow_bloom = 0.4
 adjustment_enabled = true
 adjustment_saturation = 1.7
 
@@ -294,11 +350,13 @@ func _ready() -> void:
 	self.environment.glow_bloom = options.bloom
 "
 
-[node name="Tres-2b" type="Node2D"]
+[node name="Tres-2b" type="Node2D" node_paths=PackedStringArray("stage_music")]
 editor_description = "Stage 1 Of Starbreaker, it's suppose to be simple and easy for beginners to get through without much hassle but have a learning curve to get the S rank."
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
-player_starting_position = Vector2(320, 290)
+stage_music = NodePath("Music")
+enemy_data = SubResource("Resource_20uvn")
+pattern_data = SubResource("Resource_ryhv8")
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_6vs1r")
@@ -313,14 +371,13 @@ stream = ExtResource("2_dst4g")
 bus = &"Music"
 
 [node name="Camera" parent="." instance=ExtResource("1_3cjne")]
-position = Vector2(320.049, 183.915)
+anchor_mode = 0
 zoom = Vector2(3, 3)
-limit_left = -25
-limit_top = -45
-limit_right = 660
-limit_bottom = 380
+limit_right = 640
+limit_bottom = 360
 position_smoothing_speed = 109.5
 initial_zoom_value = 3.0
+anchor = 0
 
 [node name="Player" parent="." instance=ExtResource("2_8fgom")]
 

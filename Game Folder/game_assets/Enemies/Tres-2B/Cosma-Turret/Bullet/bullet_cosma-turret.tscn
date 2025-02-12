@@ -469,7 +469,7 @@ damage = -25.0
 knockback_amount = 1115.0
 knockback_stun_duration = 0.3
 
-[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent" groups=["enemy"]]
 shape = SubResource("CircleShape2D_6gdg6")
 
 [connection signal="area_entered" from="HitboxComponent" to="." method="area_entered"]

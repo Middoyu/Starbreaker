@@ -11,14 +11,12 @@ signal PlayerDeath  # Signal emitted when the player dies
 @onready var i_frames: Node = $"I-Frames Manager"  # Reference to the I-Frames Manager
 @onready var weapons: Node = $"Weapon Manager"  # Reference to the Weapon Manager
 @onready var knockback: KnockbackComponent = $KnockbackComponent
-@onready var crosshair: Polygon2D = $Crosshair
+@onready var crosshair: Sprite2D = $TrueCrosshair
 
 
 func _ready() -> void:
 	# Set up the player when the scene is ready
 	setup_player()
-	# Hide the mouse when the player enters.
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func setup_player():
 	global.player = self  # Set this player instance as the global player

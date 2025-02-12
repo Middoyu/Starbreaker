@@ -1,4 +1,3 @@
-printupgrade
-Base_Projectile_Upgrade
+World2D
 Resource
 HitboxData

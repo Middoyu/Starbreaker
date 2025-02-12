@@ -11,6 +11,7 @@ var boss_healthbar = null
 
 var current_stage = null
 var current_stage_score := 0
+var EntityManager = null
 
 var music_player = null
 

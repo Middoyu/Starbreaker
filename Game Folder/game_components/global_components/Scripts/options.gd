@@ -10,7 +10,7 @@ var extra_vfx : bool = true
 var bloom = 0.5
 var screen_flash : bool = true
 
-var displaydamage_enabled : bool = false
+var displaydamage_enabled : bool = true
 
 func _ready() -> void:
 	pass

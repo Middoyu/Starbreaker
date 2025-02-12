@@ -1,3 +1,8 @@
+AnimationPlayer
+Sprite2D
+Line2D
+AnimationTree
+Node
 Timer
 CollisionShape2D
 HitboxComponent
@@ -6,9 +11,4 @@ HurtboxComponent
 Polygon2D
 Entity
 GPUParticles2D
-AnimationPlayer
 HealthComponent
-Node2D
-Node
-State
-NavigationAgent2D

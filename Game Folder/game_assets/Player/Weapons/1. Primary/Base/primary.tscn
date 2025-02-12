@@ -26,7 +26,7 @@ func spawn_projectile(projectile_path):
 	var proj_int = PLAYER_BULLET.instantiate()
 	proj_int.global_position = player.global_position
 	switch_bullet_pos(proj_int)
-	global.add_child(proj_int)
+	global.EntityManager.add_child(proj_int)
 
 
 # Shoots the projectile and starts the cooldown.

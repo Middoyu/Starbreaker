@@ -1,17 +1,9 @@
 res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
 res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
+res://Game Folder/game_components/shaders/hitflash.tres
 res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
-res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/nullspace.tscn
-res://Game Folder/game_components/global_components/Scripts/events.gd
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
+res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/Bullet/bullet_cosma-turret.tscn
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects/blackhole.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects/crate.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects/health_capsule.tscn
-res://Game Folder/game_assets/Player/Main/Player.tscn
-res://Game Folder/game_assets/Player/Main/Player.gd
-res://Game Folder/game_assets/Player/Weapons/3. Utility/BioticField/biotic_field.tscn
-res://Game Folder/game_components/0. Entity Components/Health/health_component.gd
-res://Game Folder/game_assets/Player/HUD/hud.tscn
-res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd
-res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn

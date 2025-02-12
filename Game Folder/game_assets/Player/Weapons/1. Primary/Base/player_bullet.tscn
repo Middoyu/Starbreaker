@@ -25,6 +25,7 @@ func _ready() -> void:
 	super()
 
 func area_entered(area: Area2D) -> void:
+	print(area.get_groups())
 	if area.get_groups().has(\"enemy\"):
 		effects()
 		queue_free()
@@ -36,9 +37,12 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func effects():
-	sfx_hit.reparent(global)
-	sfx_hit.play()
-	VFX()
+	#VFX()
+	#sfx_hit.reparent(global)
+	#sfx_hit.play()
+	#await sfx_hit.finished
+	#sfx_hit.queue_free()
+	pass
 
 func VFX():
 	camera.shake(10.0)

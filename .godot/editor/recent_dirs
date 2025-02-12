@@ -1,3 +1,5 @@
+res://Game Folder/game_components/shaders
+res://Game Folder/game_assets/Stages/01 - Tres-2B
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/Objects
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone
 res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret
@@ -17,6 +19,3 @@ res://Game Folder/game_assets/Player/VFX
 res://Game Folder/game_components/global_loading
 res://Game Folder/game_components/button_component
 res://Game Folder/game_assets/Menus/IntroCine
-res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites
-res://Game Folder/game_components/global_components/Scripts
-res://Game Folder/game_assets/Stages/00 - BASE/lvl_manager/walls

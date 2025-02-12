@@ -31,6 +31,9 @@ func get_score_position() -> Vector2:
 	else:
 		return Vector2.ZERO
 
+func _ready() -> void:
+	cache.load_in_cache("res://Game Folder/game_components/global_components/Damage Display/DamageDisplay.tscn")
+
 func _physics_process(delta: float) -> void:
 	if global.paused == false:
 		passive_score_update(250, delta)
@@ -40,7 +43,8 @@ func _process(_delta: float) -> void:
 		score_display.text = str(score)
 
 func display_damage(amount : int, target : Node2D):
-	var damagedisplay = load("res://Game Folder/game_components/global_components/Damage Display/DamageDisplay.tscn") as PackedScene
+	var damagedisplay = load("res://Game Folder/game_components/global_components/Damage Display/DamageDisplay.tscn")
 	var dd_int = damagedisplay.instantiate() as Label
+	global.EntityManager.add_child(dd_int)
 	dd_int.text = str(amount)
-	target.add_child(dd_int)
+	dd_int.global_position = target.global_position
