@@ -10,11 +10,12 @@ config_version=5
 
 [application]
 
-config/name="STARBREAKER"
+config/name="☆ Starbreaker ☆"
+config/description="Starbreaker is a anti-SHMUP game, designed to break the rules of classics SHMUP gameplay loops in order to create a fun and new experience."
+config/version="0.59.1 ALPHA"
 config/tags=PackedStringArray("starbreaker")
 run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-run/max_fps=320
 boot_splash/show_image=false
 boot_splash/use_filter=false
 
