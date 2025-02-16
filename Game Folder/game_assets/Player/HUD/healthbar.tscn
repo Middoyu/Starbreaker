@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://crg4nvhxx414j"]
+[gd_scene load_steps=9 format=3 uid="uid://crg4nvhxx414j"]
 
 [ext_resource type="Texture2D" uid="uid://uxa68rfc0hgy" path="res://Game Folder/game_assets/Player/HUD/newhealth1.png" id="1_wdb2w"]
 [ext_resource type="Texture2D" uid="uid://bskvsudoxnnbs" path="res://Game Folder/game_assets/Player/HUD/newhealth4.png" id="2_ptdjj"]
 [ext_resource type="Texture2D" uid="uid://bjbuu8666fc1r" path="res://Game Folder/game_assets/Player/HUD/newhealth3.png" id="3_nri7k"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="4_y1cuq"]
+[ext_resource type="Texture2D" uid="uid://bg0mhcdk3n3d6" path="res://Game Folder/game_assets/Player/TimerDisplay/Blackbg.png" id="5_4m3bl"]
+[ext_resource type="Texture2D" uid="uid://6uinhgyffoo8" path="res://Game Folder/game_assets/Player/TimerDisplay/whiteoverlay.png" id="6_4begm"]
 
 [sub_resource type="GDScript" id="GDScript_ulytf"]
 resource_name = "healthbar_controllerscript"
@@ -23,10 +25,13 @@ func _ready() -> void:
 
 		# Connects event signals to update the health UI when the player takes damage or gets healed.
 		events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox): update_health_text(current_health), 3)
+		events.connect(\"player_death\", func(current_health, damage_taken, colliding_hitbox): update_health_text(current_health), 3)
 		events.connect(\"player_healed\", update_health_text, 1)
 
 # Updates the progress bar values based on the player's health.
 func update_health_progressbar():
+	var health_ratio = float(global.player.health.current_health) / float(global.player.health.maximum_health)
+	health_progressbar.tint_progress = healthbar_gradient.sample(health_ratio)
 	health_progressbar.max_value = global.player.health.maximum_health
 	health_progressbar.value = global.player.health.current_health
 
@@ -41,15 +46,21 @@ func update_health_text(new_health):
 		health_text.push_color(healthbar_gradient.sample(health_ratio))
 
 		# Adds a shaking effect if health drops to 30 or below.
-		if global.player.health.current_health <= 30:
-			health_text.append_text(\"[shake rate=75.0 level=15 connected=1]\" + str(global.player.health.current_health) + \"[/shake]\")
+		if global.player.health.current_health <= 50:
+			health_text.append_text(\"[shake rate=100.0 level=15 connected=1]\" + str(global.player.health.current_health) + \"[/shake]\")
 		else:
 			health_text.append_text(str(global.player.health.current_health))
 
 		health_text.pop_all()  # Resets text formatting.
+
+func _physics_process(delta: float) -> void:
+	update_health_text(global.player.health.current_health)
 "
 
 [sub_resource type="Gradient" id="Gradient_s5sqd"]
+interpolation_mode = 2
+interpolation_color_space = 2
+colors = PackedColorArray(1, 0, 0, 1, 0.160784, 1, 0.972549, 1)
 
 [node name="HealthContainter" type="Control"]
 layout_mode = 3
@@ -76,7 +87,6 @@ rounded = true
 texture_under = ExtResource("1_wdb2w")
 texture_over = ExtResource("2_ptdjj")
 texture_progress = ExtResource("3_nri7k")
-tint_progress = Color(0.623854, 0.997958, 1, 1)
 
 [node name="health_text" type="RichTextLabel" parent="health_progressbar"]
 top_level = true
@@ -109,12 +119,13 @@ shortcut_keys_enabled = false
 progress_bar_delay = 5
 text_direction = 1
 
-[node name="leveling" type="ProgressBar" parent="."]
+[node name="leveling" type="TextureProgressBar" parent="."]
 z_index = 4096
 y_sort_enabled = true
 layout_mode = 2
-offset_top = 44.0
-offset_right = 133.0
-offset_bottom = 48.0
-mouse_filter = 1
-show_percentage = false
+offset_left = 4.0
+offset_top = 45.0
+offset_right = 132.0
+offset_bottom = 49.0
+texture_under = ExtResource("5_4m3bl")
+texture_progress = ExtResource("6_4begm")

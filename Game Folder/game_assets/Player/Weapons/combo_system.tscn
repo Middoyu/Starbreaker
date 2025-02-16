@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=3 uid="uid://deqlsf3ha0ly2"]
+
+[sub_resource type="GDScript" id="GDScript_ptkyo"]
+script/source = "extends Node
+@onready var combo_meter = 1.0
+@onready var combo_timer_visual: ProgressBar = $CanvasLayer/ComboTimer
+@onready var combo_timer: Timer = $Timer
+
+func _ready() -> void:
+	events.connect(\"enemy_killed\", update_combo, 1)
+
+func update_combo(enemy):
+	combo_meter += 0.1
+	combo_timer.start(5)
+
+func combo_timeout() -> void:
+	combo_meter = 1.0
+
+func _process(delta: float) -> void:
+	score_event.combo_multiplier = combo_meter
+	$CanvasLayer/Label.text = str(combo_timer.time_left)
+	$CanvasLayer/Label2.text = str(combo_meter)
+"
+
+[node name="ComboSystem" type="Node"]
+script = SubResource("GDScript_ptkyo")
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 15.0
+one_shot = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ComboTimer" type="ProgressBar" parent="CanvasLayer"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = 10.0
+offset_right = 290.0
+offset_bottom = 20.0
+grow_vertical = 2
+show_percentage = false
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -28.0
+offset_right = 40.0
+offset_bottom = -5.0
+grow_vertical = 2
+size_flags_horizontal = 0
+text = "15"
+
+[node name="Label2" type="Label" parent="CanvasLayer"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -11.5
+offset_right = 40.0
+offset_bottom = 11.5
+grow_vertical = 2
+size_flags_horizontal = 0
+text = "15"
+
+[connection signal="timeout" from="Timer" to="." method="combo_timeout"]

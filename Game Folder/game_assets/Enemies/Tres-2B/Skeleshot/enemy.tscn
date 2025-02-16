@@ -26,12 +26,14 @@ func _physics_process(_delta: float) -> void:
 
 #region Interaction Handlers
 func on_hit(amount, colliding_hitbox) -> void:
+	events.emit_signal(\"enemy_damaged\", self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
-	score_event.update_score(10)
+	score_event.update_score(OnHit_score * score_event.combo_multiplier)
 
 func on_death(amount, colliding_hitbox) -> void:
+	events.emit_signal(\"enemy_killed\", self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
-	score_event.update_score(25)
+	score_event.update_score(OnDeath_score * score_event.combo_multiplier)
 #endregion
 "
 

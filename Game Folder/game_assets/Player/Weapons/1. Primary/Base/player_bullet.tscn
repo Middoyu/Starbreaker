@@ -1,122 +1,88 @@
-[gd_scene load_steps=13 format=3 uid="uid://ln88vbvxsas4"]
+[gd_scene load_steps=10 format=3 uid="uid://ln88vbvxsas4"]
 
+[ext_resource type="Texture2D" uid="uid://cb4ed35sin5rx" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet_trails.png" id="1_5o0bk"]
 [ext_resource type="Texture2D" uid="uid://bxu4vpyreyq67" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Sprites/bullet1.png" id="1_lm31s"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_xfx0c"]
-[ext_resource type="PackedScene" uid="uid://dlq8my4bamdlh" path="res://Game Folder/game_assets/Player/VFX/Action Particles/Hit Particles.tscn" id="3_nso23"]
-[ext_resource type="AudioStream" uid="uid://brao2bap7hjx" path="res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sp_hit.ogg" id="4_qh70t"]
 
 [sub_resource type="GDScript" id="GDScript_4ywsl"]
 resource_name = "testbullet"
 script/source = "extends Projectile
-@export var speed = 48000.0
 
-
-
+@export var speed = 0.0
 @onready var sprite: Sprite2D = $Sprite
-@onready var spawn_anim: AnimationPlayer = $Spawn_anim
-@onready var timer: Timer = $Timer
-@onready var camera = global.camera as juicycamera_component
-@onready var hit_particles: GPUParticles2D = $hit_particles
-@onready var hit_particles_2: CPUParticles2D = $hit_particles2
-@onready var sfx_hit: AudioStreamPlayer = $sfx_hit
 @onready var direction = global_position.direction_to(global.player.crosshair.global_position).normalized()
+
+const BULLET_EFFECTS = preload(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/bullet_effects.tscn\")
 
 func _ready() -> void:
 	super()
 
 func area_entered(area: Area2D) -> void:
-	print(area.get_groups())
 	if area.get_groups().has(\"enemy\"):
-		effects()
+		VFX()
 		queue_free()
-	else:
-		pass
 
 func _physics_process(delta: float) -> void:
-	velocity = direction * speed * delta
+	sprite.rotation_degrees += 50.0 * speed * delta
+	velocity = direction * speed
 	move_and_slide()
 
-func effects():
-	#VFX()
-	#sfx_hit.reparent(global)
-	#sfx_hit.play()
-	#await sfx_hit.finished
-	#sfx_hit.queue_free()
-	pass
-
 func VFX():
-	camera.shake(10.0)
-	camera.freezeframe(0.1, 0.05)
-	camera.impact_zoom(0.0003, Vector2(320, 181), 0.01)
-	hit_particles.global_position = self.global_position
-	hit_particles.emitting = true
-	hit_particles_2.global_position = self.global_position
+	events.emit_signal(\"camera_shake\", 25.0)
+	events.emit_signal(\"camera_freezeframe\", 0.1, 0.05)
+	var effects = global.spawn_entity(BULLET_EFFECTS)
+	effects.global_position = global_position
 "
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_hilb6"]
+particles_animation = true
+particles_anim_h_frames = 4
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_gihtj"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.148338, 1), 0.0, 0.0, 0, 0, Vector2(0.782609, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_bwy7i"]
+curve = SubResource("Curve_gihtj")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rc5nx"]
+particle_flag_disable_z = true
+direction = Vector3(0, 0, 0)
+radial_velocity_min = -10.0
+radial_velocity_max = 9.99998
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_bwy7i")
+anim_speed_max = 1.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gdh8w"]
 radius = 6.0
 
-[sub_resource type="Animation" id="Animation_se65j"]
-resource_name = "spawn-anim"
-length = 0.1
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(1.3, 1.3), Vector2(1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ysol4"]
-_data = {
-"spawn-anim": SubResource("Animation_se65j")
-}
-
-[sub_resource type="Curve" id="Curve_7c1eh"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.77957, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_j6vgf"]
-curve = SubResource("Curve_7c1eh")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5b6j6"]
-particle_flag_disable_z = true
-emission_shape_scale = Vector3(1, 44, 1)
-emission_shape = 1
-emission_sphere_radius = 1.0
-angle_min = 720.0
-angle_max = 720.0
-spread = 180.0
-initial_velocity_min = 1000.0
-initial_velocity_max = 1000.0
-angular_velocity_min = -1.60933e-05
-angular_velocity_max = 720.0
-orbit_velocity_min = 2.0
-orbit_velocity_max = 2.0
-radial_velocity_min = -162.16
-radial_velocity_max = 54.06
-gravity = Vector3(0, 0, 0)
-linear_accel_min = 100.0
-linear_accel_max = 100.0
-color = Color(0, 1, 1, 1)
-alpha_curve = SubResource("CurveTexture_j6vgf")
-
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_o5l0r"]
-random_pitch = 1.2
-streams_count = 1
-stream_0/stream = ExtResource("4_qh70t")
-
-[node name="test_ubullet" type="CharacterBody2D" groups=["player"]]
+[node name="PlayerBullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox") groups=["player"]]
 collision_layer = 8
 collision_mask = 5
 motion_mode = 1
 script = SubResource("GDScript_4ywsl")
+speed = 650.0
+hitbox = NodePath("HitboxComponent")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_lm31s")
+
+[node name="BulletParticleTrail" type="GPUParticles2D" parent="."]
+y_sort_enabled = true
+texture_filter = 1
+material = SubResource("CanvasItemMaterial_hilb6")
+amount = 5
+process_material = SubResource("ParticleProcessMaterial_rc5nx")
+texture = ExtResource("1_5o0bk")
+lifetime = 0.25
+fixed_fps = 28
+interpolate = false
+fract_delta = false
+draw_order = 0
 
 [node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
 collision_layer = 8
@@ -124,49 +90,10 @@ collision_mask = 5
 script = ExtResource("1_xfx0c")
 parent = NodePath("..")
 damage = -35.0
-knockback_amount = -5115.0
-knockback_stun_duration = 0.3
+knockback_amount = 3333.3
+knockback_stun_duration = 0.4
 
 [node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
 shape = SubResource("CircleShape2D_gdh8w")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-texture_filter = 1
-texture = ExtResource("1_lm31s")
-
-[node name="Spawn_anim" type="AnimationPlayer" parent="."]
-callback_mode_process = 0
-libraries = {
-"": SubResource("AnimationLibrary_ysol4")
-}
-autoplay = "spawn-anim"
-speed_scale = 0.5
-
-[node name="Timer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 0.1
-autostart = true
-
-[node name="hit_particles" type="GPUParticles2D" parent="."]
-emitting = false
-amount = 150
-process_material = SubResource("ParticleProcessMaterial_5b6j6")
-lifetime = 0.5
-one_shot = true
-speed_scale = 44.0
-explosiveness = 1.0
-randomness = 1.0
-fixed_fps = 60
-
-[node name="hit_particles2" parent="." instance=ExtResource("3_nso23")]
-
-[node name="sfx_hit" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStreamRandomizer_o5l0r")
-volume_db = -6.5
-mix_target = 2
-max_polyphony = 3
-bus = &"SFX"
-playback_type = 2
-
 [connection signal="area_entered" from="HitboxComponent" to="." method="area_entered"]
-[connection signal="timeout" from="Timer" to="." method="timer_timeout"]

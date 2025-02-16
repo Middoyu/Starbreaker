@@ -16,6 +16,8 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/1. 
 @export var left_pos = Vector2(-5.5, -0.6)
 @onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
 
+func _ready() -> void:
+	super()
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed(\"primary\") and player.weapons.is_actionable:
@@ -69,5 +71,3 @@ left_pos = Vector2(2, 8)
 stream = SubResource("AudioStreamRandomizer_pnshu")
 max_polyphony = 2
 bus = &"SFX"
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

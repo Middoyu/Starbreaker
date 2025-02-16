@@ -26,6 +26,10 @@ var pause_menu = null
 var mouse_state_before = null
 var quit_value = 0
 
+var projectile_z_index = 4000
+
+
+
 func _process(_delta: float) -> void:
 	if is_pausable:
 		pausing_sequence(_delta)
@@ -64,3 +68,8 @@ func pausing_sequence(_delta):
 						i.process_mode = PROCESS_MODE_ALWAYS
 				pause_menu.hide()
 				Input.set_mouse_mode(mouse_state_before)
+
+static func spawn_entity(path : PackedScene) -> Node:
+	var path_instaniated = path.instantiate()
+	global.EntityManager.add_child(path_instaniated)
+	return path_instaniated

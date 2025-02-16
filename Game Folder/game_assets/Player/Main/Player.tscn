@@ -1,4 +1,4 @@
-[gd_scene load_steps=196 format=3 uid="uid://dju5f2wa2fucv"]
+[gd_scene load_steps=197 format=3 uid="uid://dju5f2wa2fucv"]
 
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="4_sp8mo"]
 [ext_resource type="Texture2D" uid="uid://ceuqf56q32fjj" path="res://Game Folder/game_assets/Player/Crosshair/crosshair tile-export.png" id="5_p52m1"]
 [ext_resource type="Script" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.gd" id="8_oo2xt"]
+[ext_resource type="PackedScene" uid="uid://deqlsf3ha0ly2" path="res://Game Folder/game_assets/Player/Weapons/combo_system.tscn" id="10_5ayyr"]
 
 [sub_resource type="Animation" id="Animation_k4rei"]
 length = 0.001
@@ -1379,12 +1380,27 @@ const BREAKER = preload(\"res://Game Folder/game_assets/Player/Weapons/4. Breake
 
 func _ready() -> void:
 	setup_weapons()  # Call setup_weapons when the scene is ready
+	events.connect(\"enemy_damaged\", update_consecutive_hits_counter, 1)
+	events.connect(\"enemy_killed\", update_consecutive_hits_counter, 1)
 
 func setup_weapons():
 	var weapon_list = [PRIMARY.instantiate(), SECONDARY.instantiate(), BREAKER.instantiate(), UTILITY.instantiate()]  # Create a list of instantiated weapons
 	for weapon in weapon_list:
 		owner.add_child.call_deferred(weapon, true)  # Add each weapon as a child of the owner
 		weapon.player = owner  # Set the player's reference to the weapon's player
+
+
+
+@onready var consecutive_hits_target = Node2D
+@onready var consecutive_hits = 0
+
+func update_consecutive_hits_counter(target : Node2D):
+	if target == consecutive_hits_target:
+		consecutive_hits += 1
+	if target != consecutive_hits_target:
+		consecutive_hits = 1
+	consecutive_hits_target = target
+	print(str(consecutive_hits_target, consecutive_hits))
 "
 
 [sub_resource type="GDScript" id="GDScript_rdqb0"]
@@ -1435,6 +1451,7 @@ script = ExtResource("1_5vafy")
 
 [node name="TrueCrosshair" type="Sprite2D" parent="."]
 z_index = 4096
+scale = Vector2(1.125, 1)
 texture = ExtResource("3_wj1xj")
 script = ExtResource("8_oo2xt")
 
@@ -1501,6 +1518,8 @@ friction = 127500.0
 [node name="Weapon Manager" type="Node" parent="."]
 script = SubResource("GDScript_xpxrt")
 is_actionable = true
+
+[node name="ComboSystem" parent="Weapon Manager" instance=ExtResource("10_5ayyr")]
 
 [node name="I-Frames Manager" type="Node" parent="."]
 script = SubResource("GDScript_rdqb0")

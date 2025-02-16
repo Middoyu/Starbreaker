@@ -8,7 +8,7 @@ extends CharacterBody2D
 func _ready():
 	setup_screen_notifier()
 	#self.add_to_group("Projectile")
-	z_index = 4096
+	z_index = global.projectile_z_index
 
 func setup_screen_notifier():
 	self.add_child(view_detector)

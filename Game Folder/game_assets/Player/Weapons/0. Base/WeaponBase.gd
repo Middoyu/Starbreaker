@@ -8,10 +8,7 @@ class_name WeaponBase
 func _ready() -> void:
 	cooldown_timer.one_shot = true
 	add_child(cooldown_timer)
-	cooldown_timer.connect("timeout", self.refund_action_cooldown)
-
-func refund_action_cooldown():
-	is_weapon_actionable = true
+	cooldown_timer.connect("timeout", func(): is_weapon_actionable = true)
 
 func shoot():
 	pass
