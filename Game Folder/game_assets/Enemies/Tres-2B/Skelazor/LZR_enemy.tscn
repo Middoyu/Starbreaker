@@ -1,4 +1,4 @@
-[gd_scene load_steps=333 format=3 uid="uid://2kuv342uj1hh"]
+[gd_scene load_steps=334 format=3 uid="uid://2kuv342uj1hh"]
 
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_bqkrg"]
 [ext_resource type="PackedScene" uid="uid://cadhurax76sxf" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/HurtboxComponent.tscn" id="2_1smco"]
@@ -2391,6 +2391,16 @@ func animation_finished() -> void:
 		parent.queue_free()
 "
 
+[sub_resource type="GDScript" id="GDScript_l83r2"]
+script/source = "extends RayCast2D
+
+
+func _physics_process(delta: float) -> void:
+	if is_colliding() and is_instance_valid(get_collision_point()):
+		var ally_collision = get_collision_point()
+		
+"
+
 [node name="LzrEnemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 0
 motion_mode = 1
@@ -2420,6 +2430,7 @@ color = Color(1, 0, 0, 1)
 polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 
 [node name="Collision" type="CollisionPolygon2D" parent="HitboxComponent"]
+position = Vector2(0, 1)
 polygon = PackedVector2Array(-8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 disabled = true
 
@@ -2502,6 +2513,11 @@ script = SubResource("GDScript_gp50k")
 parent = NodePath("../..")
 is_state_cancelable = false
 sprite = NodePath("../../spr")
+
+[node name="Ally_Detection" type="RayCast2D" parent="."]
+target_position = Vector2(0, 698)
+collision_mask = 4
+script = SubResource("GDScript_l83r2")
 
 [connection signal="death" from="HealthComponent" to="." method="on_death"]
 [connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]

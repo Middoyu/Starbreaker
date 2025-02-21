@@ -31,6 +31,7 @@ func on_hit(amount, colliding_hitbox) -> void:
 	score_event.update_score(OnHit_score * score_event.combo_multiplier)
 
 func on_death(amount, colliding_hitbox) -> void:
+	events.emit_signal(\"camera_shake\", 35.0)
 	events.emit_signal(\"enemy_killed\", self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	score_event.update_score(OnDeath_score * score_event.combo_multiplier)
@@ -1512,7 +1513,7 @@ func make_path():
 
 func physics_update(_delta):
 	var dir = parent.to_local(pathfinding.get_next_path_position()).normalized()
-	var intended_velocity = dir * parent.movement_speed * _delta
+	var intended_velocity = dir * parent.movement_speed
 	pathfinding.set_velocity(intended_velocity)
 	make_path()
 

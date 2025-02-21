@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3 uid="uid://b8litkitbnw3p"]
+
+[ext_resource type="Texture2D" uid="uid://cqexw4iganr5g" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/default.png" id="1_2edsa"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_tcuiy"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="3_vqd17"]
+[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="4_7pyke"]
+
+[sub_resource type="GDScript" id="GDScript_ltu4l"]
+script/source = "extends Projectile
+@onready var speed = randf_range(0.2, 0.8)
+
+func _physics_process(delta: float) -> void:
+	if get_parent() is PathFollow2D:
+		get_parent().progress_ratio += speed * delta
+		position.y = 60 * sin(25)
+	else:
+		velocity.y = 250
+		rotate(10 * delta)
+		move_and_slide()
+
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	score_event.update_score(25)
+
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	score_event.update_score(35)
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_40622"]
+radius = 13.0384
+
+[node name="Asetroid" type="CharacterBody2D" groups=["enemy"]]
+script = SubResource("GDScript_ltu4l")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("1_2edsa")
+hframes = 2
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("2_tcuiy")
+parent = NodePath("..")
+damage = -20.0
+knockback_amount = 4500.0
+knockback_stun_duration = 0.3
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_40622")
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"]]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("3_vqd17")
+parent = NodePath("..")
+health = NodePath("../HealthComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_40622")
+
+[node name="HealthComponent" type="Node" parent="." groups=["enemy"]]
+script = ExtResource("4_7pyke")
+maximum_health = 15.0
+
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]

@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://bf6somwj76fiy"]
+
+[sub_resource type="GDScript" id="GDScript_u206m"]
+script/source = "extends Node2D
+const ASETROID = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\")
+var amount = 15
+
+
+func _ready() -> void:
+	randomize()
+	for i in range(amount):
+		var x = ASETROID.instantiate()
+		x.position = self.position + Vector2(randf_range(-70.0, 70.0), -64)
+		await get_tree().create_timer(randf_range(0.2, 0.35), false, true).timeout
+		global.EntityManager.add_child(x)
+"
+
+[node name="AsetroidBelt" type="Node2D"]
+script = SubResource("GDScript_u206m")

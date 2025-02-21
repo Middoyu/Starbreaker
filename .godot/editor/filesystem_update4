@@ -1,14 +1,1 @@
 res://z_Export/default_bus_layout.tres
-res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/bullet_effects.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader
-res://Game Folder/game_components/shaders/hitflash.tres
-res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
-res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn
-res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/player_bullet.tscn
-res://Game Folder/game_assets/Player/Main/Player.tscn
-res://Game Folder/game_assets/Player/Weapons/combo_system.tscn
-res://Game Folder/game_components/global_components/ScoreManager/ScoreEventBus.gd
-res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn
-res://Game Folder/game_assets/Player/HUD/healthbar.tscn
-res://Game Folder/game_assets/Player/HUD/hud.tscn

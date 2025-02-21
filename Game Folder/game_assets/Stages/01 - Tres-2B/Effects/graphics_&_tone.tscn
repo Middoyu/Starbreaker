@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhgdalba8s8j2"]
+
+[sub_resource type="Environment" id="Environment_t5cpe"]
+background_mode = 3
+tonemap_mode = 3
+glow_enabled = true
+glow_bloom = 0.4
+adjustment_enabled = true
+adjustment_saturation = 1.7
+
+[sub_resource type="GDScript" id="GDScript_rp1j6"]
+script/source = "extends WorldEnvironment
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	self.environment.glow_bloom = options.bloom
+"
+
+[node name="Graphics & Tone" type="WorldEnvironment"]
+environment = SubResource("Environment_t5cpe")
+script = SubResource("GDScript_rp1j6")

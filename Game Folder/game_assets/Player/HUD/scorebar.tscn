@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://d4fy5lnqtae8j"]
+
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_g2dfd"]
+
+[sub_resource type="GDScript" id="GDScript_6ot1m"]
+script/source = "extends RichTextLabel
+@onready var display_fade_score: AnimationPlayer = $\"../DisplayFadeScore\"
+@onready var score_display_duration: Timer = $\"../ScoreDisplay_Duration\"
+@onready var score: RichTextLabel = $\".\"
+
+
+func _ready() -> void:
+	get_parent().global_position.x = 470
+	score_event.connect(\"score_update\", update_score, 1)
+
+func update_score(amount):
+	text = str(score_event.score).pad_zeros(7)
+	if amount >= 10000:
+		display_fade_score.play_backwards(\"fade\")
+		score_display_duration.start(3.5)
+
+func ScoreDisplayDuration_timeout() -> void:
+	display_fade_score.play(\"fade\")
+"
+
+[node name="ScoreRectTexture" type="Control"]
+custom_minimum_size = Vector2(115, 0)
+layout_direction = 1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 115.0
+offset_bottom = 40.0
+tooltip_text = "SCORE: 000000"
+
+[node name="Score" type="RichTextLabel" parent="."]
+z_index = 4095
+layout_mode = 0
+offset_left = 20.0
+offset_top = 14.0
+offset_right = 152.0
+offset_bottom = 44.0
+theme = ExtResource("1_g2dfd")
+theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
+text = "0000000"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = SubResource("GDScript_6ot1m")

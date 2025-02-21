@@ -1,68 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://5lh8eipbj0c6"]
+[gd_scene load_steps=3 format=3 uid="uid://5lh8eipbj0c6"]
 
-[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_80i7q"]
 [ext_resource type="PackedScene" uid="uid://crg4nvhxx414j" path="res://Game Folder/game_assets/Player/HUD/healthbar.tscn" id="2_5s35i"]
-
-[sub_resource type="GDScript" id="GDScript_6ot1m"]
-script/source = "extends RichTextLabel
-@onready var display_fade_score: AnimationPlayer = $\"../DisplayFadeScore\"
-@onready var score_display_duration: Timer = $\"../ScoreDisplay_Duration\"
-@onready var score: RichTextLabel = $\".\"
-
-
-func _ready() -> void:
-	get_parent().global_position.x = 470
-	score_event.connect(\"score_update\", update_score, 1)
-
-func update_score(amount):
-	text = \"SCORE: \" + str(score_event.score).pad_zeros(7)
-	if amount >= 10000:
-		display_fade_score.play_backwards(\"fade\")
-		score_display_duration.start(3.5)
-
-func ScoreDisplayDuration_timeout() -> void:
-	display_fade_score.play(\"fade\")
-"
-
-[sub_resource type="Animation" id="Animation_li85b"]
-resource_name = "DisplayFade"
-
-[sub_resource type="Animation" id="Animation_oulbm"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Score:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0.0980392)]
-}
-
-[sub_resource type="Animation" id="Animation_12egj"]
-resource_name = "fade"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Score:self_modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.0980392)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_t0f2q"]
-_data = {
-"DisplayFade": SubResource("Animation_li85b"),
-"RESET": SubResource("Animation_oulbm"),
-"fade": SubResource("Animation_12egj")
-}
+[ext_resource type="PackedScene" uid="uid://d4fy5lnqtae8j" path="res://Game Folder/game_assets/Player/HUD/scorebar.tscn" id="2_gjam0"]
 
 [node name="HUD" type="CanvasLayer"]
 offset = Vector2(8, 0)
@@ -73,49 +12,4 @@ follow_viewport_enabled = true
 offset_right = 0.0
 offset_bottom = 0.0
 
-[node name="ScoreRectTexture" type="Control" parent="."]
-custom_minimum_size = Vector2(115, 0)
-layout_direction = 1
-layout_mode = 3
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -170.0
-offset_right = -55.0
-offset_bottom = 40.0
-grow_horizontal = 0
-tooltip_text = "SCORE: 000000"
-
-[node name="Score" type="RichTextLabel" parent="ScoreRectTexture"]
-self_modulate = Color(1, 1, 1, 0.0980392)
-clip_contents = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -94.0
-offset_top = 1.0
-offset_right = 54.0
-offset_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("1_80i7q")
-theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
-theme_override_constants/outline_size = 10
-text = "SCORE: 0000000"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-script = SubResource("GDScript_6ot1m")
-
-[node name="DisplayFadeScore" type="AnimationPlayer" parent="ScoreRectTexture"]
-libraries = {
-"": SubResource("AnimationLibrary_t0f2q")
-}
-
-[node name="ScoreDisplay_Duration" type="Timer" parent="ScoreRectTexture"]
-process_callback = 0
-wait_time = 3.5
-one_shot = true
-
-[connection signal="timeout" from="ScoreRectTexture/ScoreDisplay_Duration" to="ScoreRectTexture/Score" method="ScoreDisplayDuration_timeout"]
+[node name="ScoreRectTexture" parent="." instance=ExtResource("2_gjam0")]

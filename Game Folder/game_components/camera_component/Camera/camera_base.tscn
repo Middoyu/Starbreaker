@@ -58,7 +58,7 @@ limit_smoothed = true
 position_smoothing_enabled = true
 editor_draw_limits = true
 script = ExtResource("1_8n6dp")
-initial_zoom_value = 1.0
+initial_zoom_value = 3.0
 
 [node name="Flash" type="ColorRect" parent="."]
 z_index = 4095

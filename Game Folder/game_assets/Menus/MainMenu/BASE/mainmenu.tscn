@@ -408,10 +408,12 @@ text_overrun_behavior = 1
 script = ExtResource("4_tprer")
 
 [node name="SKILLS" type="Button" parent="MainMenu/ButtonContainer"]
+visible = false
 layout_mode = 2
 text = "Skills"
 
 [node name="INDEX" type="Button" parent="MainMenu/ButtonContainer"]
+visible = false
 layout_mode = 2
 text = "Index"
 

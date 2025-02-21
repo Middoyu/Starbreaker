@@ -1,28 +1,69 @@
-[gd_scene load_steps=32 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=6 format=3 uid="uid://k0rog1tlg78y"]
 
-[ext_resource type="PackedScene" uid="uid://cr5lkcdqqb78g" path="res://Game Folder/game_components/camera_component/Camera/camera_base.tscn" id="1_3cjne"]
-[ext_resource type="AudioStream" uid="uid://cmo53j3sow4hg" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tokonemu_tres2b.wav" id="1_6vs1r"]
-[ext_resource type="Script" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/T2B-EnemyData.gd" id="1_ljwki"]
-[ext_resource type="AudioStream" uid="uid://dm04h5kj66vst" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/1.mp3" id="1_u5x7w"]
-[ext_resource type="PackedScene" uid="uid://dju5f2wa2fucv" path="res://Game Folder/game_assets/Player/Main/Player.tscn" id="2_8fgom"]
-[ext_resource type="AudioStream" uid="uid://kpd61ipwb0xy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/2.mp3" id="2_dst4g"]
-[ext_resource type="Script" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/T2B-PatternData.gd" id="2_o84y5"]
-[ext_resource type="PackedScene" uid="uid://cgfhxpflb4jti" path="res://Game Folder/game_components/global_components/ScoreManager/Level_ScoreManager.tscn" id="2_rnqcw"]
-[ext_resource type="Texture2D" uid="uid://cgmrpphio3w5a" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Sprites/Background/360_F_179077796_P6UNHX6KBpb1hITJSF1gN173qw4GF98U.jpg" id="4_npuxh"]
-[ext_resource type="PackedScene" uid="uid://5lh8eipbj0c6" path="res://Game Folder/game_assets/Player/HUD/hud.tscn" id="7_ld0jn"]
+[ext_resource type="AudioStream" uid="uid://dfcd14lp8fxca" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Starbreaker - Tres2B FM WIP.mp3" id="1_n8ym8"]
+[ext_resource type="PackedScene" uid="uid://ccyfgaostrrk4" path="res://Game Folder/game_assets/Stages/00 - BASE/navigation_space.tscn" id="4_nkdvc"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
 
 # Stage-specific Additions #
-@onready var tutorial_music: AudioStreamPlayer = $Tutorial_Music
-@onready var tutorial_transisition: AudioStreamPlayer = $Tutorial_Music/Tutorial_Transisition
 const TUTORIAL_SKELESHOT = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn\")
-const NULLSPACE_SUBSTAGE = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Sub-Zone/nullspace.tscn\")
+const BACKGROUNDS = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Effects/backgrounds.tscn\")
+const ENVIORMENT = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Effects/graphics_&_tone.tscn\")
+@onready var FADE_BLACK = ColorRect.new()
+@onready var spawning: AnimationPlayer = $Spawning
+
+@export var enemy_list = [
+	# Placeholder Enemies
+	\"res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn\", #0
+	# Tres-2B Enemies
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn\", #1
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", #2
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", #4
+	# W.I.P
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn\", #5
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn\", #6
+	\"res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn\", #7
+	\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn\", #8
+	\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\" #9
+	]
+
+func spawn_enemies(enemy_index, forced_spawnpoint := Vector2.ZERO, _extra_arg_1 := 0.0, _extra_arg_2 := 0.0, _extra_arg_3 := 0.0):
+	var enemy_int = load(enemy_list[enemy_index])
+	enemy_int = enemy_int.instantiate()
+	
+	if forced_spawnpoint != Vector2.ZERO:
+		enemy_int.global_position = forced_spawnpoint
+	if enemy_list[enemy_index] == \"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\":
+		enemy_int.spawn_rotation = _extra_arg_1
+		enemy_int.rotation_speed = _extra_arg_2
+	if enemy_list[enemy_index] == \"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn\":
+		if _extra_arg_1 != 0:
+			enemy_int.amount = roundi(_extra_arg_1)
+	
+	EntityManager.add_child(enemy_int, true)
+
 
 
 func _ready() -> void:
 	super()
+	$CameraPreview.queue_free()
+	
+	for i in enemy_list:
+		cache.load_in_cache(i)
+	
+	
+	FADE_BLACK.color = Color.BLACK
+	FADE_BLACK.size = Vector2(5000, 5000)
+	FADE_BLACK.z_index = 4096
+	add_child(FADE_BLACK)
+	
+	
+	
+	var c = ENVIORMENT.instantiate()
+	add_child(c)
+	var i = BACKGROUNDS.instantiate()
+	add_child(i)
 	
 	events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
 	
@@ -30,7 +71,6 @@ func _ready() -> void:
 	
 	# If the player has never viewed the tutorial; make them
 	if !global.has_viewed_tutorial:
-		tutorial_music.play()
 		var x = TUTORIAL_SKELESHOT.instantiate()
 		x.global_position = Vector2(320, 128)
 		EntityManager.add_child(x)
@@ -39,10 +79,10 @@ func _ready() -> void:
 		start_stage()
 
 func intro():
-	var i = create_tween().bind_node($Black).set_ease(Tween.EASE_IN_OUT)
-	i.tween_property($Black, \"color\", Color(0,0,0,0), 0.5)
+	var i = create_tween().bind_node(FADE_BLACK).set_ease(Tween.EASE_IN_OUT)
+	i.tween_property(FADE_BLACK, \"color\", Color(0,0,0,0), 0.5)
 	await i.finished
-	$Black.hide()
+	FADE_BLACK.hide()
 
 # Overrides start_stage base and inserts the tutorial sequence.
 func start_stage():
@@ -50,424 +90,292 @@ func start_stage():
 	global.is_pausable = true
 	
 	if global.has_viewed_tutorial == false: # If Player hasn't seen the tutorial.
-		tutorial_transisition.play()
-		tutorial_music.stop()
-		await tutorial_transisition.finished
-		tutorial_music.queue_free()
 		stage_music.play()
 		events.emit_signal(\"stage_started\")
 	
 	if global.has_viewed_tutorial == true: # If Player has seen the tutorial.
-		tutorial_music.queue_free()
 		stage_music.play()
 		events.emit_signal(\"stage_started\")
-
+	spawning.play(\"tres2b\")
 
 func enter_nullspace():
 	# Play Nullspace music.
-	# Spawn Blackhole with debre
-	
-	
+	# Spawn Blackhole with debre 
 	pass
-
-# Called every frame.
-func _process(delta: float) -> void:
-	super(delta)
-	sync_music()
 "
 
-[sub_resource type="Resource" id="Resource_20uvn"]
-script = ExtResource("1_ljwki")
-enemy_list = {
-"Absorbio": "res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn",
-"Cosma-Turret": "res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn",
-"Faider": "res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn",
-"NULL_Placeholder": "res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn",
-"Skelazor": "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn",
-"Skeleshot": "res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn",
-"Trishooter": "res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn"
-}
-
-[sub_resource type="Resource" id="Resource_ryhv8"]
-script = ExtResource("2_o84y5")
-spawn_times = {
-0: 1.5,
-1: 3.0
-}
-spawn_patterns = {
-0: 0,
-1: 1
-}
-
-[sub_resource type="GDScript" id="GDScript_e4ttt"]
-script/source = "extends Node2D
-@onready var graphics___tone: WorldEnvironment = $\"../Graphics & Tone\"
-
-func _ready() -> void:
-	$\"../Graphics & Tone\".environment.glow_enabled = true
-	$\"../Graphics & Tone\".environment.set_adjustment_enabled(true)
-
-func tokonemu_intro_fadein():
-	if options.ost_selection == \"Tokonemu\":
-		$Fade.play(\"Tokonemu_FadeIn\")
-"
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1sgdk"]
-particle_flag_disable_z = true
-emission_shape_offset = Vector3(309, -75, 0)
-emission_shape_scale = Vector3(554.5, 0, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-direction = Vector3(0, 0, 0)
-spread = 0.0
-gravity = Vector3(0, 100, 0)
-linear_accel_min = -100.0
-linear_accel_max = 100.0
-radial_accel_min = -2.23517e-06
-radial_accel_max = -2.23517e-06
-scale_min = 0.0
-scale_max = 0.2
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ck7t2"]
-noise_type = 2
-seed = -202
-frequency = 0.0001
-fractal_octaves = 10
-fractal_lacunarity = 1486.0
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tugfv"]
-width = 1
-noise = SubResource("FastNoiseLite_ck7t2")
-
-[sub_resource type="GDScript" id="GDScript_ub2jc"]
-script/source = "extends GPUParticles2D
-
-
-func _ready() -> void:
-	process_material.gravity = Vector3(0, 0, 0)
-	hide()
-	events.connect(\"tutorial_completed\", func(): $\"Speedline Amount\".play(\"Speedlinesfade\"); await $\"Speedline Amount\".animation_finished; amount = 1250; show(), 0)
-"
-
-[sub_resource type="Animation" id="Animation_jmtsh"]
-length = 0.001
-tracks/0/type = "value"
+[sub_resource type="Animation" id="Animation_ljsmw"]
+resource_name = "tres2b"
+length = 196.551
+step = 0.01
+tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:process_material")
+tracks/0/path = NodePath(".")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [SubResource("ParticleProcessMaterial_1sgdk")]
+"times": PackedFloat32Array(0.02, 2.81, 2.96, 8.75, 11.66, 14.57, 17.32, 17.47, 20.38, 26.05, 26.2, 27.01, 27.49, 29.11, 29.12, 30.21, 31.12, 31.48, 32.57, 33.7, 34.03, 34.93, 34.94, 35.49, 36.94, 37, 37.84),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [1, Vector2(320, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 360), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 424), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 382), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(0, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [7, Vector2(320, 0), 45.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, 376), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, -4), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [7, Vector2(320, 0), 45.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, 376), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}]
 }
-tracks/1/type = "value"
+tracks/1/type = "audio"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath(".:self_modulate")
+tracks/1/path = NodePath("Music")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0.0196078)]
+"clips": [{
+"end_offset": 0.737892,
+"start_offset": 0.01,
+"stream": ExtResource("1_n8ym8")
+}],
+"times": PackedFloat32Array(0)
 }
-tracks/2/type = "value"
+tracks/1/use_blend = true
+tracks/2/type = "method"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("../../Black:color")
+tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0, 0, 0, 1)]
+"times": PackedFloat32Array(0.02, 2.96, 5.84, 8.75, 11.66, 14.57, 17.47, 20.38, 23.29, 26.2, 27.49, 29.11, 29.12, 30.21, 31.12, 32.57, 34.03, 34.93, 34.94, 35.49, 36.94, 37.84),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [1, Vector2(128, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 192), 90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(512, -16), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 0), 90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(128, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 192), 90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(-48, 192), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [3, Vector2(320, -64), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 360), 90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(0, 360), -90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 360), 90.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(640, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}]
 }
-tracks/3/type = "value"
+tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("../../Black:visible")
+tracks/3/path = NodePath(".")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
+"times": PackedFloat32Array(0.02, 5.84, 8.71, 8.75, 14.57, 20.38, 27.49, 29.11, 29.12, 30.21, 31.12, 32.57, 34.93, 34.94, 35.49, 36.94, 37.84),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [1, Vector2(512, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(128, -16), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [7, Vector2(320, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(512, -32), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(688, 192), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(640, 360), 180.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [2, Vector2(0, 0), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}, {
+"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
+"method": &"spawn_enemies"
+}]
 }
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p536e"]
-particle_flag_disable_z = true
-emission_shape_offset = Vector3(309, -75, 0)
-emission_shape_scale = Vector3(554.5, 0, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-direction = Vector3(0, 0, 0)
-spread = 0.0
-gravity = Vector3(0, 9999, 0)
-linear_accel_min = -100.0
-linear_accel_max = 100.0
-radial_accel_min = -2.23517e-06
-radial_accel_max = -2.23517e-06
-scale_min = 0.0
-scale_max = 0.2
-
-[sub_resource type="Animation" id="Animation_rh8eu"]
-resource_name = "Speedlinesfade"
-length = 1.5
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:process_material")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [SubResource("ParticleProcessMaterial_1sgdk"), SubResource("ParticleProcessMaterial_p536e")]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:self_modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.0431373)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../../Black:color")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.4, 0.8, 1.1, 1.3),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("../../Black:visible")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.3, 0.4, 0.9, 1, 1.1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [false, true, true, true, false]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_sa4x2"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jprum"]
 _data = {
-"RESET": SubResource("Animation_jmtsh"),
-"Speedlinesfade": SubResource("Animation_rh8eu")
+"tres2b": SubResource("Animation_ljsmw")
 }
-
-[sub_resource type="Animation" id="Animation_ll1yi"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_8fy6b"]
-resource_name = "Tokonemu_FadeIn"
-length = 0.5
-step = 0.02
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.26),
-"transitions": PackedFloat32Array(1.36604, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_0hi5d"]
-_data = {
-"RESET": SubResource("Animation_ll1yi"),
-"Tokonemu_FadeIn": SubResource("Animation_8fy6b")
-}
-
-[sub_resource type="Gradient" id="Gradient_e8xxh"]
-interpolation_mode = 2
-colors = PackedColorArray(0, 0, 0, 0.0235294, 1, 0.427451, 0.596078, 0.67451)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_s3au4"]
-frequency = 0.0232
-domain_warp_enabled = true
-domain_warp_fractal_type = 2
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_que5d"]
-seamless = true
-seamless_blend_skirt = 1.0
-color_ramp = SubResource("Gradient_e8xxh")
-noise = SubResource("FastNoiseLite_s3au4")
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_1nr6p"]
-vertices = PackedVector2Array(694.109, 437.813, -53.8828, 438.008, -54.0234, -117.977, 693.969, -118.18)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-64.0339, -127.983, 703.966, -128.187, 704.119, 447.813, -63.8813, 448.017, -64.0339, -127.983)])
-
-[sub_resource type="Environment" id="Environment_t5cpe"]
-background_mode = 3
-tonemap_mode = 3
-glow_enabled = true
-glow_bloom = 0.4
-adjustment_enabled = true
-adjustment_saturation = 1.7
-
-[sub_resource type="GDScript" id="GDScript_rp1j6"]
-script/source = "extends WorldEnvironment
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	self.environment.glow_bloom = options.bloom
-"
 
 [node name="Tres-2b" type="Node2D" node_paths=PackedStringArray("stage_music")]
 editor_description = "Stage 1 Of Starbreaker, it's suppose to be simple and easy for beginners to get through without much hassle but have a learning curve to get the S rank."
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
 stage_music = NodePath("Music")
-enemy_data = SubResource("Resource_20uvn")
-pattern_data = SubResource("Resource_ryhv8")
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_6vs1r")
 bus = &"Music"
 
-[node name="Tutorial_Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_u5x7w")
-bus = &"Music"
+[node name="Spawning" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_jprum")
+}
 
-[node name="Tutorial_Transisition" type="AudioStreamPlayer" parent="Tutorial_Music"]
-stream = ExtResource("2_dst4g")
-bus = &"Music"
-
-[node name="Camera" parent="." instance=ExtResource("1_3cjne")]
+[node name="CameraPreview" type="Camera2D" parent="."]
 anchor_mode = 0
 zoom = Vector2(3, 3)
-limit_right = 640
-limit_bottom = 360
-position_smoothing_speed = 109.5
-initial_zoom_value = 3.0
-anchor = 0
 
-[node name="Player" parent="." instance=ExtResource("2_8fgom")]
-
-[node name="Score" parent="." instance=ExtResource("2_rnqcw")]
-
-[node name="VFX & Backgrounds" type="Node2D" parent="."]
-script = SubResource("GDScript_e4ttt")
-
-[node name="Speedlines" type="GPUParticles2D" parent="VFX & Backgrounds"]
-self_modulate = Color(1, 1, 1, 0.0196078)
-z_index = 4096
-amount = 2800
-process_material = SubResource("ParticleProcessMaterial_1sgdk")
-texture = SubResource("NoiseTexture2D_tugfv")
-lifetime = 3.5
-fixed_fps = 144
-script = SubResource("GDScript_ub2jc")
-
-[node name="Speedline Amount" type="AnimationPlayer" parent="VFX & Backgrounds/Speedlines"]
-libraries = {
-"": SubResource("AnimationLibrary_sa4x2")
-}
-playback_default_blend_time = 1.0
-
-[node name="Fade" type="AnimationPlayer" parent="VFX & Backgrounds"]
-callback_mode_process = 0
-libraries = {
-"": SubResource("AnimationLibrary_0hi5d")
-}
-
-[node name="Background" type="Parallax2D" parent="VFX & Backgrounds"]
-z_index = -4096
-scroll_scale = Vector2(0, 0.5)
-repeat_size = Vector2(1166, 720)
-autoscroll = Vector2(0, 175)
-repeat_times = 100
-ignore_camera_scroll = true
-
-[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Background"]
-self_modulate = Color(1, 0, 0, 0.054902)
-position = Vector2(320, 184)
-scale = Vector2(2, 2)
-texture = ExtResource("4_npuxh")
-
-[node name="Gas_Background" type="Parallax2D" parent="VFX & Backgrounds"]
-z_index = -4096
-scroll_scale = Vector2(0, 0.5)
-repeat_size = Vector2(512, 512)
-autoscroll = Vector2(0, 87)
-repeat_times = 5
-
-[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Gas_Background"]
-self_modulate = Color(1, 0, 0, 0.054902)
-z_index = -4090
-position = Vector2(320, 184)
-scale = Vector2(2, 2)
-texture = SubResource("NoiseTexture2D_que5d")
-
-[node name="Clouds_Background" type="Parallax2D" parent="VFX & Backgrounds"]
-z_index = -4093
-scroll_scale = Vector2(0, 0.5)
-repeat_size = Vector2(512, 512)
-autoscroll = Vector2(0, 43)
-repeat_times = 5
-
-[node name="Sprite" type="Sprite2D" parent="VFX & Backgrounds/Clouds_Background"]
-self_modulate = Color(1, 1, 1, 0.054902)
-z_index = -4090
-position = Vector2(320.049, 183.915)
-scale = Vector2(2, 2)
-texture = SubResource("NoiseTexture2D_que5d")
-
-[node name="Navigation Space" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_1nr6p")
-
-[node name="Graphics & Tone" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_t5cpe")
-script = SubResource("GDScript_rp1j6")
-
-[node name="Black" type="ColorRect" parent="."]
-z_index = 4096
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -142.0
-offset_top = -157.0
-offset_right = 811.0
-offset_bottom = 420.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
-[node name="HUD" parent="." instance=ExtResource("7_ld0jn")]
+[node name="Navigation Space" parent="." instance=ExtResource("4_nkdvc")]
