@@ -8,7 +8,7 @@ signal PlayerDeath  # Signal emitted when the player dies
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent  # Reference to the Hurtbox component
 @onready var health: HealthComponent = $"Health Manager"  # Reference to the Health component
 @onready var physics: Node = $"Physics Manager"  # Reference to the Physics Manager
-@onready var i_frames: Node = $"I-Frames Manager"  # Reference to the I-Frames Manager
+@onready var i_frames: Node = $"I-Frames Manager"  # Reference to the I-Frames Managerd
 @onready var weapons: Node = $"Weapon Manager"  # Reference to the Weapon Manager
 @onready var knockback: KnockbackComponent = $KnockbackComponent
 @onready var crosshair: Sprite2D = $TrueCrosshair

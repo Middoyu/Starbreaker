@@ -10,7 +10,6 @@ var combo_multiplier = 1.0
 signal score_update(amount)
 
 func update_score(amount):
-	print("adding " + str(amount) + "to score...")
 	add_up_to_score(amount)
 	emit_signal("score_update", amount)
 

@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm1xlgxrd1oa0"]
+
+[sub_resource type="GDScript" id="GDScript_qbwcn"]
+script/source = "extends Label
+
+
+func _ready() -> void:
+	var preset = ConfigFile.new()
+	preset.load(\"res://export_presets.cfg\")
+	text = preset.get_value(\"preset.0.options\", \"application/file_version\")
+"
+
+[node name="ReleaseUI" type="CanvasLayer"]
+
+[node name="Release" type="Label" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -57.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "release"
+script = SubResource("GDScript_qbwcn")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+enabled = false
+zoom = Vector2(2.5, 2.5)

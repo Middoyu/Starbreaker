@@ -23,12 +23,10 @@ script/source = "extends Enemy
 func on_hit(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 	score_event.update_score(OnHit_score)
-	score_event.display_damage(amount, self)
 
 func on_death(amount, colliding_hitbox) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 	score_event.update_score(OnDeath_score)
-	score_event.display_damage(amount, self)
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ywqrl"]

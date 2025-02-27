@@ -1,5 +1,6 @@
 [gd_scene load_steps=219 format=3 uid="uid://dfepk5fmqyutd"]
 
+[ext_resource type="Script" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.gd" id="1_t7cul"]
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/death.png" id="2_3ivxn"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_lgqps"]
@@ -9,34 +10,6 @@
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="6_w1j0l"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="8_ueg8n"]
 [ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="9_sjgo5"]
-
-[sub_resource type="GDScript" id="GDScript_vvde2"]
-script/source = "extends Enemy
-#region Nodes
-@onready var hurtbox: HurtboxComponent = $HurtboxComponent
-@onready var hitbox: HitboxComponent = $HitboxComponent
-
-@onready var sprite: AnimatedSprite2D = $Sprite
-@onready var state_machine = $StateMachine
-#endregion
-@export var movement_speed = 4000.0
-
-func _physics_process(_delta: float) -> void:
-	move_and_slide()
-
-#region Interaction Handlers
-func on_hit(amount, colliding_hitbox) -> void:
-	events.emit_signal(\"enemy_damaged\", self)
-	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
-	score_event.update_score(OnHit_score * score_event.combo_multiplier)
-
-func on_death(amount, colliding_hitbox) -> void:
-	events.emit_signal(\"camera_shake\", 35.0)
-	events.emit_signal(\"enemy_killed\", self)
-	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
-	score_event.update_score(OnDeath_score * score_event.combo_multiplier)
-#endregion
-"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 
@@ -1482,6 +1455,7 @@ radius = 9.0
 script/source = "extends State
 
 func enter():
+	await get_tree().create_timer(0.07, false, true, false).timeout
 	parent.hurtbox.is_disabled = true
 	parent.hitbox.is_disabled = true
 	
@@ -1569,9 +1543,7 @@ func physics_update(_delta):
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 0
 motion_mode = 1
-script = SubResource("GDScript_vvde2")
-OnHit_score = 500
-OnDeath_score = 1000
+script = ExtResource("1_t7cul")
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_ueg8n")
@@ -1587,9 +1559,10 @@ disabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"chase"
+animation = &"spawn"
 autoplay = "chase"
-frame_progress = 0.533456
+frame = 57
+frame_progress = 1.0
 
 [node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["enemy"]]
 collision_layer = 4
@@ -1622,7 +1595,7 @@ debug_enabled = true
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("2_lgqps")]
 parent = NodePath("..")
-intial_state = NodePath("chase")
+intial_state = NodePath("spawn")
 hit_state = NodePath("hit")
 death_state = NodePath("death")
 

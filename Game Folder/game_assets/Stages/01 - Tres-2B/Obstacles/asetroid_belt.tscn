@@ -1,19 +1,39 @@
 [gd_scene load_steps=2 format=3 uid="uid://bf6somwj76fiy"]
 
 [sub_resource type="GDScript" id="GDScript_u206m"]
-script/source = "extends Node2D
+script/source = "extends Enemy
 const ASETROID = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\")
-var amount = 15
+@export var amount = 15
+@export var range = 70
+
+var has_started = false
+var s = null
+
+func appear(audio_time):
+	audio_time = snappedf(audio_time, 0.1)
+	if audio_time == spawn_time:
+		show()
+		process_mode = ProcessMode.PROCESS_MODE_INHERIT
+		start()
+		has_started = true
+		self.reparent(global.EntityManager)
 
 
-func _ready() -> void:
-	randomize()
-	for i in range(amount):
-		var x = ASETROID.instantiate()
-		x.position = self.position + Vector2(randf_range(-70.0, 70.0), -64)
-		await get_tree().create_timer(randf_range(0.2, 0.35), false, true).timeout
-		global.EntityManager.add_child(x)
+func start():
+	if has_started == false:
+		randomize()
+		for i in range(amount):
+			var x = ASETROID.instantiate()
+			x.position = self.position + Vector2(randf_range(-range, range), -64)
+			global.EntityManager.add_child(x)
+			$Spawnrate.start(randf_range(0.2, 0.35))
+			await $Spawnrate.timeout
 "
 
-[node name="AsetroidBelt" type="Node2D"]
+[node name="AsetroidBelt" type="CharacterBody2D"]
 script = SubResource("GDScript_u206m")
+
+[node name="Spawnrate" type="Timer" parent="."]
+process_callback = 0
+
+[connection signal="timeout" from="Spawnrate" to="." method="_on_spawnrate_timeout"]

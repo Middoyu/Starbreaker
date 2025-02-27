@@ -15,7 +15,7 @@ func _physics_process(delta: float) -> void:
 	input_detection()
 
 func input_detection():
-	if Input.is_action_just_pressed(\"movement_util\") and player.weapons.is_actionable:
+	if Input.is_action_just_pressed(\"shift\") and player.weapons.is_actionable:
 		action()
 
 
@@ -34,3 +34,4 @@ func action():
 
 [node name="MovementUtility" type="Node"]
 script = SubResource("GDScript_gl4md")
+currently_active_mvt_util = 0

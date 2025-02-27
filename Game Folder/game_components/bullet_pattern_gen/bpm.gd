@@ -54,7 +54,7 @@ func shoot():
 		bullet.global_position = s.global_position
 		bullet.rotation = s.global_rotation
 		s.queue_free()
-		global.current_stage.add_child(bullet, true)
+		global.EntityManager.add_child(bullet, true)
 	emit_signal("shooting")
 	bulletsetup()
 

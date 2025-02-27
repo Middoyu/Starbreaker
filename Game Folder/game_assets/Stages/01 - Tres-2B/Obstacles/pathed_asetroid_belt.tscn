@@ -5,24 +5,30 @@
 [sub_resource type="GDScript" id="GDScript_mw0be"]
 script/source = "extends Path2D
 const ASETROID = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\")
+@export var spawn_time = 0.0
+@export var amount := 0
 
+
+func appear(audio_time):
+	audio_time = snappedf(audio_time, 0.1)
+	if audio_time == spawn_time:
+		show()
+		process_mode = ProcessMode.PROCESS_MODE_INHERIT
 
 func _ready() -> void:
-	spawn_path()
-
-func spawn_path():
-	self.curve.add_point(Vector2(0, 0))
-	self.curve.add_point(Vector2(775, randi_range(0, 432)))
+	hide()
+	process_mode = ProcessMode.PROCESS_MODE_DISABLED
+	events.connect(\"stage_time\", appear, 1)
 	
-	for c in range(10):
-		await get_tree().create_timer(0.2, false, true).timeout
+	for c in range(amount):
 		
 		var x = PathFollow2D.new()
-		self.add_child(x)
 		
 		var i = ASETROID.instantiate()
 		i.global_position = self.global_position
 		
+		await get_tree().create_timer(randf_range(0.2, 0.55), false, true).timeout
+		self.add_child(x)
 		x.add_child(i, true)
 "
 

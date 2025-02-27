@@ -9,7 +9,7 @@ script/source = "extends Node2D
 @onready var player = global.player as Player
 @onready var velocity_vector = Vector2.ZERO
 @onready var release_vector = Vector2.ZERO
-@onready var is_on_cooldown = true
+@onready var is_on_cooldown = false
 @onready var afterimage: GPUParticles2D = $Afterimage
 
 enum states {
@@ -74,7 +74,7 @@ func timer_timeout() -> void:
 		afterimage.emitting = false
 	$Hitbox.is_disabled = true
 	player.i_frames.invincibility_override = false
-	player.i_frames.invincibility_timer.start(0.3)
+	player.i_frames.invincibility_timer.start(0.1)
 	$\"Internal Cooldown\".start(0.65)
 
 func internal_cooldown_timeout() -> void:

@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3 uid="uid://dy2lu7u6xhhkf"]
+
+[ext_resource type="PackedScene" uid="uid://x3qocpbfrgay" path="res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/Bullet/bullet_cosma-turret.tscn" id="3_j221b"]
+
+[sub_resource type="GDScript" id="GDScript_e85qt"]
+script/source = "extends Enemy
+@onready var duration: Timer = $Duration
+@export var stop_time = 0.0
+@export var move_time = 0.0
+
+func stop(audio_time):
+	audio_time = snappedf(audio_time, 0.1)
+	if audio_time == move_time:
+		$AnimationPlayer.play(\"Bob\")
+	if audio_time == stop_time:
+		events.camera_flash.emit()
+		global.clear_enemies()
+
+
+
+func appear(audio_time):
+	audio_time = snappedf(audio_time, 0.1)
+	if audio_time == spawn_time:
+		process_mode = ProcessMode.PROCESS_MODE_INHERIT
+		events.camera_flash.emit()
+		global.clear_enemies()
+		show()
+		await get_tree().create_timer(0.5, false, true, false).timeout
+		is_active = true
+		events.connect(\"stage_time\", stop, 1)
+"
+
+[sub_resource type="GDScript" id="GDScript_g7sdy"]
+script/source = "extends BulletPatternGenerator
+
+
+func shoot():
+	for s in rotater.get_children():
+		var bullet = bulletpath.instantiate()
+		
+		bullet.global_position = s.global_position
+		bullet.rotation = s.global_rotation
+		s.queue_free()
+		global.EntityManager.add_child(bullet, true)
+		bullet.speed = bullet.speed / 1.85
+	emit_signal(\"shooting\")
+	bulletsetup()
+"
+
+[node name="SpiralTurret" type="CharacterBody2D"]
+position = Vector2(384, 0)
+motion_mode = 1
+script = SubResource("GDScript_e85qt")
+spawn_time = 0.5
+
+[node name="BulletPatternGenerator" type="Node2D" parent="."]
+script = SubResource("GDScript_g7sdy")
+bulletpath = ExtResource("3_j221b")
+firerate = 0.1
+rotation_speed = 75
+bullet_points = 14
+
+[node name="Duration" type="Timer" parent="."]
+process_callback = 0
+
+[node name="CameraPreview" type="Camera2D" parent="."]
+top_level = true
+anchor_mode = 0
+enabled = false
+zoom = Vector2(2.5, 2.5)

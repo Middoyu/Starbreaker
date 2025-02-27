@@ -1,56 +1,36 @@
-[gd_scene load_steps=6 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=18 format=3 uid="uid://k0rog1tlg78y"]
 
-[ext_resource type="AudioStream" uid="uid://dfcd14lp8fxca" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/Starbreaker - Tres2B FM WIP.mp3" id="1_n8ym8"]
+[ext_resource type="AudioStream" uid="uid://dfcd14lp8fxca" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tres2b.mp3" id="1_n8ym8"]
+[ext_resource type="PackedScene" uid="uid://dfepk5fmqyutd" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn" id="3_uolb2"]
 [ext_resource type="PackedScene" uid="uid://ccyfgaostrrk4" path="res://Game Folder/game_assets/Stages/00 - BASE/navigation_space.tscn" id="4_nkdvc"]
+[ext_resource type="PackedScene" uid="uid://bmehsjqlfnqij" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn" id="4_t7q6j"]
+[ext_resource type="PackedScene" uid="uid://2kuv342uj1hh" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn" id="5_hpkel"]
+[ext_resource type="PackedScene" uid="uid://bf6somwj76fiy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn" id="6_phsey"]
+[ext_resource type="PackedScene" uid="uid://d2k6dxwe5v7l1" path="res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn" id="7_5fmbx"]
+[ext_resource type="PackedScene" uid="uid://dy2lu7u6xhhkf" path="res://Game Folder/game_assets/Enemies/Tres-2B/SpiralTurret/spiral_turret.tscn" id="8_ketdh"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
+
+
 
 # Stage-specific Additions #
 const TUTORIAL_SKELESHOT = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn\")
 const BACKGROUNDS = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Effects/backgrounds.tscn\")
 const ENVIORMENT = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Effects/graphics_&_tone.tscn\")
 @onready var FADE_BLACK = ColorRect.new()
-@onready var spawning: AnimationPlayer = $Spawning
 
-@export var enemy_list = [
-	# Placeholder Enemies
-	\"res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn\", #0
-	# Tres-2B Enemies
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn\", #1
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\", #2
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn\", #4
-	# W.I.P
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn\", #5
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn\", #6
-	\"res://Game Folder/game_assets/Enemies/Tres-2B/Absorbio/Absorbio.tscn\", #7
-	\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn\", #8
-	\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\" #9
-	]
-
-func spawn_enemies(enemy_index, forced_spawnpoint := Vector2.ZERO, _extra_arg_1 := 0.0, _extra_arg_2 := 0.0, _extra_arg_3 := 0.0):
-	var enemy_int = load(enemy_list[enemy_index])
-	enemy_int = enemy_int.instantiate()
-	
-	if forced_spawnpoint != Vector2.ZERO:
-		enemy_int.global_position = forced_spawnpoint
-	if enemy_list[enemy_index] == \"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\":
-		enemy_int.spawn_rotation = _extra_arg_1
-		enemy_int.rotation_speed = _extra_arg_2
-	if enemy_list[enemy_index] == \"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn\":
-		if _extra_arg_1 != 0:
-			enemy_int.amount = roundi(_extra_arg_1)
-	
-	EntityManager.add_child(enemy_int, true)
-
-
+@onready var music: AudioStreamPlayer = $Music
+@onready var audio_time = music.get_playback_position()
 
 func _ready() -> void:
+	
+	for x in get_children():
+		if x is Enemy:
+			x.reparent(EntityManager)
+	
 	super()
 	$CameraPreview.queue_free()
-	
-	for i in enemy_list:
-		cache.load_in_cache(i)
 	
 	
 	FADE_BLACK.color = Color.BLACK
@@ -65,18 +45,12 @@ func _ready() -> void:
 	var i = BACKGROUNDS.instantiate()
 	add_child(i)
 	
-	events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
+	#events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
 	
 	intro()
 	
-	# If the player has never viewed the tutorial; make them
-	if !global.has_viewed_tutorial:
-		var x = TUTORIAL_SKELESHOT.instantiate()
-		x.global_position = Vector2(320, 128)
-		EntityManager.add_child(x)
-	# Else it'll start the stage without it.
-	else:
-		start_stage()
+	
+	start_stage()
 
 func intro():
 	var i = create_tween().bind_node(FADE_BLACK).set_ease(Tween.EASE_IN_OUT)
@@ -96,7 +70,18 @@ func start_stage():
 	if global.has_viewed_tutorial == true: # If Player has seen the tutorial.
 		stage_music.play()
 		events.emit_signal(\"stage_started\")
-	spawning.play(\"tres2b\")
+
+
+
+
+
+func _process(delta: float) -> void:
+	audio_time = music.get_playback_position()
+	events.emit_signal(\"stage_time\", audio_time)
+	if snappedf(audio_time, 0.1) == 192.0:
+		global.clear_enemies()
+	if snappedf(audio_time, 0.1) == end_time:
+		global.main_manager.gameover_sequence(false)
 
 func enter_nullspace():
 	# Play Nullspace music.
@@ -104,278 +89,980 @@ func enter_nullspace():
 	pass
 "
 
-[sub_resource type="Animation" id="Animation_ljsmw"]
-resource_name = "tres2b"
-length = 196.551
-step = 0.01
-tracks/0/type = "method"
+[sub_resource type="GDScript" id="GDScript_ckhcj"]
+script/source = "extends Label
+
+
+func _ready() -> void:
+	events.connect(\"stage_time\", set_time_text, 1)
+
+func set_time_text(time):
+	text = str(snappedf(time, 0.1))
+"
+
+[sub_resource type="GDScript" id="GDScript_lpdmb"]
+script/source = "extends Timer
+
+@onready var lzr_enemy: CharacterBody2D = $\"../LzrEnemy\"
+@onready var lzr_enemy_2: CharacterBody2D = $\"../LzrEnemy2\"
+@onready var lzr_enemy_3: CharacterBody2D = $\"../LzrEnemy3\"
+@onready var lzr_enemy_4: CharacterBody2D = $\"../LzrEnemy4\"
+
+
+
+
+func _ready() -> void:
+	await get_tree().create_timer(0.3, false, true, false).timeout
+	reparent(global.EntityManager)
+
+func _on_timeout() -> void:
+	lzr_enemy.queue_free()
+	lzr_enemy_2.queue_free()
+	lzr_enemy_3.queue_free()
+	lzr_enemy_4.queue_free()
+"
+
+[sub_resource type="Animation" id="Animation_ocrj6"]
+resource_name = "Bob"
+length = 11.5
+loop_mode = 1
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".")
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3.83, 7.66),
+"transitions": PackedFloat32Array(-2, -2, -2),
+"update": 0,
+"values": [Vector2(320, 0), Vector2(128, 0), Vector2(512, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_mw4mm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.02, 2.81, 2.96, 8.75, 11.66, 14.57, 17.32, 17.47, 20.38, 26.05, 26.2, 27.01, 27.49, 29.11, 29.12, 30.21, 31.12, 31.48, 32.57, 33.7, 34.03, 34.93, 34.94, 35.49, 36.94, 37, 37.84),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"values": [{
-"args": [1, Vector2(320, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 360), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 424), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 382), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(0, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [7, Vector2(320, 0), 45.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, 376), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, -4), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 192), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [7, Vector2(320, 0), 45.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, 376), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(64, 8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}]
-}
-tracks/1/type = "audio"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Music")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"clips": [{
-"end_offset": 0.737892,
-"start_offset": 0.01,
-"stream": ExtResource("1_n8ym8")
-}],
-"times": PackedFloat32Array(0)
-}
-tracks/1/use_blend = true
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.02, 2.96, 5.84, 8.75, 11.66, 14.57, 17.47, 20.38, 23.29, 26.2, 27.49, 29.11, 29.12, 30.21, 31.12, 32.57, 34.03, 34.93, 34.94, 35.49, 36.94, 37.84),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"values": [{
-"args": [1, Vector2(128, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 192), 90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(512, -16), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 0), 90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(128, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 192), 90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(-48, 192), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [3, Vector2(320, -64), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 360), 90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(0, 360), -90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 360), 90.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(640, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(576, -8), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}]
-}
-tracks/3/type = "method"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath(".")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.02, 5.84, 8.71, 8.75, 14.57, 20.38, 27.49, 29.11, 29.12, 30.21, 31.12, 32.57, 34.93, 34.94, 35.49, 36.94, 37.84),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"values": [{
-"args": [1, Vector2(512, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(128, -16), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [7, Vector2(320, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(512, -32), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(688, 192), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(640, 360), 180.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [2, Vector2(0, 0), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}, {
-"args": [1, Vector2(320, 384), 0.0, 0.0, 0.0],
-"method": &"spawn_enemies"
-}]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(320, -0.0848077)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_jprum"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mj482"]
 _data = {
-"tres2b": SubResource("Animation_ljsmw")
+"Bob": SubResource("Animation_ocrj6"),
+"RESET": SubResource("Animation_mw4mm")
+}
+
+[sub_resource type="Animation" id="Animation_ftkvx"]
+resource_name = "Bob"
+length = 4.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4),
+"transitions": PackedFloat32Array(-2, -2, -2, -2, -2),
+"update": 0,
+"values": [Vector2(320, -0.0848077), Vector2(192, -0.0508846), Vector2(320, -0.0848077), Vector2(448, -0.118731), Vector2(320, -0.0848077)]
+}
+
+[sub_resource type="Animation" id="Animation_arqe4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(320, -0.0848077)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_h17f2"]
+_data = {
+"Bob": SubResource("Animation_ftkvx"),
+"RESET": SubResource("Animation_arqe4")
 }
 
 [node name="Tres-2b" type="Node2D" node_paths=PackedStringArray("stage_music")]
 editor_description = "Stage 1 Of Starbreaker, it's suppose to be simple and easy for beginners to get through without much hassle but have a learning curve to get the S rank."
 rotation = 0.000265024
 script = SubResource("GDScript_sy80a")
+end_time = 196.0
 stage_music = NodePath("Music")
 
+[node name="TimeDisplay" type="Label" parent="."]
+visible = false
+offset_left = 600.028
+offset_top = 103.841
+offset_right = 640.028
+offset_bottom = 126.841
+script = SubResource("GDScript_ckhcj")
+
 [node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_n8ym8")
 bus = &"Music"
 
-[node name="Spawning" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_jprum")
-}
-
 [node name="CameraPreview" type="Camera2D" parent="."]
+visible = false
 anchor_mode = 0
+enabled = false
 zoom = Vector2(3, 3)
 
 [node name="Navigation Space" parent="." instance=ExtResource("4_nkdvc")]
+visible = false
+
+[node name="Enemy" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 0.1
+
+[node name="Enemy2" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 0.1
+
+[node name="Enemy3" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 0.1
+
+[node name="Trishooter" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 6.0
+
+[node name="LzrEnemy" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+z_index = 5
+position = Vector2(-0.0169615, -64)
+rotation_speed = 0.0
+spawn_time = 26.5
+
+[node name="HurtboxComponent" parent="LzrEnemy" index="1"]
+is_disabled = true
+
+[node name="Collision" parent="LzrEnemy/HurtboxComponent" index="0"]
+disabled = true
+
+[node name="LzrEnemy2" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(704, -0.186577)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+spawn_time = 26.5
+
+[node name="HurtboxComponent" parent="LzrEnemy2" index="1"]
+is_disabled = true
+
+[node name="Collision" parent="LzrEnemy2/HurtboxComponent" index="0"]
+disabled = true
+
+[node name="LzrEnemy3" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(-63.9046, 360.017)
+spawn_rotation = -90.0
+rotation_speed = 0.0
+spawn_time = 26.5
+
+[node name="HurtboxComponent" parent="LzrEnemy3" index="1"]
+is_disabled = true
+
+[node name="LzrEnemy4" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(640.119, 447.83)
+spawn_rotation = 180.0
+rotation_speed = 0.0
+spawn_time = 26.5
+
+[node name="HurtboxComponent" parent="LzrEnemy4" index="1"]
+is_disabled = true
+
+[node name="lazer_despawn" type="Timer" parent="."]
+process_callback = 0
+wait_time = 41.0
+one_shot = true
+autostart = true
+script = SubResource("GDScript_lpdmb")
+
+[node name="Enemy4" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 3.5
+
+[node name="Enemy5" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 3.5
+
+[node name="Enemy6" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 3.5
+
+[node name="Trishooter2" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 9.0
+
+[node name="Enemy7" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 7.5
+
+[node name="Enemy8" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 7.5
+
+[node name="Enemy9" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 7.5
+
+[node name="Enemy10" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 14.5
+
+[node name="Enemy11" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 14.5
+
+[node name="Enemy12" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 14.5
+
+[node name="Trishooter3" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 14.5
+
+[node name="LzrEnemy5" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(576.051, 191.847)
+spawn_rotation = 135.0
+spawn_time = 16.0
+
+[node name="LzrEnemy6" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(64.0509, 191.983)
+spawn_rotation = -135.0
+rotation_speed = -0.3
+spawn_time = 16.0
+
+[node name="Enemy13" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 17.5
+
+[node name="Enemy14" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 17.5
+
+[node name="Enemy15" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 17.5
+
+[node name="Trishooter4" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 17.5
+
+[node name="Enemy16" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 20.5
+
+[node name="Enemy17" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 20.5
+
+[node name="Enemy18" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.989, -40.0848)
+spawn_time = 20.5
+
+[node name="Trishooter5" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 20.5
+
+[node name="Enemy19" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-39.8876, 424.011)
+spawn_time = 27.0
+
+[node name="Enemy20" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.97, -112.085)
+spawn_time = 27.0
+
+[node name="Enemy21" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(680.112, 423.82)
+spawn_time = 27.0
+
+[node name="Trishooter6" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(-32.0255, -95.9915)
+spawn_time = 27.0
+
+[node name="Trishooter7" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(671.975, -96.1781)
+spawn_time = 27.0
+
+[node name="AsetroidBelt" parent="." instance=ExtResource("6_phsey")]
+visible = false
+position = Vector2(320, -0.0848077)
+amount = 125
+range = 180
+spawn_time = 27.5
+
+[node name="Enemy22" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.985, -56.0339)
+spawn_time = 35.0
+
+[node name="Enemy23" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.985, -56.1357)
+spawn_time = 35.0
+
+[node name="Enemy24" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.985, -56.0848)
+spawn_time = 35.0
+
+[node name="Trishooter8" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 35.0
+
+[node name="Cosmo_Turret" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(576.015, 55.8473)
+shot_burst = 1
+spawn_time = 41.0
+
+[node name="Cosmo_Turret2" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(64.0148, 55.983)
+shot_burst = 1
+spawn_time = 41.0
+
+[node name="Cosmo_Turret3" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(64.0806, 303.983)
+shot_burst = 1
+spawn_time = 41.0
+
+[node name="Cosmo_Turret4" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(576.081, 303.847)
+shot_burst = 1
+spawn_time = 41.0
+
+[node name="Enemy29" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-39.8876, 424.011)
+spawn_time = 41.0
+
+[node name="Enemy30" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.97, -112.085)
+spawn_time = 41.0
+
+[node name="Enemy31" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(680.112, 423.82)
+spawn_time = 41.0
+
+[node name="Trishooter9" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(-32.0255, -95.9915)
+spawn_time = 41.0
+
+[node name="Trishooter10" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(671.975, -96.1781)
+spawn_time = 41.0
+
+[node name="LzrEnemy7" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(0.0169678, 64)
+spawn_rotation = -90.0
+rotation_speed = 0.0
+spawn_time = 42.5
+
+[node name="LzrEnemy8" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(640.017, 63.8304)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+spawn_time = 42.5
+
+[node name="Enemy32" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(128.051, 191.966)
+movement_speed = 3000.0
+spawn_time = 44.0
+
+[node name="Enemy33" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(512.051, 191.864)
+movement_speed = 3000.0
+spawn_time = 44.0
+
+[node name="Trishooter11" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.034, 127.915)
+spawn_time = 46.5
+
+[node name="Enemy25" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 49.5
+
+[node name="Enemy26" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 49.5
+
+[node name="Enemy27" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 49.5
+
+[node name="Trishooter12" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 49.5
+
+[node name="Enemy28" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+movement_speed = 3000.0
+spawn_time = 52.5
+
+[node name="Enemy34" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+movement_speed = 3000.0
+spawn_time = 52.5
+
+[node name="Enemy35" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+movement_speed = 3000.0
+spawn_time = 52.5
+
+[node name="Enemy36" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+movement_speed = 3000.0
+spawn_time = 55.5
+
+[node name="Enemy37" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+movement_speed = 3000.0
+spawn_time = 55.5
+
+[node name="Trishooter13" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(-32.0255, -95.9915)
+spawn_time = 58.5
+
+[node name="Trishooter14" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(671.975, -96.1781)
+spawn_time = 58.5
+
+[node name="Enemy38" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.985, -56.0339)
+spawn_time = 59.0
+
+[node name="Enemy39" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.985, -56.1357)
+spawn_time = 60.0
+
+[node name="Enemy40" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.985, -56.0848)
+spawn_time = 61.0
+
+[node name="Trishooter15" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 62.2
+
+[node name="SpiralTurret" parent="." instance=ExtResource("8_ketdh")]
+visible = false
+position = Vector2(320, -0.0848077)
+stop_time = 122.0
+move_time = 99.0
+spawn_time = 87.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SpiralTurret"]
+libraries = {
+"": SubResource("AnimationLibrary_mj482")
+}
+
+[node name="Enemy41" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 67.0
+
+[node name="Enemy42" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 67.0
+
+[node name="Enemy43" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 67.0
+
+[node name="Trishooter16" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 67.0
+
+[node name="AsetroidBelt2" parent="." instance=ExtResource("6_phsey")]
+visible = false
+position = Vector2(320, -0.0848077)
+amount = 65
+range = 250
+spawn_time = 64.0
+
+[node name="Enemy44" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-39.8876, 424.011)
+movement_speed = 2500.0
+spawn_time = 70.0
+
+[node name="Enemy45" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.97, -112.085)
+movement_speed = 2500.0
+spawn_time = 70.0
+
+[node name="Enemy46" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(680.112, 423.82)
+movement_speed = 2500.0
+spawn_time = 70.0
+
+[node name="Enemy47" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 73.0
+
+[node name="Enemy48" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 73.0
+
+[node name="Enemy49" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 73.0
+
+[node name="Trishooter17" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+spawn_time = 75.5
+
+[node name="Trishooter18" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+spawn_time = 75.5
+
+[node name="LzrEnemy9" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(0.0339231, 128)
+spawn_rotation = -90.0
+rotation_speed = 0.0
+charging_time = 2.0
+spawn_time = 86.0
+
+[node name="LzrEnemy10" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(0.0678461, 256)
+spawn_rotation = -90.0
+rotation_speed = 0.0
+charging_time = 3.0
+spawn_time = 85.0
+
+[node name="LzrEnemy15" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(640.017, 63.8304)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+charging_time = 3.0
+spawn_time = 85.0
+
+[node name="LzrEnemy16" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(640.051, 191.83)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+charging_time = 3.0
+spawn_time = 85.0
+
+[node name="LzrEnemy17" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+spawn_rotation = -90.0
+rotation_speed = 0.0
+charging_time = 3.0
+spawn_time = 85.0
+
+[node name="LzrEnemy18" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(640.085, 319.83)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+charging_time = 3.0
+spawn_time = 85.0
+
+[node name="Enemy50" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 79.5
+
+[node name="Enemy51" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 79.5
+
+[node name="Enemy52" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 79.5
+
+[node name="LzrEnemy11" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(512.017, 63.8643)
+spawn_rotation = 30.0
+rotation_speed = 0.0
+spawn_time = 122.5
+
+[node name="LzrEnemy12" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(128.017, 63.9661)
+spawn_rotation = -30.0
+rotation_speed = 0.0
+spawn_time = 122.5
+
+[node name="Enemy53" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 124.0
+
+[node name="Enemy54" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 124.0
+
+[node name="Enemy55" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 124.0
+
+[node name="Trishooter19" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(-32.0255, -95.9915)
+spawn_time = 126.0
+
+[node name="Trishooter20" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(671.975, -96.1781)
+spawn_time = 126.0
+
+[node name="Trishooter21" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 128.5
+
+[node name="LzrEnemy13" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(576.051, 191.847)
+spawn_rotation = 135.0
+spawn_time = 128.5
+
+[node name="LzrEnemy14" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(64.0509, 191.983)
+spawn_rotation = -135.0
+rotation_speed = -0.3
+spawn_time = 128.5
+
+[node name="CosmaTurret" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(320.047, 175.915)
+spawn_time = 128.0
+
+[node name="Enemy56" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(128.017, 63.9661)
+movement_speed = 3500.0
+spawn_time = 132.0
+
+[node name="Enemy57" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(320.017, 63.9152)
+movement_speed = 3500.0
+spawn_time = 132.0
+
+[node name="Enemy58" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(512.017, 63.8643)
+movement_speed = 3500.0
+spawn_time = 132.0
+
+[node name="Enemy59" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(576.085, 319.847)
+movement_speed = 3500.0
+spawn_time = 132.0
+
+[node name="Enemy60" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(128.085, 319.966)
+movement_speed = 3500.0
+spawn_time = 132.0
+
+[node name="Trishooter22" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.017, 63.9152)
+spawn_time = 134.0
+
+[node name="Trishooter23" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 134.0
+
+[node name="Trishooter24" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(64.0509, 191.983)
+spawn_time = 137.0
+
+[node name="Trishooter25" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(576.051, 191.847)
+spawn_time = 137.0
+
+[node name="LzrEnemy19" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(128.068, 255.966)
+spawn_time = 140.0
+
+[node name="LzrEnemy20" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(512.068, 255.864)
+rotation_speed = -0.3
+spawn_time = 140.0
+
+[node name="Enemy61" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(328.002, 7.91307)
+spawn_time = 140.0
+
+[node name="Enemy62" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(0.0508846, 192)
+spawn_time = 142.5
+
+[node name="Enemy63" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(640.051, 191.83)
+spawn_time = 142.5
+
+[node name="Enemy64" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(320, -0.0848077)
+spawn_time = 142.5
+
+[node name="Enemy65" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(320.095, 359.915)
+spawn_time = 142.5
+
+[node name="LzrEnemy21" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(64.0848, 319.983)
+spawn_rotation = -90.0
+rotation_speed = 0.0
+spawn_time = 145.5
+
+[node name="LzrEnemy22" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(576.034, 127.847)
+spawn_rotation = 90.0
+rotation_speed = 0.0
+spawn_time = 145.5
+
+[node name="Enemy66" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+spawn_time = 148.5
+
+[node name="Enemy67" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(640.095, 359.83)
+spawn_time = 148.5
+
+[node name="LzrEnemy23" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(128.006, 23.9661)
+spawn_time = 151.5
+
+[node name="LzrEnemy24" parent="." instance=ExtResource("5_hpkel")]
+visible = false
+position = Vector2(512.006, 23.8643)
+spawn_time = 151.5
+
+[node name="Trishooter26" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(64.017, 63.983)
+spawn_time = 154.0
+
+[node name="Trishooter27" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(576.017, 63.8473)
+spawn_time = 154.0
+
+[node name="Enemy68" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(-15.9491, 192.004)
+spawn_time = 157.0
+
+[node name="Enemy69" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(656.051, 191.826)
+spawn_time = 157.0
+
+[node name="Enemy70" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.989, -40.0848)
+spawn_time = 157.0
+
+[node name="Trishooter28" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(319.983, -64.0848)
+spawn_time = 157.0
+
+[node name="AsetroidBelt3" parent="." instance=ExtResource("6_phsey")]
+visible = false
+position = Vector2(320, -0.0848077)
+amount = 50
+range = 250
+spawn_time = 128.0
+
+[node name="Cosmo_Turret5" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(576.015, 55.8473)
+spawn_time = 157.0
+
+[node name="Cosmo_Turret6" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(64.0148, 55.983)
+spawn_time = 157.0
+
+[node name="Cosmo_Turret7" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(64.0806, 303.983)
+spawn_time = 157.0
+
+[node name="Cosmo_Turret8" parent="." instance=ExtResource("7_5fmbx")]
+visible = false
+position = Vector2(576.081, 303.847)
+spawn_time = 157.0
+
+[node name="Enemy71" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(127.996, -16.0339)
+spawn_time = 163.0
+
+[node name="Enemy72" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(511.996, -16.1357)
+spawn_time = 163.0
+
+[node name="Enemy73" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(319.996, -16.0848)
+spawn_time = 163.0
+
+[node name="Trishooter29" parent="." instance=ExtResource("4_t7q6j")]
+visible = false
+position = Vector2(320.085, 319.915)
+spawn_time = 163.0
+
+[node name="Enemy74" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+spawn_time = 166.0
+
+[node name="Enemy75" parent="." instance=ExtResource("3_uolb2")]
+visible = false
+position = Vector2(640.095, 359.83)
+spawn_time = 166.0
+
+[node name="SpiralTurret2" parent="." instance=ExtResource("8_ketdh")]
+visible = false
+position = Vector2(320, -0.0848077)
+move_time = 174.0
+spawn_time = 169.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SpiralTurret2"]
+libraries = {
+"": SubResource("AnimationLibrary_h17f2")
+}
+
+[connection signal="on_hit" from="LzrEnemy/HealthComponent" to="LzrEnemy" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy/StateMachine/firing/firing_timer" to="LzrEnemy/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy2/HealthComponent" to="LzrEnemy2" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy2/StateMachine/firing/firing_timer" to="LzrEnemy2/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy3/HealthComponent" to="LzrEnemy3" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy3/StateMachine/firing/firing_timer" to="LzrEnemy3/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy4/HealthComponent" to="LzrEnemy4" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy4/StateMachine/firing/firing_timer" to="LzrEnemy4/StateMachine/firing" method="timeout"]
+[connection signal="timeout" from="lazer_despawn" to="lazer_despawn" method="_on_timeout"]
+[connection signal="visibility_changed" from="SpiralTurret" to="SpiralTurret" method="_on_visibility_changed"]
+
+[editable path="LzrEnemy"]
+[editable path="LzrEnemy2"]
+[editable path="LzrEnemy3"]
+[editable path="LzrEnemy4"]

@@ -19,6 +19,7 @@ signal enemy_killed(enemy)
 #region Stage Action/Reaction Signals
 signal stage_intro_finished
 signal stage_started
+signal stage_time(audio_time)
 signal boss_spawning
 signal GameOver(final_score)
 

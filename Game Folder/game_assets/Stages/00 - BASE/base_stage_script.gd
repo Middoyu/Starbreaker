@@ -5,6 +5,8 @@ const CAMERA_BASE = preload("res://Game Folder/game_components/camera_component/
 const NAVIGATION_SPACE = preload("res://Game Folder/game_assets/Stages/00 - BASE/navigation_space.tscn")
 const PLAYER = preload("res://Game Folder/game_assets/Player/Main/Player.tscn")
 
+@export var end_time := 0.0
+
 @onready var stage_started = false
 @onready var is_boss_active = false
 
@@ -19,6 +21,9 @@ const PLAYER = preload("res://Game Folder/game_assets/Player/Main/Player.tscn")
 @export var player_starting_position := Vector2(320, 290)
 
 func _ready() -> void:
+	add_child(EntityManager, true)
+	global.EntityManager = EntityManager
+	
 	var hud = HUD.instantiate()
 	var camera = CAMERA_BASE.instantiate()
 	var nav_space = NAVIGATION_SPACE.instantiate()
@@ -35,10 +40,8 @@ func _ready() -> void:
 	
 	
 	add_wall_collision()
-	add_child(EntityManager, true)
 	
 	global.player.global_position = player_starting_position
-	global.EntityManager = EntityManager
 	global.current_stage = self
 
 func start_stage():

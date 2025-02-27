@@ -38,3 +38,32 @@ static func is_mouse_hidden(_is_mouse_hidden : bool): # Hides the mouse if value
 
 func get_mouse_pos():
 	return global.current_stage.get_global_mouse_position()
+
+
+
+func _ready() -> void:
+	for i in enemy_list:
+		cache.load_in_cache(i)
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("debug_wipe") and OS.is_debug_build():
+		events.camera_flash.emit()
+		global.clear_enemies()
+	if Input.is_action_just_pressed("heal") and OS.is_debug_build():
+		global.player.health.modify_health(25)
+
+
+@export var enemy_list = [
+	# Placeholder Enemies
+	"res://Game Folder/game_assets/Enemies/0. NULL/PH Enemy/placeholder_enemy.tscn", #0
+	# Tres-2B Enemies
+	"res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn", #1
+	"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn", #2
+	"res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn", #4
+	# W.I.P
+	"res://Game Folder/game_assets/Enemies/Tres-2B/The Faider/TheFaider.tscn", #5
+	"res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn", #6
+	"res://Game Folder/game_assets/Enemiees/Tres-2B/Absorbio/Absorbio.tscn", #7
+	"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn", #8
+	"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn" #9
+	]

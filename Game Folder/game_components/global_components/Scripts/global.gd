@@ -28,11 +28,15 @@ var quit_value = 0
 
 var projectile_z_index = 4000
 
-
+const RELEASE_UI = preload("res://release_ui.tscn")
 
 func _process(_delta: float) -> void:
 	if is_pausable:
 		pausing_sequence(_delta)
+
+func _ready() -> void:
+	var i = RELEASE_UI.instantiate()
+	add_child(i)
 
 func pausing_sequence(_delta):
 	quit_value = clamp(quit_value, 0, 100)
@@ -73,3 +77,15 @@ static func spawn_entity(path : PackedScene) -> Node:
 	var path_instaniated = path.instantiate()
 	global.EntityManager.add_child(path_instaniated)
 	return path_instaniated
+
+func clear_enemies():
+	if is_instance_valid(current_stage):
+		for i in global.EntityManager.get_children():
+			if i is Enemy:
+				if i.is_active == true:
+					i.queue_free()
+			if i is Projectile:
+				i.queue_free()
+			if i is Timer:
+				if i.is_stopped() == false:
+					i.queue_free()

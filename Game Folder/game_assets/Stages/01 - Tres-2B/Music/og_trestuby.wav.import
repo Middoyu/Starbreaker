@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bdu0sxw8iwlpk"
+path="res://.godot/imported/og_trestuby.wav-46dcbf3cb8b48eba9c60cd007568cd15.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/og_trestuby.wav"
+dest_files=["res://.godot/imported/og_trestuby.wav-46dcbf3cb8b48eba9c60cd007568cd15.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=true
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

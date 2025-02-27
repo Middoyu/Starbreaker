@@ -4,8 +4,6 @@
 
 [sub_resource type="GDScript" id="GDScript_6ot1m"]
 script/source = "extends RichTextLabel
-@onready var display_fade_score: AnimationPlayer = $\"../DisplayFadeScore\"
-@onready var score_display_duration: Timer = $\"../ScoreDisplay_Duration\"
 @onready var score: RichTextLabel = $\".\"
 
 
@@ -15,12 +13,6 @@ func _ready() -> void:
 
 func update_score(amount):
 	text = str(score_event.score).pad_zeros(7)
-	if amount >= 10000:
-		display_fade_score.play_backwards(\"fade\")
-		score_display_duration.start(3.5)
-
-func ScoreDisplayDuration_timeout() -> void:
-	display_fade_score.play(\"fade\")
 "
 
 [node name="ScoreRectTexture" type="Control"]
