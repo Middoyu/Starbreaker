@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/death.png" id="1_wpeii"]
 [ext_resource type="Texture2D" uid="uid://duvka0g40rn5t" path="res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/render.png" id="2_fotf5"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="3_m2m8s"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="4_7bewc"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_lciau"]
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="3_m2m8s"]
+[ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="4_7bewc"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_lciau"]
 [ext_resource type="Texture2D" uid="uid://c1qv57ut2bxq2" path="res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/sPRITE_Z.png" id="6_0s67l"]
 [ext_resource type="Texture2D" uid="uid://tlmmpxt51c48" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprite-0001-export.png" id="6_7e065"]
 [ext_resource type="Texture2D" uid="uid://bu5ldxqsy0p1l" path="res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/mousesprite.png" id="6_132ol"]
@@ -318,8 +318,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ulf8m"]
 _data = {
-"RESET": SubResource("Animation_502yf"),
-"Wiggle": SubResource("Animation_cp2bq")
+&"RESET": SubResource("Animation_502yf"),
+&"Wiggle": SubResource("Animation_cp2bq")
 }
 
 [sub_resource type="Curve" id="Curve_v27t3"]
@@ -399,8 +399,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_as6gy"]
 _data = {
-"RESET": SubResource("Animation_u8auf"),
-"sleeping": SubResource("Animation_6ayfv")
+&"RESET": SubResource("Animation_u8auf"),
+&"sleeping": SubResource("Animation_6ayfv")
 }
 
 [node name="kevin" type="CharacterBody2D" groups=["enemy"]]

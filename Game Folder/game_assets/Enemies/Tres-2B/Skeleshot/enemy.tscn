@@ -1,15 +1,15 @@
 [gd_scene load_steps=219 format=3 uid="uid://dfepk5fmqyutd"]
 
-[ext_resource type="Script" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.gd" id="1_t7cul"]
+[ext_resource type="Script" uid="uid://bpf2md5esgawm" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.gd" id="1_t7cul"]
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/death.png" id="2_3ivxn"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_lgqps"]
 [ext_resource type="Texture2D" uid="uid://0giwyh1og78x" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/hit.png" id="2_vrino"]
 [ext_resource type="Texture2D" uid="uid://cipnnf6ne6or4" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/spawn.png" id="3_kvhsi"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_alwm2"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="6_w1j0l"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="8_ueg8n"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="9_sjgo5"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="5_alwm2"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="6_w1j0l"]
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="8_ueg8n"]
+[ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="9_sjgo5"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://tmv7qtq62kb6"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_343ls"]
+[ext_resource type="Script" uid="uid://f37ieuipj0vh" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="1_343ls"]
 [ext_resource type="Texture2D" uid="uid://fll005ijx1el" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/comet.png" id="2_0ja1j"]
 [ext_resource type="Texture2D" uid="uid://dvqrhbjhh7g83" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/Warn_signs/offscreen_indicator.png" id="3_ubqiq"]
 [ext_resource type="Texture2D" uid="uid://d1qgp2wevag1o" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/Sprites/bone_fragments_spr.png" id="3_yvflk"]

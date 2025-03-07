@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cj7jh88a1txx6"]
 
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="2_atf3f"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_p6yc2"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_p6yc2"]
 
 [sub_resource type="GDScript" id="GDScript_y1aru"]
 script/source = "extends Node2D

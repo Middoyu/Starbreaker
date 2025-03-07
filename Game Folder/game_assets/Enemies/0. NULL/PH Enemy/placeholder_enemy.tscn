@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c430suysa0v1a"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_4w5la"]
+[ext_resource type="Script" uid="uid://f37ieuipj0vh" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_4w5la"]
 
 [sub_resource type="GDScript" id="GDScript_jlxpf"]
 script/source = "extends Enemy

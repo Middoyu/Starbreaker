@@ -1,9 +1,9 @@
 [gd_scene load_steps=21 format=3 uid="uid://d2k6dxwe5v7l1"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="1_6hnih"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="1_6hnih"]
 [ext_resource type="Texture2D" uid="uid://cxvpobaioil4n" path="res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/Cosma-Turret.png" id="1_6p10k"]
 [ext_resource type="Shader" uid="uid://8nbd6mrasp3a" path="res://Game Folder/game_components/shaders/hitflash.tres" id="1_h7o5c"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_jg0yl"]
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_jg0yl"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_q665o"]
 
 [sub_resource type="GDScript" id="GDScript_eqsky"]
@@ -187,8 +187,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_37lp5"]
 _data = {
-"RESET": SubResource("Animation_ysuh1"),
-"hit": SubResource("Animation_5wg5p")
+&"RESET": SubResource("Animation_ysuh1"),
+&"hit": SubResource("Animation_5wg5p")
 }
 
 [sub_resource type="Animation" id="Animation_1fp78"]
@@ -224,8 +224,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_werbc"]
 _data = {
-"RESET": SubResource("Animation_1fp78"),
-"hitflash": SubResource("Animation_68ina")
+&"RESET": SubResource("Animation_1fp78"),
+&"hitflash": SubResource("Animation_68ina")
 }
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]

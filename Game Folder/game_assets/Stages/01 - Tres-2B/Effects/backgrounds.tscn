@@ -174,8 +174,8 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sa4x2"]
 _data = {
-"RESET": SubResource("Animation_jmtsh"),
-"Speedlinesfade": SubResource("Animation_rh8eu")
+&"RESET": SubResource("Animation_jmtsh"),
+&"Speedlinesfade": SubResource("Animation_rh8eu")
 }
 
 [sub_resource type="Animation" id="Animation_ll1yi"]
@@ -212,8 +212,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0hi5d"]
 _data = {
-"RESET": SubResource("Animation_ll1yi"),
-"Tokonemu_FadeIn": SubResource("Animation_8fy6b")
+&"RESET": SubResource("Animation_ll1yi"),
+&"Tokonemu_FadeIn": SubResource("Animation_8fy6b")
 }
 
 [sub_resource type="Gradient" id="Gradient_e8xxh"]

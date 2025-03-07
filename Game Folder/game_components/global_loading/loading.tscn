@@ -200,9 +200,9 @@ tracks/4/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xlna1"]
 _data = {
-"Fade_To_Hide": SubResource("Animation_sd0um"),
-"Fade_To_Show": SubResource("Animation_f3xgw"),
-"RESET": SubResource("Animation_5tlhk")
+&"Fade_To_Hide": SubResource("Animation_sd0um"),
+&"Fade_To_Show": SubResource("Animation_f3xgw"),
+&"RESET": SubResource("Animation_5tlhk")
 }
 
 [node name="Loading_Visuals" type="Control"]

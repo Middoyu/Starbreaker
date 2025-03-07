@@ -49,8 +49,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_546xc"]
 _data = {
-"Fade": SubResource("Animation_dewcp"),
-"RESET": SubResource("Animation_tgk7p")
+&"Fade": SubResource("Animation_dewcp"),
+&"RESET": SubResource("Animation_tgk7p")
 }
 
 [node name="IntroCine" type="Control"]
@@ -85,7 +85,7 @@ autowrap_mode = 0
 
 [node name="FadeAnimation" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_546xc")
+&"": SubResource("AnimationLibrary_546xc")
 }
 autoplay = "Fade"
 speed_scale = 3.0

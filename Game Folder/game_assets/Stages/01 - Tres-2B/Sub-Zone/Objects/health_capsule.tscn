@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://j1c6vmbpnhpy"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_etw0k"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_etw0k"]
 
 [sub_resource type="GDScript" id="GDScript_xbbi4"]
 script/source = "extends Entity

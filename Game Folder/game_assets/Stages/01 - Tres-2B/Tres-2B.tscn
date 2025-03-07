@@ -156,8 +156,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mj482"]
 _data = {
-"Bob": SubResource("Animation_ocrj6"),
-"RESET": SubResource("Animation_mw4mm")
+&"Bob": SubResource("Animation_ocrj6"),
+&"RESET": SubResource("Animation_mw4mm")
 }
 
 [sub_resource type="Animation" id="Animation_ftkvx"]
@@ -194,8 +194,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h17f2"]
 _data = {
-"Bob": SubResource("Animation_ftkvx"),
-"RESET": SubResource("Animation_arqe4")
+&"Bob": SubResource("Animation_ftkvx"),
+&"RESET": SubResource("Animation_arqe4")
 }
 
 [node name="Tres-2b" type="Node2D" node_paths=PackedStringArray("stage_music")]

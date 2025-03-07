@@ -34,7 +34,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_g5vc7"]
 _data = {
-"Scaling": SubResource("Animation_76ppk")
+&"Scaling": SubResource("Animation_76ppk")
 }
 
 [node name="Crosshair" type="Node2D"]

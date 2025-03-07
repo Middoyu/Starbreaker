@@ -3,7 +3,7 @@
 [ext_resource type="AudioStream" uid="uid://erm3xbidorsi" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/starbreaker - menu (chillin).mp3" id="1_b1kbp"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="3_mm2qm"]
 [ext_resource type="Texture2D" uid="uid://cs6s2641cjjdq" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="3_wslbo"]
-[ext_resource type="Script" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
+[ext_resource type="Script" uid="uid://cb7ckkc703no7" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
 
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
 resource_name = "mainmenu"
@@ -90,8 +90,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0bqiu"]
 _data = {
-"RESET": SubResource("Animation_mg2qj"),
-"bob": SubResource("Animation_c6u7e")
+&"RESET": SubResource("Animation_mg2qj"),
+&"bob": SubResource("Animation_c6u7e")
 }
 
 [sub_resource type="GDScript" id="GDScript_vca51"]
@@ -323,8 +323,8 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_n1wfx"]
 _data = {
-"Fade": SubResource("Animation_lhi5l"),
-"RESET": SubResource("Animation_igopm")
+&"Fade": SubResource("Animation_lhi5l"),
+&"RESET": SubResource("Animation_igopm")
 }
 
 [sub_resource type="Environment" id="Environment_5lcc6"]

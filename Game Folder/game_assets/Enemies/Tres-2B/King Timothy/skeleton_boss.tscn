@@ -1,8 +1,8 @@
 [gd_scene load_steps=24 format=3 uid="uid://c3thas2ivw5s8"]
 
-[ext_resource type="Shader" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader" id="1_7mki6"]
+[ext_resource type="Shader" uid="uid://bcaijvxn78d50" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/hit_flash.gdshader" id="1_7mki6"]
 [ext_resource type="Texture2D" uid="uid://dwyuu6haf6hqg" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sprites/boss.png" id="2_yuykx"]
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
+[ext_resource type="Script" uid="uid://f37ieuipj0vh" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="3_wh82c"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_fgkdi"]
 [ext_resource type="PackedScene" uid="uid://c1k2ssyjaj5h3" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Bullets/bullet.tscn" id="5_4cjuf"]
 [ext_resource type="AudioStream" uid="uid://d22yvm0lw4705" path="res://Game Folder/game_assets/Enemies/Tres-2B/King Timothy/Sound Effects/boss_hitsfx.wav" id="6_xnjup"]
@@ -197,7 +197,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8fi0c"]
 _data = {
-"idle": SubResource("Animation_l363u")
+&"idle": SubResource("Animation_l363u")
 }
 
 [sub_resource type="GDScript" id="GDScript_ix1sk"]
@@ -541,7 +541,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_scih6"]
 _data = {
-"hit_flash": SubResource("Animation_xkxwo")
+&"hit_flash": SubResource("Animation_xkxwo")
 }
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_20m5l"]

@@ -1,10 +1,10 @@
 [gd_scene load_steps=71 format=3 uid="uid://bmehsjqlfnqij"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_8w56e"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_8w56e"]
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_c1kin"]
 [ext_resource type="Texture2D" uid="uid://ibjey310ja1h" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites/trishooter_hit_45x45.png" id="2_7mlk3"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="2_igsfb"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="3_hgvv4"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/hurtbox.gd" id="2_igsfb"]
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="3_hgvv4"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_mtath"]
 [ext_resource type="Texture2D" uid="uid://cj28c6xg6lr1k" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Trishooter_Spawning_62x40.png" id="4_cjcrx"]
 [ext_resource type="PackedScene" uid="uid://vf8atn3god1g" path="res://Game Folder/game_components/bullet_pattern_gen/bpm.tscn" id="5_kbe1e"]

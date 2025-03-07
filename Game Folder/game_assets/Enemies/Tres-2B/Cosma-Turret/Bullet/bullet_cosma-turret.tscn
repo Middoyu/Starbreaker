@@ -1,7 +1,7 @@
 [gd_scene load_steps=66 format=3 uid="uid://x3qocpbfrgay"]
 
 [ext_resource type="Texture2D" uid="uid://bsldpa031indc" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites/trishooter_bullet.png" id="1_i86dx"]
-[ext_resource type="Script" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_1s235"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_1s235"]
 
 [sub_resource type="GDScript" id="GDScript_qlpno"]
 script/source = "extends Projectile

@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_ns363"]
 [ext_resource type="AudioStream" uid="uid://cem4aaklv0lae" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over.mp3" id="1_xouxq"]
-[ext_resource type="Script" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
+[ext_resource type="Script" uid="uid://cf6o2g72ifmy3" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
 [ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="2_xv7wk"]
 [ext_resource type="FontFile" uid="uid://cpqwt7n2r0v1m" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/Pixeloid/ImpactFont.ttf" id="4_hmhld"]
 
@@ -89,7 +89,7 @@ script/source = "extends CustomButton
 "
 
 [sub_resource type="Curve" id="Curve_8tcqj"]
-max_value = 1.5
+_limits = [0.0, 1.5, 0.0, 1.0]
 _data = [Vector2(0, 1.5), 0.0, 0.0, 0, 0, Vector2(0.0490798, 1.00303), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 

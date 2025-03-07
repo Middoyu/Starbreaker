@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://chu0dp2kkaibw"]
 
-[ext_resource type="Script" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_uin2f"]
+[ext_resource type="Script" uid="uid://f37ieuipj0vh" path="res://Game Folder/game_components/collision_component/Databox/databox.gd" id="2_uin2f"]
 
 [sub_resource type="GDScript" id="GDScript_rdqev"]
 script/source = "extends Projectile
