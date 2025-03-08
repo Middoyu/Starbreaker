@@ -20,7 +20,6 @@ func _ready() -> void:
 func area_entered(area: Area2D) -> void:
 	if area.get_groups().has(\"enemy\"):
 		VFX()
-		queue_free()
 
 func _physics_process(delta: float) -> void:
 	sprite.rotation_degrees += 50.0 * speed * delta
@@ -28,8 +27,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func VFX():
-	events.emit_signal(\"camera_shake\", 25.0)
-	events.emit_signal(\"camera_freezeframe\", 0.1, 0.05)
+	events.emit_signal(\"camera_shake\", 55.0)
+	events.emit_signal(\"camera_freezeframe\", 0.1, 0.2)
 	var effects = global.spawn_entity(BULLET_EFFECTS)
 	effects.global_position = global_position
 "
@@ -89,9 +88,9 @@ collision_layer = 8
 collision_mask = 5
 script = ExtResource("3_gndls")
 parent = NodePath("..")
-damage = -33.0
+damage = -45.0
 knockback_amount = 3000.0
-knockback_stun_duration = 0.1
+knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
 shape = SubResource("CircleShape2D_wv04o")

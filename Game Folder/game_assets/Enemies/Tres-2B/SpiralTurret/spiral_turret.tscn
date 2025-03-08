@@ -64,6 +64,7 @@ bullet_points = 14
 process_callback = 0
 
 [node name="CameraPreview" type="Camera2D" parent="."]
+visible = false
 top_level = true
 anchor_mode = 0
 enabled = false

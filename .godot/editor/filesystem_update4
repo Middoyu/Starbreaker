@@ -1,3 +1,12 @@
 res://z_Export/default_bus_layout.tres
-res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/bullet_stuff/bullet_trishooter.tscn
+res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/Shotgun.tscn
 res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
+res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/ShotgunBullet.tscn
+res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/bullet_effects.tscn
+res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/player_bullet.tscn
+res://Game Folder/game_components/shaders/hitflash.tres
+res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/Bullet/bullet_cosma-turret.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/SpiralTurret/spiral_turret.tscn
+res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn

@@ -288,12 +288,12 @@ script = SubResource("GDScript_1iqck")
 
 [node name="Animation" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_37lp5")
+&"": SubResource("AnimationLibrary_37lp5")
 }
 
 [node name="Hitflash Animation" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_werbc")
+&"": SubResource("AnimationLibrary_werbc")
 }
 
 [connection signal="timeout" from="Firerate" to="StateMachine/Idle" method="firerate_timeout"]

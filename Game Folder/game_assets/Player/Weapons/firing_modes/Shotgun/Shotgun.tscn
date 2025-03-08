@@ -13,7 +13,7 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/fir
 
 @onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
 
-var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(2.0)
+var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(55.0)
 
 func action():
 	cooldown_timer.start(firerate)
@@ -36,6 +36,7 @@ func spawn_projectile():
 
 [node name="Shotgun" type="Node"]
 script = SubResource("GDScript_vqp20")
+firerate = 0.6
 arc = 45
 
 [node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
