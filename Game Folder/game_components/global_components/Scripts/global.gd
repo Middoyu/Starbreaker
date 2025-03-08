@@ -28,6 +28,10 @@ var quit_value = 0
 
 var projectile_z_index = 4000
 
+var primary_selection = "Spray"
+var utility_selection = "Zip-Dash"
+
+
 const RELEASE_UI = preload("res://release_ui.tscn")
 
 func _process(_delta: float) -> void:

@@ -49,8 +49,8 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("debug_wipe") and OS.is_debug_build():
 		events.camera_flash.emit()
 		global.clear_enemies()
-	if Input.is_action_just_pressed("heal") and OS.is_debug_build():
-		global.player.health.modify_health(25)
+	#if Input.is_action_just_pressed("heal") and OS.is_debug_build():
+		#global.player.health.modify_health(25)
 
 
 @export var enemy_list = [

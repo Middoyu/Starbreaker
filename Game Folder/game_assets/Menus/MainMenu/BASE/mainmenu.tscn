@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=26 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://erm3xbidorsi" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/starbreaker - menu (chillin).mp3" id="1_b1kbp"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="3_mm2qm"]
@@ -93,6 +93,17 @@ _data = {
 &"RESET": SubResource("Animation_mg2qj"),
 &"bob": SubResource("Animation_c6u7e")
 }
+
+[sub_resource type="GDScript" id="GDScript_ai1e2"]
+script/source = "extends Button
+@onready var main_camera: Camera2D = $\"../../../MainCamera\"
+@onready var skills_camera: Camera2D = $\"../../../SkillsCamera\"
+
+
+func on_pressed() -> void:
+	main_camera.enabled = false
+	skills_camera.enabled = true
+"
 
 [sub_resource type="GDScript" id="GDScript_vca51"]
 script/source = "extends CustomButton
@@ -220,6 +231,54 @@ func value_changed(value: float) -> void:
 	options.bloom = value
 "
 
+[sub_resource type="GDScript" id="GDScript_g26pg"]
+script/source = "extends Control
+
+@onready var options_primary: OptionButton = $primary
+@onready var options_secondary: OptionButton = $secondary
+@onready var options_utility: OptionButton = $utility
+@onready var options_breaker: OptionButton = $breaker
+
+func _ready() -> void:
+	await get_tree().create_timer(0.1, false, true, true).timeout
+	match global.primary_selection:
+		\"Spray\":
+			options_primary.select(0)
+		\"Shotgun\":
+			options_primary.select(1)
+	
+	
+	match global.utility_selection:
+		\"Zip-Dash\":
+			options_utility.select(0)
+		\"Shine\":
+			options_utility.select(1)
+
+func _on_primary_item_selected(index: int) -> void:
+	global.primary_selection = options_primary.get_item_text(index)
+
+func _on_utility_item_selected(index: int) -> void:
+	global.utility_selection = options_utility.get_item_text(index)
+	print(options_utility.get_item_text(index))
+
+func _on_secondary_item_selected(index: int) -> void:
+	pass # Replace with function body.
+
+
+func _on_breaker_item_selected(index: int) -> void:
+	pass # Replace with function body.
+"
+
+[sub_resource type="GDScript" id="GDScript_8jj6y"]
+script/source = "extends Button
+
+
+
+func on_pressed() -> void:
+	$\"../../SkillsCamera\".enabled = false
+	$\"../../MainCamera\".enabled = true
+"
+
 [sub_resource type="GDScript" id="GDScript_fs3n1"]
 script/source = "extends Control
 
@@ -340,12 +399,12 @@ script = SubResource("GDScript_cf4c7")
 [node name="Motionlines" type="GPUParticles2D" parent="VisualEffects"]
 position = Vector2(336, 8)
 amount = 2743
-process_material = SubResource("ParticleProcessMaterial_e5p0j")
 lifetime = 3.0
 preprocess = 20.0
 fixed_fps = 28
 interpolate = false
 visibility_rect = Rect2(-348, -25, 686.5, 387)
+process_material = SubResource("ParticleProcessMaterial_e5p0j")
 
 [node name="MainCamera" type="Camera2D" parent="."]
 anchor_mode = 0
@@ -356,6 +415,14 @@ process_callback = 0
 position = Vector2(1984, 0)
 anchor_mode = 0
 ignore_rotation = false
+enabled = false
+
+[node name="SkillsCamera" type="Camera2D" parent="."]
+position = Vector2(0, 1152)
+anchor_mode = 0
+ignore_rotation = false
+enabled = false
+process_callback = 0
 
 [node name="MM_Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_b1kbp")
@@ -381,7 +448,7 @@ texture = ExtResource("3_wslbo")
 
 [node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
 libraries = {
-"": SubResource("AnimationLibrary_0bqiu")
+&"": SubResource("AnimationLibrary_0bqiu")
 }
 autoplay = "bob"
 playback_default_blend_time = 1.0
@@ -407,11 +474,6 @@ text = "Play"
 text_overrun_behavior = 1
 script = ExtResource("4_tprer")
 
-[node name="SKILLS" type="Button" parent="MainMenu/ButtonContainer"]
-visible = false
-layout_mode = 2
-text = "Skills"
-
 [node name="INDEX" type="Button" parent="MainMenu/ButtonContainer"]
 visible = false
 layout_mode = 2
@@ -421,6 +483,11 @@ text = "Index"
 layout_mode = 2
 text = "Options"
 script = ExtResource("4_tprer")
+
+[node name="SKILLS" type="Button" parent="MainMenu/ButtonContainer"]
+layout_mode = 2
+text = "Skills"
+script = SubResource("GDScript_ai1e2")
 
 [node name="QUIT" type="Button" parent="MainMenu/ButtonContainer"]
 layout_mode = 2
@@ -556,6 +623,69 @@ max_value = 1.0
 step = 0.1
 script = SubResource("GDScript_w84vj")
 
+[node name="Skills" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource("GDScript_g26pg")
+
+[node name="Return" type="Button" parent="Skills"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 1176.0
+offset_right = 413.0
+offset_bottom = 1273.0
+text = "Return"
+script = SubResource("GDScript_8jj6y")
+
+[node name="primary" type="OptionButton" parent="Skills"]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 1408.0
+offset_right = 984.0
+offset_bottom = 1472.0
+selected = 0
+allow_reselect = true
+item_count = 2
+popup/item_0/text = "Spray"
+popup/item_0/id = 0
+popup/item_1/text = "Shotgun"
+popup/item_1/id = 1
+
+[node name="secondary" type="OptionButton" parent="Skills"]
+offset_left = 800.0
+offset_top = 1536.0
+offset_right = 984.0
+offset_bottom = 1600.0
+selected = 0
+item_count = 1
+popup/item_0/text = "None"
+popup/item_0/id = 0
+
+[node name="utility" type="OptionButton" parent="Skills"]
+offset_left = 800.0
+offset_top = 1664.0
+offset_right = 984.0
+offset_bottom = 1728.0
+selected = 0
+allow_reselect = true
+item_count = 2
+popup/item_0/text = "Zip-Dash"
+popup/item_0/id = 0
+popup/item_1/text = "Shine"
+popup/item_1/id = 1
+
+[node name="breaker" type="OptionButton" parent="Skills"]
+offset_left = 800.0
+offset_top = 1792.0
+offset_right = 984.0
+offset_bottom = 1856.0
+selected = 0
+item_count = 1
+popup/item_0/text = "None"
+popup/item_0/id = 0
+
 [node name="TutorialPrompt" type="Control" parent="."]
 visible = false
 layout_mode = 3
@@ -644,7 +774,7 @@ color = Color(0, 0, 0, 1)
 
 [node name="Fade" type="AnimationPlayer" parent="Fade"]
 libraries = {
-"": SubResource("AnimationLibrary_n1wfx")
+&"": SubResource("AnimationLibrary_n1wfx")
 }
 autoplay = "Fade"
 
@@ -653,10 +783,16 @@ environment = SubResource("Environment_5lcc6")
 
 [connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
+[connection signal="pressed" from="MainMenu/ButtonContainer/SKILLS" to="MainMenu/ButtonContainer/SKILLS" method="on_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/QUIT" to="." method="quit_pressed"]
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/Music Vol" to="Options/Container/Music Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/Bloom" to="Options/Container/Bloom" method="value_changed"]
+[connection signal="pressed" from="Skills/Return" to="Skills/Return" method="on_pressed"]
+[connection signal="item_selected" from="Skills/primary" to="Skills" method="_on_primary_item_selected"]
+[connection signal="item_selected" from="Skills/secondary" to="Skills" method="_on_secondary_item_selected"]
+[connection signal="item_selected" from="Skills/utility" to="Skills" method="_on_utility_item_selected"]
+[connection signal="item_selected" from="Skills/breaker" to="Skills" method="_on_breaker_item_selected"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
 [connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]

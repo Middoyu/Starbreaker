@@ -1,0 +1,54 @@
+[gd_scene load_steps=4 format=3 uid="uid://fual85xipl34"]
+
+[ext_resource type="AudioStream" uid="uid://bxrhsgdwv711w" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Audio/sp_firing.wav" id="1_m72t4"]
+
+[sub_resource type="GDScript" id="GDScript_4ckef"]
+resource_name = "primaryweaponscript"
+script/source = "extends Weapon
+
+signal player_onprimaryfired
+
+const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/player_bullet.tscn\")
+
+@export var firerate := 0.085
+
+@onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
+
+@onready var bullet_pos = 1
+@onready var right_pos = Vector2(5.5, -0.6)
+@onready var left_pos = Vector2(-5.5, -0.6)
+
+var switch_bullet_position = func(_proj_int): match(bullet_pos):
+		1:
+			_proj_int.global_position += right_pos
+			bullet_pos = 2
+		2:
+			_proj_int.global_position += left_pos
+			bullet_pos = 1
+var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(2.0)
+
+func action():
+	cooldown_timer.start(firerate)
+	spawn_projectile()
+	emit_signal(\"player_onprimaryfired\")
+
+func spawn_projectile():
+	var proj_int = PLAYER_BULLET.instantiate()
+	proj_int.global_position = global.player.global_position
+	switch_bullet_position.call(proj_int)
+	firing_effects.call()
+	global.EntityManager.add_child(proj_int)
+"
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_pnshu"]
+random_pitch = 1.05
+streams_count = 1
+stream_0/stream = ExtResource("1_m72t4")
+
+[node name="Primary" type="Node"]
+script = SubResource("GDScript_4ckef")
+
+[node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_pnshu")
+max_polyphony = 2
+bus = &"SFX"

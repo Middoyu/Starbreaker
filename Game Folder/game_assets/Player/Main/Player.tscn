@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://bicfx3rt2dc3y" path="res://Game Folder/game_assets/Player/Main/Player.gd" id="1_5vafy"]
 [ext_resource type="Texture2D" uid="uid://wxuxaeqrhonh" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_death_512x512.png" id="2_a6fo3"]
 [ext_resource type="Texture2D" uid="uid://0g26oshcb22" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.png" id="2_h5nhg"]
-[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/0. Entity Components/Health/health_component.gd" id="2_shqxk"]
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="2_shqxk"]
 [ext_resource type="Texture2D" uid="uid://bga6dk4a4ifp5" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_hit_42x37_42x37.png" id="3_ahd3f"]
 [ext_resource type="Texture2D" uid="uid://dquvjfksile86" path="res://Game Folder/game_assets/Player/Crosshair/extra_air.png" id="3_wj1xj"]
-[ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/0. Entity Components/Knockback/knockback.gd" id="4_pp5h7"]
+[ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/entity_components/Knockback/knockback.gd" id="4_pp5h7"]
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="4_sp8mo"]
 [ext_resource type="Texture2D" uid="uid://ceuqf56q32fjj" path="res://Game Folder/game_assets/Player/Crosshair/crosshair tile-export.png" id="5_p52m1"]
 [ext_resource type="Script" uid="uid://cnrlid6cwjxj6" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.gd" id="8_oo2xt"]
@@ -1369,25 +1369,83 @@ func movement_handler(delta):
 
 [sub_resource type="GDScript" id="GDScript_xpxrt"]
 script/source = "extends Node
-@export var is_actionable = false  # Exported boolean to control whether actions are actionable
+var is_all_weapons_actionable = true  # Exported boolean to control whether actions are actionable
+@export_enum(\"Spray\", \"Shotgun\", \"Longshot\") var primary_firingmode_selection = \"None\"
+@export_enum(\"Spray\", \"Shotgun\", \"Longshot\") var secondary_firingmode_selection = \"None\"
+@export_enum(\"Zip-Dash\", \"DiagBomb\", \"Shine\") var utility_selection = \"None\"
+@export_enum(\"BH-7\", \"Overclock\", \"Starman\") var breaker_selection = \"None\"
 
+@onready var active_primary_firingmode
+@onready var active_secondary_firingmode
+@onready var active_utility_selection
 
-const PRIMARIES = preload(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Base/primary.tscn\")  # Preload primary weapon scene
-const UTILITY = preload(\"res://Game Folder/game_assets/Player/Weapons/3. Utility/Base/Movement Utility.tscn\")  # Preload utility weapon scene
-const BREAKER = preload(\"res://Game Folder/game_assets/Player/Weapons/4. Breaker/breaker.tscn\")  # Preload breaker weapon scene
+# Firing Modes
+const SPRAY_FIRINGMODE = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/spray_firingmode.tscn\")
+const SHOTGUN_FIRINGMODE = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/Shotgun.tscn\")
+
+# Utilities
+const ZIP_DASH = preload(\"res://Game Folder/game_assets/Player/Weapons/utility/Zip-Dash/zipdash.tscn\")
+const SHINE = preload(\"res://Game Folder/game_assets/Player/Weapons/utility/Shine/Shine.tscn\")
 
 func _ready() -> void:
-	setup_weapons()  # Call setup_weapons when the scene is ready
+	primary_firingmode_selection = global.primary_selection
+	utility_selection = global.utility_selection
+	firingmode_selector(primary_firingmode_selection)
+	firingmode_selector(secondary_firingmode_selection)
+	utilitymode_selector()
+	
 	events.connect(\"enemy_damaged\", update_consecutive_hits_counter, 1)
 	events.connect(\"enemy_killed\", update_consecutive_hits_counter, 1)
-	events.connect(\"player_death\", func(damage, hb): is_actionable = false, 2)
+	events.connect(\"player_death\", func(damage, hb): is_all_weapons_actionable = false, 2)
 
-func setup_weapons():
-	var weapon_list = [PRIMARIES.instantiate(), BREAKER.instantiate(), UTILITY.instantiate()]  # Create a list of instantiated weapons
-	for weapon in weapon_list:
-		owner.add_child.call_deferred(weapon, true)  # Add each weapon as a child of the owner
-		weapon.player = owner  # Set the player's reference to the weapon's player
+func firingmode_selector(firingmode : String):
+	match(firingmode):
+		\"Spray\":
+			match(firingmode):
+				primary_firingmode_selection:
+					active_primary_firingmode = SPRAY_FIRINGMODE.instantiate()
+					add_child(active_primary_firingmode)
+				secondary_firingmode_selection:
+					active_secondary_firingmode = SPRAY_FIRINGMODE.instantiate()
+					add_child(active_secondary_firingmode)
+		\"Shotgun\":
+			match(firingmode):
+				primary_firingmode_selection:
+					active_primary_firingmode = SHOTGUN_FIRINGMODE.instantiate()
+					add_child(active_primary_firingmode)
+				secondary_firingmode_selection:
+					active_secondary_firingmode = SHOTGUN_FIRINGMODE.instantiate()
+					add_child(active_secondary_firingmode)
+		\"Longshot\":
+			pass
+		\"None\":
+			pass
 
+func utilitymode_selector():
+	match utility_selection:
+		\"Zip-Dash\":
+			active_utility_selection = ZIP_DASH.instantiate()
+			add_child(active_utility_selection)
+		\"DiagBomb\":
+			pass
+		\"Shine\":
+			active_utility_selection = SHINE.instantiate()
+			add_child(active_utility_selection)
+
+
+func _physics_process(delta: float) -> void:
+	if is_all_weapons_actionable:
+		if active_primary_firingmode != null:
+			if Input.is_action_pressed(\"primary\") and active_primary_firingmode.is_weapon_actionable:
+				active_primary_firingmode.is_weapon_actionable = false
+				active_primary_firingmode.action()
+		if active_secondary_firingmode != null:
+			if Input.is_action_pressed(\"secondary\") and active_secondary_firingmode.is_weapon_actionable:
+				active_secondary_firingmode.is_weapon_actionable = false
+				active_secondary_firingmode.action()
+		if active_utility_selection != null:
+			if Input.is_action_just_pressed(\"shift\") and active_utility_selection.is_weapon_actionable:
+				active_utility_selection.action()
 
 @onready var consecutive_hits_target = Node2D
 @onready var consecutive_hits = 0
@@ -1515,7 +1573,6 @@ friction = 127500.0
 
 [node name="Weapon Manager" type="Node" parent="."]
 script = SubResource("GDScript_xpxrt")
-is_actionable = true
 
 [node name="ComboSystem" parent="Weapon Manager" instance=ExtResource("10_5ayyr")]
 

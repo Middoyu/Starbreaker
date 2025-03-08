@@ -628,7 +628,7 @@ spawn_time = 87.5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="SpiralTurret"]
 libraries = {
-"": SubResource("AnimationLibrary_mj482")
+&"": SubResource("AnimationLibrary_mj482")
 }
 
 [node name="Enemy41" parent="." instance=ExtResource("3_uolb2")]
@@ -692,11 +692,10 @@ position = Vector2(319.996, -16.0848)
 spawn_time = 73.0
 
 [node name="Trishooter17" parent="." instance=ExtResource("4_t7q6j")]
-visible = false
+position = Vector2(640, -0.169615)
 spawn_time = 75.5
 
 [node name="Trishooter18" parent="." instance=ExtResource("4_t7q6j")]
-visible = false
 spawn_time = 75.5
 
 [node name="LzrEnemy9" parent="." instance=ExtResource("5_hpkel")]
@@ -791,7 +790,6 @@ position = Vector2(319.996, -16.0848)
 spawn_time = 124.0
 
 [node name="Trishooter19" parent="." instance=ExtResource("4_t7q6j")]
-visible = false
 position = Vector2(-32.0255, -95.9915)
 spawn_time = 126.0
 
@@ -1036,29 +1034,9 @@ spawn_time = 169.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="SpiralTurret2"]
 libraries = {
-"": SubResource("AnimationLibrary_h17f2")
+&"": SubResource("AnimationLibrary_h17f2")
 }
 
-[connection signal="on_hit" from="LzrEnemy/HealthComponent" to="LzrEnemy" method="on_hit"]
-[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/spawn" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/hit" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/death" method="animation_finished"]
-[connection signal="timeout" from="LzrEnemy/StateMachine/firing/firing_timer" to="LzrEnemy/StateMachine/firing" method="timeout"]
-[connection signal="on_hit" from="LzrEnemy2/HealthComponent" to="LzrEnemy2" method="on_hit"]
-[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/spawn" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/hit" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/death" method="animation_finished"]
-[connection signal="timeout" from="LzrEnemy2/StateMachine/firing/firing_timer" to="LzrEnemy2/StateMachine/firing" method="timeout"]
-[connection signal="on_hit" from="LzrEnemy3/HealthComponent" to="LzrEnemy3" method="on_hit"]
-[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/spawn" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/hit" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/death" method="animation_finished"]
-[connection signal="timeout" from="LzrEnemy3/StateMachine/firing/firing_timer" to="LzrEnemy3/StateMachine/firing" method="timeout"]
-[connection signal="on_hit" from="LzrEnemy4/HealthComponent" to="LzrEnemy4" method="on_hit"]
-[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/spawn" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/hit" method="animation_finished"]
-[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/death" method="animation_finished"]
-[connection signal="timeout" from="LzrEnemy4/StateMachine/firing/firing_timer" to="LzrEnemy4/StateMachine/firing" method="timeout"]
 [connection signal="timeout" from="lazer_despawn" to="lazer_despawn" method="_on_timeout"]
 [connection signal="visibility_changed" from="SpiralTurret" to="SpiralTurret" method="_on_visibility_changed"]
 

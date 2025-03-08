@@ -1,17 +1,16 @@
 [gd_scene load_steps=66 format=3 uid="uid://x3qocpbfrgay"]
 
 [ext_resource type="Texture2D" uid="uid://bsldpa031indc" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites/trishooter_bullet.png" id="1_i86dx"]
-[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_1s235"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="2_1s235"]
 
 [sub_resource type="GDScript" id="GDScript_qlpno"]
 script/source = "extends Projectile
-@export var speed = 15000
 
 func _ready() -> void:
 	super()
 
 func _physics_process(delta: float) -> void:
-	velocity = transform.x * delta * speed
+	velocity = transform.x * speed
 	move_and_slide()
 "
 
@@ -451,6 +450,7 @@ z_index = 4096
 collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_qlpno")
+speed = 150.0
 hitbox = NodePath("HitboxComponent")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]

@@ -1,12 +1,11 @@
 [gd_scene load_steps=9 format=3 uid="uid://cj7jh88a1txx6"]
 
 [ext_resource type="Texture2D" uid="uid://bq5wnk4wiiwor" path="res://Game Folder/game_assets/Player/Sprites/Starbreaker_20xSprite.png" id="2_atf3f"]
-[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_p6yc2"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="2_p6yc2"]
 
 [sub_resource type="GDScript" id="GDScript_y1aru"]
-script/source = "extends UtilityWeapon
+script/source = "extends Weapon
 
-@onready var player = global.player as Player
 @onready var velocity_vector = Vector2.ZERO
 @onready var release_vector = Vector2.ZERO
 @onready var is_on_cooldown = true
@@ -33,7 +32,7 @@ func action():
 
 func enter_focus():
 	$Hitbox.is_disabled = false
-	player.i_frames.invincibility_override = true
+	global.player.i_frames.invincibility_override = true
 	current_state = states.FOCUS
 	await get_tree().create_timer(0.01, true, true, true).timeout
 	velocity_vector = Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\").normalized()
@@ -41,26 +40,25 @@ func enter_focus():
 
 func release(direction := Vector2.ZERO):
 	current_state = states.RELEASE
-	player.velocity = Vector2.ZERO
-	player.physics.is_movement_disabled = true
-	player.weapons.is_actionable = false
+	global.player.velocity = Vector2.ZERO
+	global.player.physics.is_movement_disabled = true
+	global.player.weapons.is_all_weapons_actionable = false
 	if direction == Vector2.ZERO:
-		direction = player.global_position.direction_to(get_global_mouse_position())
+		direction = global.player.global_position.direction_to(global.player.get_global_mouse_position())
 	release_vector = direction
 	$Timer.start(0.15)
 
 func _physics_process(delta: float) -> void:
-	global_position = player.global_position
 	if current_state == states.RELEASE:
 		var speed = 2500.0  # Dash speed
 		var deceleration = 10.0  # Deceleration factor
 		var target_velocity = release_vector * speed
 		
 		# Apply a smoothing factor using custom logic
-		var velocity_diff = target_velocity - player.velocity
-		var smooth_velocity = player.velocity + velocity_diff * (deceleration * delta)
+		var velocity_diff = target_velocity - global.player.velocity
+		var smooth_velocity = global.player.velocity + velocity_diff * (deceleration * delta)
 		
-		player.velocity = smooth_velocity
+		global.player.velocity = smooth_velocity
 	   
 			
 		if options.extra_vfx:
@@ -68,17 +66,13 @@ func _physics_process(delta: float) -> void:
 
 func timer_timeout() -> void:
 	current_state = states.IDLE
-	player.physics.is_movement_disabled = false
-	player.weapons.is_actionable = true
+	global.player.physics.is_movement_disabled = false
+	global.player.weapons.is_actionable = true
 	if options.extra_vfx:
 		afterimage.emitting = false
 	$Hitbox.is_disabled = true
-	player.i_frames.invincibility_override = false
-<<<<<<< Updated upstream:Game Folder/game_assets/Player/Weapons/3.5 Movement Utility/Zip-Dash/Zip-Dash.tscn
-	player.i_frames.invincibility_timer.start(0.3)
-=======
-	player.i_frames.invincibility_timer.start(0.2)
->>>>>>> Stashed changes:Game Folder/game_assets/Player/Weapons/3. Utility/Zip-Dash/Zip-Dash.tscn
+	global.player.i_frames.invincibility_override = false
+	global.player.i_frames.invincibility_timer.start(0.3)
 	$\"Internal Cooldown\".start(0.65)
 
 func internal_cooldown_timeout() -> void:
@@ -127,7 +121,7 @@ func _process(delta: float) -> void:
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2f0y5"]
 size = Vector2(36, 36)
 
-[node name="BoostScene" type="Node2D" groups=["player"]]
+[node name="BoostScene" type="Node" groups=["player"]]
 script = SubResource("GDScript_y1aru")
 
 [node name="Internal Cooldown" type="Timer" parent="."]
@@ -150,11 +144,10 @@ trail_lifetime = 0.7
 process_material = SubResource("ParticleProcessMaterial_v6eu1")
 script = SubResource("GDScript_evom7")
 
-[node name="Hitbox" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+[node name="Hitbox" type="Area2D" parent="." groups=["player"]]
 collision_layer = 8
 collision_mask = 4
 script = ExtResource("2_p6yc2")
-parent = NodePath("..")
 is_disabled = true
 damage = -55.0
 knockback_amount = -14000.0
@@ -163,7 +156,3 @@ knockback_stun_duration = 0.4
 [node name="Collision" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("RectangleShape2D_2f0y5")
 disabled = true
-
-[connection signal="timeout" from="Internal Cooldown" to="." method="internal_cooldown_timeout"]
-[connection signal="timeout" from="Timer" to="." method="timer_timeout"]
-[connection signal="area_entered" from="Hitbox" to="." method="area_entered"]

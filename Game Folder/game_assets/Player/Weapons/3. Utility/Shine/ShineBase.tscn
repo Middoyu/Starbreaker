@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://bh7jqee2gbos1"]
 
-[ext_resource type="AudioStream" uid="uid://dhhq7xky2cxdy" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Shine/Effects/use.mp3" id="1_be02m"]
+[ext_resource type="AudioStream" uid="uid://dhhq7xky2cxdy" path="res://Game Folder/game_assets/Player/Weapons/utility/Shine/use.mp3" id="1_be02m"]
 [ext_resource type="Texture2D" uid="uid://bwhwe54nvdjsm" path="res://Game Folder/game_assets/Player/Weapons/3. Utility/Shine/Effects/Shine_texturing.png" id="2_018hd"]
 
 [sub_resource type="GDScript" id="GDScript_ej84n"]

@@ -1,9 +1,9 @@
 [gd_scene load_steps=333 format=3 uid="uid://2kuv342uj1hh"]
 
-[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_bqkrg"]
-[ext_resource type="PackedScene" uid="uid://cadhurax76sxf" path="res://Game Folder/game_components/0. Entity Components/Hurtbox/HurtboxComponent.tscn" id="2_1smco"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="1_bqkrg"]
+[ext_resource type="PackedScene" uid="uid://cadhurax76sxf" path="res://Game Folder/game_components/entity_components/Hurtbox/HurtboxComponent.tscn" id="2_1smco"]
 [ext_resource type="Texture2D" uid="uid://cv6llxenkgbte" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/charging_anim.png" id="2_winjy"]
-[ext_resource type="PackedScene" uid="uid://duhmfhxqltebm" path="res://Game Folder/game_components/0. Entity Components/Health/HealthComponent.tscn" id="3_d24t2"]
+[ext_resource type="PackedScene" uid="uid://duhmfhxqltebm" path="res://Game Folder/game_components/entity_components/Health/HealthComponent.tscn" id="3_d24t2"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="3_kxo5a"]
 [ext_resource type="Texture2D" uid="uid://ck31hjtmh31lx" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/death_anim.png" id="3_p813r"]
 [ext_resource type="Texture2D" uid="uid://8qx08ci5568s" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/firing_anim.png" id="4_1j3qv"]

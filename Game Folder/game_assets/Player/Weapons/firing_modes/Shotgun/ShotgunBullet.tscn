@@ -1,0 +1,97 @@
+[gd_scene load_steps=10 format=3 uid="uid://cpn24ejqvxg6p"]
+
+[ext_resource type="Texture2D" uid="uid://bxu4vpyreyq67" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Sprites/bullet1.png" id="1_ycgi2"]
+[ext_resource type="Texture2D" uid="uid://cb4ed35sin5rx" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Sprites/bullet_trails.png" id="2_abagg"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="3_gndls"]
+
+[sub_resource type="GDScript" id="GDScript_hdpxr"]
+script/source = "extends Projectile
+
+@onready var sprite: Sprite2D = $Sprite
+@onready var direction = Vector2.RIGHT.rotated(global_rotation)
+
+const BULLET_EFFECTS = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/bullet_effects.tscn\")
+
+func _ready() -> void:
+	super()
+	await get_tree().create_timer(0.17, false, true, false).timeout
+	queue_free()
+
+func area_entered(area: Area2D) -> void:
+	if area.get_groups().has(\"enemy\"):
+		VFX()
+		queue_free()
+
+func _physics_process(delta: float) -> void:
+	sprite.rotation_degrees += 50.0 * speed * delta
+	velocity = direction * speed
+	move_and_slide()
+
+func VFX():
+	events.emit_signal(\"camera_shake\", 25.0)
+	events.emit_signal(\"camera_freezeframe\", 0.1, 0.05)
+	var effects = global.spawn_entity(BULLET_EFFECTS)
+	effects.global_position = global_position
+"
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_yb4c2"]
+particles_animation = true
+particles_anim_h_frames = 4
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_clo62"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.148338, 1), 0.0, 0.0, 0, 0, Vector2(0.782609, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_bwy7i"]
+curve = SubResource("Curve_clo62")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nm4c3"]
+particle_flag_disable_z = true
+direction = Vector3(0, 0, 0)
+radial_velocity_min = -10.0
+radial_velocity_max = 9.99998
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_bwy7i")
+anim_speed_max = 1.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wv04o"]
+resource_local_to_scene = true
+radius = 6.0
+
+[node name="ShotgunBullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
+motion_mode = 1
+script = SubResource("GDScript_hdpxr")
+speed = 700.0
+hitbox = NodePath("HitboxComponent")
+metadata/_custom_type_script = "uid://cp026tcaij1c6"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_ycgi2")
+
+[node name="BulletParticleTrail" type="GPUParticles2D" parent="."]
+y_sort_enabled = true
+texture_filter = 1
+material = SubResource("CanvasItemMaterial_yb4c2")
+amount = 5
+texture = ExtResource("2_abagg")
+lifetime = 0.25
+fixed_fps = 28
+interpolate = false
+fract_delta = false
+draw_order = 0
+process_material = SubResource("ParticleProcessMaterial_nm4c3")
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["player"]]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("3_gndls")
+parent = NodePath("..")
+damage = -33.0
+knockback_amount = 3000.0
+knockback_stun_duration = 0.1
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_wv04o")

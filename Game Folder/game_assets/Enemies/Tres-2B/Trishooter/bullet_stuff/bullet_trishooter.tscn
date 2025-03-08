@@ -1,22 +1,21 @@
 [gd_scene load_steps=66 format=3 uid="uid://cpyhh3wvmfubr"]
 
 [ext_resource type="Texture2D" uid="uid://bsldpa031indc" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/Sprites/trishooter_bullet.png" id="1_w7mnf"]
-[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="2_bks3k"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="2_bks3k"]
 
 [sub_resource type="GDScript" id="GDScript_qlpno"]
 script/source = "extends Projectile
-var speed = 3000
 
 func _ready() -> void:
 	super()
 
 func _physics_process(delta: float) -> void:
-	velocity = transform.x * delta * speed
+	velocity = transform.x * speed
 	move_and_slide()
 
 func timeout() -> void:
 	if is_instance_valid(global.player):
-		look_at(global.player.global_position)
+		self.look_at(global.player.global_position)
 		speed *= 5
 "
 
@@ -456,6 +455,7 @@ z_index = 4096
 collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_qlpno")
+speed = 30.0
 hitbox = NodePath("HitboxComponent")
 
 [node name="Timer" type="Timer" parent="."]
@@ -475,7 +475,7 @@ collision_layer = 16
 collision_mask = 2
 script = ExtResource("2_bks3k")
 parent = NodePath("..")
-damage = -25.0
+damage = -20.0
 knockback_amount = 1115.0
 knockback_stun_duration = 0.3
 

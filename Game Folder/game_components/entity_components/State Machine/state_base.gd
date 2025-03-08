@@ -1,7 +1,7 @@
 extends Node
 class_name State
 
-@export var parent : Node2D
+@export var parent : Node
 @export var is_state_cancelable := true
 @export var sprite: AnimatedSprite2D
 @onready var hit_state = get_parent().hit_state

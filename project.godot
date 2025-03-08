@@ -12,12 +12,13 @@ config_version=5
 
 config/name="☆ Starbreaker ☆"
 config/description="Starbreaker is a anti-SHMUP game, designed to break the rules of classics SHMUP gameplay loops in order to create a fun and new experience."
-config/version="0.59.1 ALPHA"
+config/version="0.61.5 ALPHA"
 config/tags=PackedStringArray("starbreaker")
 run/main_scene="res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 boot_splash/show_image=false
 boot_splash/use_filter=false
+config/icon="uid://bq5wnk4wiiwor"
 
 [audio]
 
@@ -59,7 +60,6 @@ folder_colors={
 "res://Game Folder/game_assets/Menus/IntroCine/": "pink",
 "res://Game Folder/game_assets/Menus/SFX/": "blue",
 "res://Game Folder/game_assets/Menus/Themes/": "purple",
-"res://Game Folder/game_assets/NPCs/": "gray",
 "res://Game Folder/game_assets/Player/": "blue",
 "res://Game Folder/game_assets/Stages/": "green",
 "res://z_Export/": "gray"

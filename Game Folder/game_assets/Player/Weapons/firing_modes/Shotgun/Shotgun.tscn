@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvk1bcp44fms6"]
+
+[ext_resource type="AudioStream" uid="uid://bxrhsgdwv711w" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Audio/sp_firing.wav" id="1_1kwhh"]
+
+[sub_resource type="GDScript" id="GDScript_vqp20"]
+script/source = "extends Weapon
+
+const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/ShotgunBullet.tscn\")
+
+@export var firerate := 0.5
+@export var arc = 30
+@export var origin: Node2D
+
+@onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
+
+var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(2.0)
+
+func action():
+	cooldown_timer.start(firerate)
+	spawn_projectile()
+
+func spawn_projectile():
+	for i in 5:
+		var proj_int = PLAYER_BULLET.instantiate()
+		proj_int.position = global.player.global_position
+		var arc_rad = deg_to_rad(arc)
+		var increment = arc_rad / (5 - 1)
+		proj_int.global_rotation = (
+			global.player.global_rotation +
+			increment * i -
+			arc_rad / 2
+		)
+		global.EntityManager.add_child(proj_int)
+	firing_effects.call()
+"
+
+[node name="Shotgun" type="Node"]
+script = SubResource("GDScript_vqp20")
+arc = 45
+
+[node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("1_1kwhh")
+volume_db = 4.0
+pitch_scale = 0.3
+max_polyphony = 2
+bus = &"SFX"

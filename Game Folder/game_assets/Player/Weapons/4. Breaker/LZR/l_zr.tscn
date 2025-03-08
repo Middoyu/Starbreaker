@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bct00pdxdpfri"]
 
-[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/0. Entity Components/Hitbox/hitbox.gd" id="1_kfl4r"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="1_kfl4r"]
 
 [sub_resource type="GDScript" id="GDScript_boodj"]
 script/source = "extends Node2D
