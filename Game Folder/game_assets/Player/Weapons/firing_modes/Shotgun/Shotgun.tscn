@@ -9,11 +9,10 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/fir
 
 @export var firerate := 0.5
 @export var arc = 30
-@export var origin: Node2D
 
 @onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
 
-var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(55.0)
+var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(35.0)
 
 func action():
 	cooldown_timer.start(firerate)
@@ -31,13 +30,12 @@ func spawn_projectile():
 			arc_rad / 2
 		)
 		global.EntityManager.add_child(proj_int)
-	firing_effects.call()
+		events.emit_signal(\"shotgun_projectile_fired\", proj_int)
+		firing_effects.call()
 "
 
 [node name="Shotgun" type="Node"]
 script = SubResource("GDScript_vqp20")
-firerate = 0.6
-arc = 45
 
 [node name="sfx_Firing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("1_1kwhh")

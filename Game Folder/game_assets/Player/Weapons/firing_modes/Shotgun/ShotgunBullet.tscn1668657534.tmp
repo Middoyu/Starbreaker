@@ -10,26 +10,26 @@ script/source = "extends Projectile
 @onready var sprite: Sprite2D = $Sprite
 @onready var direction = Vector2.RIGHT.rotated(global_rotation)
 @onready var damage = $HitboxComponent.damage
-@onready var speed_randomizer = randf_range(speed * 0.9, speed * 1.1)
-
-
-@export var bullet_duration = 0.25
 
 const BULLET_EFFECTS = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/bullet_effects.tscn\")
 
 func _ready() -> void:
 	super()
-	$Timer.connect(\"timeout\", func(): queue_free())
-	$Timer.start(bullet_duration)
+	await get_tree().create_timer(0.20).timeout
+	queue_free()
 
 func area_entered(area: Area2D) -> void:
 	if area.get_groups().has(\"enemy\"):
 		VFX()
-		queue_free()
+
+func falloff(delta):
+	damage -= 15 * delta
+	print(damage)
 
 func _physics_process(delta: float) -> void:
-	sprite.rotation_degrees += 15.0 * delta
-	velocity = direction * speed_randomizer
+	falloff(delta)
+	sprite.rotation_degrees += 15.0 * speed * delta
+	velocity = direction * speed
 	move_and_slide()
 
 func VFX():
@@ -63,11 +63,11 @@ anim_speed_max = 1.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wv04o"]
 resource_local_to_scene = true
+radius = 6.0
 
 [node name="ShotgunBullet" type="CharacterBody2D" node_paths=PackedStringArray("hitbox")]
 motion_mode = 1
 script = SubResource("GDScript_hdpxr")
-bullet_duration = 0.2
 speed = 700.0
 hitbox = NodePath("HitboxComponent")
 metadata/_custom_type_script = "uid://cp026tcaij1c6"
@@ -94,15 +94,11 @@ collision_layer = 8
 collision_mask = 5
 script = ExtResource("3_gndls")
 parent = NodePath("..")
-damage = -40.0
+damage = -45.0
 knockback_amount = 3000.0
 knockback_stun_duration = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
 shape = SubResource("CircleShape2D_wv04o")
-
-[node name="Timer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 1.03
 
 [connection signal="area_entered" from="HitboxComponent" to="." method="area_entered"]

@@ -1,11 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://crg4nvhxx414j"]
+[gd_scene load_steps=7 format=3 uid="uid://crg4nvhxx414j"]
 
 [ext_resource type="Texture2D" uid="uid://uxa68rfc0hgy" path="res://Game Folder/game_assets/Player/HUD/newhealth1.png" id="1_wdb2w"]
 [ext_resource type="Texture2D" uid="uid://bskvsudoxnnbs" path="res://Game Folder/game_assets/Player/HUD/newhealth4.png" id="2_ptdjj"]
 [ext_resource type="Texture2D" uid="uid://bjbuu8666fc1r" path="res://Game Folder/game_assets/Player/HUD/newhealth3.png" id="3_nri7k"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="4_y1cuq"]
-[ext_resource type="Texture2D" uid="uid://bg0mhcdk3n3d6" path="res://Game Folder/game_assets/Player/TimerDisplay/Blackbg.png" id="5_4m3bl"]
-[ext_resource type="Texture2D" uid="uid://6uinhgyffoo8" path="res://Game Folder/game_assets/Player/TimerDisplay/whiteoverlay.png" id="6_4begm"]
 
 [sub_resource type="GDScript" id="GDScript_ulytf"]
 resource_name = "healthbar_controllerscript"
@@ -21,7 +19,7 @@ script/source = "extends Control
 func _ready() -> void:
 	if global.player:
 		# Initialize health bar with the player's maximum health.
-		update_health_text(global.player.health.maximum_health)
+		update_health_text(int(global.player.health.maximum_health))
 
 		# Connects event signals to update the health UI when the player takes damage or gets healed.
 		events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox): update_health_text(current_health), 3)
@@ -54,7 +52,7 @@ func update_health_text(new_health):
 		health_text.pop_all()  # Resets text formatting.
 
 func _physics_process(delta: float) -> void:
-	update_health_text(global.player.health.current_health)
+	update_health_text(int(global.player.health.current_health))
 "
 
 [sub_resource type="Gradient" id="Gradient_s5sqd"]
@@ -118,14 +116,3 @@ autowrap_mode = 0
 shortcut_keys_enabled = false
 progress_bar_delay = 5
 text_direction = 1
-
-[node name="leveling" type="TextureProgressBar" parent="."]
-z_index = 4096
-y_sort_enabled = true
-layout_mode = 2
-offset_left = 4.0
-offset_top = 45.0
-offset_right = 132.0
-offset_bottom = 49.0
-texture_under = ExtResource("5_4m3bl")
-texture_progress = ExtResource("6_4begm")
