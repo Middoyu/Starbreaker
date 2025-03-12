@@ -28,7 +28,7 @@ var quit_value = 0
 
 var projectile_z_index = 4000
 
-var primary_selection = "Spray"
+var primary_selection = "Slash"
 var utility_selection = "Zip-Dash"
 
 

@@ -1,0 +1,231 @@
+[gd_scene load_steps=14 format=3 uid="uid://d2sv0rtup6yxf"]
+
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="1_0dh1d"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="1_ysawc"]
+
+[sub_resource type="GDScript" id="GDScript_u1470"]
+script/source = "extends Weapon
+@onready var idle: Node = $StateMachine/IDLE
+@onready var combo_1: State = $StateMachine/COMBO1
+@onready var combo_2: State = $StateMachine/COMBO2
+@onready var combo_3: State = $StateMachine/COMBO3
+@onready var animation: AnimationPlayer = $SlashPosition/Animation
+@onready var state_machine: Node = $StateMachine
+@onready var timer: Timer = $Timer
+@onready var hitbox: HitboxComponent = $SlashPosition/Sword/Hitbox
+
+var continue_combo = true
+
+func _physics_process(delta: float) -> void:
+	$SlashPosition/Label.text = str(continue_combo, state_machine.current_state)
+	$SlashPosition/Label2.text = str(timer.time_left)
+	$SlashPosition.global_position = global.player.global_position
+	$SlashPosition.global_rotation = global.player.global_rotation
+
+func action():
+	$SlashPosition.show()
+	state_machine.current_state.continue_combo_action()
+
+func continue_combo_switch(state : bool):
+	continue_combo = state
+
+func timeout() -> void:
+	state_machine.current_state.emit_signal(\"Transistioned\", state_machine.current_state, \"IDLE\")
+	hitbox.is_disabled = true
+	$SlashPosition.hide()
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0dh1d"]
+size = Vector2(128, 16)
+
+[sub_resource type="Animation" id="Animation_14paq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_0dh1d"]
+resource_name = "combo1"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-1.5708, 1.5708, 1.5708]
+}
+
+[sub_resource type="Animation" id="Animation_ysawc"]
+resource_name = "combo2"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.5708, -2.0944, -2.0944]
+}
+
+[sub_resource type="Animation" id="Animation_x3o7k"]
+resource_name = "combo3"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-2.0944, 6.28319, 6.28319]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m5dmm"]
+_data = {
+&"RESET": SubResource("Animation_14paq"),
+&"combo1": SubResource("Animation_0dh1d"),
+&"combo2": SubResource("Animation_ysawc"),
+&"combo3": SubResource("Animation_x3o7k")
+}
+
+[sub_resource type="GDScript" id="GDScript_0dh1d"]
+script/source = "extends State
+
+func exit():
+	parent.hitbox.is_disabled = false
+
+func continue_combo_action():
+	Transistioned.emit(self, \"COMBO1\")
+"
+
+[sub_resource type="GDScript" id="GDScript_ysawc"]
+resource_name = "combo1"
+script/source = "extends State
+
+func enter():
+	parent.animation.play(\"combo1\")
+	parent.timer.start(0.6)
+	await get_tree().create_timer(0.3).timeout
+	parent.is_weapon_actionable = true
+
+func continue_combo_action():
+	Transistioned.emit(self, \"COMBO2\")
+"
+
+[sub_resource type="GDScript" id="GDScript_x3o7k"]
+script/source = "extends State
+
+func enter():
+	parent.animation.play(\"combo2\")
+	parent.timer.start(0.6)
+	await get_tree().create_timer(0.3).timeout
+	parent.is_weapon_actionable = true
+
+func continue_combo_action():
+	Transistioned.emit(self, \"COMBO3\")
+"
+
+[sub_resource type="GDScript" id="GDScript_14paq"]
+script/source = "extends State
+
+func enter():
+	parent.animation.play(\"combo3\")
+	parent.timer.start(1.0)
+	await get_tree().create_timer(0.7).timeout
+	parent.is_weapon_actionable = true
+
+func continue_combo_action():
+	Transistioned.emit(self, \"COMBO1\")
+"
+
+[node name="Slash" type="Node"]
+script = SubResource("GDScript_u1470")
+
+[node name="SlashPosition" type="Node2D" parent="."]
+
+[node name="Sword" type="Polygon2D" parent="SlashPosition"]
+color = Color(0, 1, 1, 1)
+polygon = PackedVector2Array(0, -8, 64, -8, 128, 0, 64, 8, 0, 8)
+
+[node name="Hitbox" type="Area2D" parent="SlashPosition/Sword" node_paths=PackedStringArray("parent")]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_ysawc")
+parent = NodePath("../..")
+damage = -35.0
+knockback_amount = 10000.0
+knockback_stun_duration = 0.4
+metadata/_custom_type_script = "uid://ucfty02weqo2"
+
+[node name="Collision" type="CollisionShape2D" parent="SlashPosition/Sword/Hitbox"]
+position = Vector2(64, 0)
+shape = SubResource("RectangleShape2D_0dh1d")
+
+[node name="Animation" type="AnimationPlayer" parent="SlashPosition"]
+libraries = {
+&"": SubResource("AnimationLibrary_m5dmm")
+}
+
+[node name="Label" type="Label" parent="SlashPosition"]
+top_level = true
+offset_left = 24.0
+offset_top = 40.0
+offset_right = 64.0
+offset_bottom = 63.0
+
+[node name="Label2" type="Label" parent="SlashPosition"]
+top_level = true
+offset_left = 24.0
+offset_top = 63.0
+offset_right = 64.0
+offset_bottom = 86.0
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("1_0dh1d")]
+parent = NodePath("../SlashPosition")
+intial_state = NodePath("IDLE")
+
+[node name="IDLE" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_0dh1d")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="COMBO1" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_ysawc")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="COMBO2" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_x3o7k")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="COMBO3" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_14paq")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="timeout"]

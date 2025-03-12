@@ -246,6 +246,8 @@ func _ready() -> void:
 			options_primary.select(0)
 		\"Shotgun\":
 			options_primary.select(1)
+		\"Slash\":
+			options_primary.select(2)
 	
 	
 	match global.utility_selection:
@@ -647,13 +649,16 @@ offset_right = 984.0
 offset_bottom = 1472.0
 selected = 0
 allow_reselect = true
-item_count = 2
+item_count = 3
 popup/item_0/text = "Spray"
 popup/item_0/id = 0
 popup/item_1/text = "Shotgun"
 popup/item_1/id = 1
+popup/item_2/text = "Slash"
+popup/item_2/id = 2
 
 [node name="secondary" type="OptionButton" parent="Skills"]
+layout_mode = 0
 offset_left = 800.0
 offset_top = 1536.0
 offset_right = 984.0
@@ -664,6 +669,7 @@ popup/item_0/text = "None"
 popup/item_0/id = 0
 
 [node name="utility" type="OptionButton" parent="Skills"]
+layout_mode = 0
 offset_left = 800.0
 offset_top = 1664.0
 offset_right = 984.0
@@ -677,6 +683,7 @@ popup/item_1/text = "Shine"
 popup/item_1/id = 1
 
 [node name="breaker" type="OptionButton" parent="Skills"]
+layout_mode = 0
 offset_left = 800.0
 offset_top = 1792.0
 offset_right = 984.0

@@ -1370,8 +1370,8 @@ func movement_handler(delta):
 [sub_resource type="GDScript" id="GDScript_xpxrt"]
 script/source = "extends Node
 var is_all_weapons_actionable = true  # Exported boolean to control whether actions are actionable
-@export_enum(\"Spray\", \"Shotgun\", \"Longshot\") var primary_firingmode_selection = \"None\"
-@export_enum(\"Spray\", \"Shotgun\", \"Longshot\") var secondary_firingmode_selection = \"None\"
+@export_enum(\"Spray\", \"Shotgun\", \"Longshot\", \"Slash\") var primary_firingmode_selection = \"None\"
+@export_enum(\"Spray\", \"Shotgun\", \"Longshot\", \"Slash\") var secondary_firingmode_selection = \"None\"
 @export_enum(\"Zip-Dash\", \"DiagBomb\", \"Shine\") var utility_selection = \"None\"
 @export_enum(\"BH-7\", \"Overclock\", \"Starman\") var breaker_selection = \"None\"
 
@@ -1382,6 +1382,7 @@ var is_all_weapons_actionable = true  # Exported boolean to control whether acti
 # Firing Modes
 const SPRAY_FIRINGMODE = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/spray_firingmode.tscn\")
 const SHOTGUN_FIRINGMODE = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/Shotgun.tscn\")
+const SLASH_FIRINGMODE = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Slash/Slash.tscn\")
 
 # Utilities
 const ZIP_DASH = preload(\"res://Game Folder/game_assets/Player/Weapons/utility/Zip-Dash/zipdash.tscn\")
@@ -1418,6 +1419,14 @@ func firingmode_selector(firingmode : String):
 					add_child(active_secondary_firingmode)
 		\"Longshot\":
 			pass
+		\"Slash\":
+			match(firingmode):
+				primary_firingmode_selection:
+					active_primary_firingmode = SLASH_FIRINGMODE.instantiate()
+					add_child(active_primary_firingmode)
+				secondary_firingmode_selection:
+					active_secondary_firingmode = SLASH_FIRINGMODE.instantiate()
+					add_child(active_secondary_firingmode)
 		\"None\":
 			pass
 
