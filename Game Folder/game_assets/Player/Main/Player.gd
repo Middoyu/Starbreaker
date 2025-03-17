@@ -25,6 +25,8 @@ func setup_player():
 
 # Called when the player takes damage
 func on_hit(damage_taken, colliding_hitbox) -> void:
+	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav")
+	
 	events.emit_signal("player_damaged", health.current_health, damage_taken, colliding_hitbox)
 	# Emit a signal for player damage, passing current health, damage taken, and the hitbox that caused the damage
 	
@@ -41,9 +43,17 @@ func on_heal(healing_taken, _colliding_hitbox):
 
 # Called when the player dies
 func on_death(damage_taken, colliding_hitbox) -> void:
+	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/dying.wav")
+	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/final_hit.wav")
+	events.camera_flash.emit()
+	global.clear_enemies()
+	$Sprite/DeathEffects.emitting = true
+	crosshair.queue_free()
+	
+	events.emit_signal("player_death", damage_taken, colliding_hitbox)
+	
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	# Hide the mouse when the player dies
-	events.emit_signal("player_death", damage_taken, colliding_hitbox)
 	# Emit a signal for player death, passing the damage taken and the hitbox that caused it
 	await player_sprite.animation_finished
 	global.main_manager.gameover_sequence(true)

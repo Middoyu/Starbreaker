@@ -37,7 +37,7 @@ func _ready() -> void:
 	camera.reset_smoothing()
 	add_child(hud)
 	
-	
+	events.connect("player_death", stop_stage, 2)
 	
 	add_wall_collision()
 	
@@ -59,3 +59,10 @@ func add_wall_collision():
 	var i = WALL_COLLISIONS.instantiate()
 	add_child(i)
 #endregion
+
+func stop_stage(damage_taken, colliding_hitbox):
+	for i in get_children():
+		if i is AudioStreamPlayer:
+			i.stop()
+	stage_started = false
+	is_boss_active = false

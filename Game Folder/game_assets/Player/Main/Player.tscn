@@ -1541,6 +1541,7 @@ texture_mode = 2
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+use_parent_material = true
 rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_wirgs")
 animation = &"idle"
@@ -1549,6 +1550,7 @@ script = SubResource("GDScript_w5s08")
 
 [node name="DeathEffects" type="GPUParticles2D" parent="Sprite"]
 z_index = 4096
+use_parent_material = true
 emitting = false
 amount = 64
 one_shot = true

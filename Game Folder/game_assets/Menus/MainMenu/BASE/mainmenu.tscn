@@ -1,6 +1,7 @@
-[gd_scene load_steps=26 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=38 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="AudioStream" uid="uid://erm3xbidorsi" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/starbreaker - menu (chillin).mp3" id="1_b1kbp"]
+[ext_resource type="Shader" uid="uid://qtemwvecpr14" path="res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader" id="3_8jj6y"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="3_mm2qm"]
 [ext_resource type="Texture2D" uid="uid://cs6s2641cjjdq" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="3_wslbo"]
 [ext_resource type="Script" uid="uid://cb7ckkc703no7" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
@@ -13,14 +14,10 @@ script/source = "extends Node2D
 
 @onready var mm_music: AudioStreamPlayer = $MM_Music
 
-@onready var main_camera: Camera2D = $MainCamera
-@onready var options_camera: Camera2D = $OptionsCamera
-
 func start():
 	global.current_stage = self
 	main_menu.show()
 	mm_music.play()
-	$TutorialPrompt.hide()
 
 
 func _ready() -> void:
@@ -28,18 +25,12 @@ func _ready() -> void:
 
 func play_pressed() -> void:
 	$MainMenu/ButtonContainer.queue_free()
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Menus/StageSelect/Base/stage_select.tscn\")
 	queue_free()
 
 
-func show_tutorial_prompt():
-	$TutorialPrompt.show()
-
 func options_pressed():
-	main_camera.enabled = false
-	options_camera.enabled = true
-
-
+	pass
 
 func quit_pressed() -> void:
 	get_tree().quit(0)
@@ -55,6 +46,91 @@ emission_shape = 3
 emission_box_extents = Vector3(1000, 1000, 1)
 gravity = Vector3(0, 0, 0)
 color = Color(1, 1, 1, 0.00784314)
+
+[sub_resource type="Shader" id="Shader_8jj6y"]
+code = "
+shader_type canvas_item;
+
+uniform vec4 color : source_color = vec4(1.0);
+uniform float width : hint_range(0, 10) = 1.0;
+uniform int pattern : hint_range(0, 2) = 0; // diamond, circle, square
+uniform bool inside = false;
+uniform bool add_margins = true; // only useful when inside is false
+uniform vec2 number_of_images = vec2(1.0); // number of horizontal and vertical images in the sprite sheet
+
+varying flat vec4 modulate;
+
+void vertex() {
+	modulate = COLOR;
+	
+	if (add_margins) {
+		if ((UV.x <= 0.0 || UV.x >= 1.0) && (UV.y <= 0.0 || UV.y >= 1.0)) {
+			VERTEX += (UV * 2.0 - 1.0) * width;
+		} else {
+			VERTEX += sign(VERTEX) * width; // replace sign(VERTEX) by (sign(VERTEX) * 2.0 - 1.0) if your AnimatedSprite2D isn't Centered
+		}
+	}
+}
+
+bool hasContraryNeighbour(vec2 uv, vec2 texture_pixel_size, vec2 image_top_left, vec2 image_bottom_right, sampler2D texture) {
+	for (float i = -ceil(width); i <= ceil(width); i++) {
+		float x = abs(i) > width ? width * sign(i) : i;
+		float offset;
+		
+		if (pattern == 0) {
+			offset = width - abs(x);
+		} else if (pattern == 1) {
+			offset = floor(sqrt(pow(width + 0.5, 2) - x * x));
+		} else if (pattern == 2) {
+			offset = width;
+		}
+		
+		for (float j = -ceil(offset); j <= ceil(offset); j++) {
+			float y = abs(j) > offset ? offset * sign(j) : j;
+			vec2 xy = uv + texture_pixel_size * vec2(x, y);
+			
+			if ((xy != clamp(xy, image_top_left, image_bottom_right) || texture(texture, xy).a <= 0.0) == inside) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+void fragment() {
+	vec2 uv = UV;
+	vec2 image_top_left = floor(uv * number_of_images) / number_of_images;
+	vec2 image_bottom_right = image_top_left + vec2(1.0) / number_of_images;
+	
+	if (add_margins) {
+		vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0) * number_of_images);
+		
+		uv = (uv - texture_pixel_size * width - image_top_left) * TEXTURE_PIXEL_SIZE / texture_pixel_size + image_top_left;
+		
+		if (uv != clamp(uv, image_top_left, image_bottom_right)) {
+			COLOR.a = 0.0;
+		} else {
+			COLOR = texture(TEXTURE, uv) * modulate;
+		}
+	} else {
+		COLOR = texture(TEXTURE, uv) * modulate;
+	}
+	
+	if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, image_top_left, image_bottom_right, TEXTURE)) {
+		COLOR.rgb = inside ? mix(COLOR.rgb, color.rgb * modulate.rgb, color.a * modulate.a) : color.rgb * modulate.rgb;
+		COLOR.a += (1.0 - COLOR.a) * color.a * modulate.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g26pg"]
+shader = SubResource("Shader_8jj6y")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/width = 1.0
+shader_parameter/pattern = 0
+shader_parameter/inside = false
+shader_parameter/add_margins = true
+shader_parameter/number_of_images = Vector2(1, 1)
 
 [sub_resource type="Animation" id="Animation_mg2qj"]
 length = 0.001
@@ -73,7 +149,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_c6u7e"]
 resource_name = "bob"
-length = 2.0
+length = 4.0
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -82,8 +158,8 @@ tracks/0/path = NodePath(".:position")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(-2, -2),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(0, -325), Vector2(0, -300)]
 }
@@ -94,8 +170,17 @@ _data = {
 &"bob": SubResource("Animation_c6u7e")
 }
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n6j81"]
+shader = ExtResource("3_8jj6y")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/width = 1.0
+shader_parameter/pattern = 0
+shader_parameter/inside = false
+shader_parameter/add_margins = true
+shader_parameter/number_of_images = Vector2(1, 1)
+
 [sub_resource type="GDScript" id="GDScript_ai1e2"]
-script/source = "extends Button
+script/source = "extends CustomButton
 @onready var main_camera: Camera2D = $\"../../../MainCamera\"
 @onready var skills_camera: Camera2D = $\"../../../SkillsCamera\"
 
@@ -104,6 +189,55 @@ func on_pressed() -> void:
 	main_camera.enabled = false
 	skills_camera.enabled = true
 "
+
+[sub_resource type="GDScript" id="GDScript_g26pg"]
+script/source = "extends CustomButton
+"
+
+[sub_resource type="Shader" id="Shader_ai1e2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8jj6y"]
+render_priority = 0
+shader = SubResource("Shader_ai1e2")
+
+[sub_resource type="Curve" id="Curve_g26pg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_n6j81"]
+curve = SubResource("Curve_g26pg")
+
+[sub_resource type="Curve" id="Curve_fxp30"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.251534, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_b38tb"]
+curve = SubResource("Curve_fxp30")
+
+[sub_resource type="Curve" id="Curve_8jj6y"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_g26pg"]
+curve = SubResource("Curve_8jj6y")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_n6j81"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(486.5, 0, 0)
+emission_shape = 3
+emission_box_extents = Vector3(997.5, 919, 1)
+direction = Vector3(0, 0, 0)
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = 149.25
+gravity = Vector3(0, 98, 0)
+scale_curve = SubResource("CurveTexture_b38tb")
+alpha_curve = SubResource("CurveTexture_n6j81")
+hue_variation_min = -0.01
+hue_variation_max = 0.00999998
+turbulence_enabled = true
+turbulence_influence_min = 0.155
+turbulence_influence_max = 0.202
+turbulence_influence_over_life = SubResource("CurveTexture_g26pg")
 
 [sub_resource type="GDScript" id="GDScript_vca51"]
 script/source = "extends CustomButton
@@ -231,68 +365,8 @@ func value_changed(value: float) -> void:
 	options.bloom = value
 "
 
-[sub_resource type="GDScript" id="GDScript_g26pg"]
-script/source = "extends Control
-
-@onready var options_primary: OptionButton = $primary
-@onready var options_secondary: OptionButton = $secondary
-@onready var options_utility: OptionButton = $utility
-@onready var options_breaker: OptionButton = $breaker
-
-func _ready() -> void:
-	await get_tree().create_timer(0.1, false, true, true).timeout
-	match global.primary_selection:
-		\"Spray\":
-			options_primary.select(0)
-		\"Shotgun\":
-			options_primary.select(1)
-		\"Slash\":
-			options_primary.select(2)
-	
-	
-	match global.utility_selection:
-		\"Zip-Dash\":
-			options_utility.select(0)
-		\"Shine\":
-			options_utility.select(1)
-
-func _on_primary_item_selected(index: int) -> void:
-	global.primary_selection = options_primary.get_item_text(index)
-
-func _on_utility_item_selected(index: int) -> void:
-	global.utility_selection = options_utility.get_item_text(index)
-	print(options_utility.get_item_text(index))
-
-func _on_secondary_item_selected(index: int) -> void:
-	pass # Replace with function body.
-
-
-func _on_breaker_item_selected(index: int) -> void:
-	pass # Replace with function body.
-"
-
 [sub_resource type="GDScript" id="GDScript_8jj6y"]
 script/source = "extends Button
-
-
-
-func on_pressed() -> void:
-	$\"../../SkillsCamera\".enabled = false
-	$\"../../MainCamera\".enabled = true
-"
-
-[sub_resource type="GDScript" id="GDScript_fs3n1"]
-script/source = "extends Control
-
-
-func _tutorial_yes_pressed() -> void:
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/0 - ProtoZone/ProtoZone.tscn\")
-	get_parent().queue_free()
-
-
-func _tutorial_no_pressed() -> void:
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
-	get_parent().queue_free()
 "
 
 [sub_resource type="Animation" id="Animation_lhi5l"]
@@ -437,14 +511,15 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 
 [node name="Title" type="TextureRect" parent="MainMenu"]
+material = SubResource("ShaderMaterial_g26pg")
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -960.0
-offset_top = -140.0
-offset_right = 952.0
-offset_bottom = 1220.0
+offset_top = -324.57
+offset_right = 960.0
+offset_bottom = 1283.43
 grow_horizontal = 2
 texture = ExtResource("3_wslbo")
 
@@ -456,40 +531,47 @@ autoplay = "bob"
 playback_default_blend_time = 1.0
 
 [node name="ButtonContainer" type="VBoxContainer" parent="MainMenu"]
+material = SubResource("ShaderMaterial_n6j81")
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = 92.0
-offset_right = 128.0
-offset_bottom = 228.0
+offset_left = -768.0
+offset_top = 228.0
+offset_right = -256.0
+offset_bottom = 484.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_mm2qm")
 alignment = 1
 
 [node name="PLAY" type="Button" parent="MainMenu/ButtonContainer"]
 layout_mode = 2
 text = "Play"
+flat = true
 text_overrun_behavior = 1
-script = ExtResource("4_tprer")
-
-[node name="INDEX" type="Button" parent="MainMenu/ButtonContainer"]
-visible = false
-layout_mode = 2
-text = "Index"
-
-[node name="OPTIONS" type="Button" parent="MainMenu/ButtonContainer"]
-layout_mode = 2
-text = "Options"
 script = ExtResource("4_tprer")
 
 [node name="SKILLS" type="Button" parent="MainMenu/ButtonContainer"]
 layout_mode = 2
 text = "Skills"
+flat = true
 script = SubResource("GDScript_ai1e2")
+
+[node name="INDEX" type="Button" parent="MainMenu/ButtonContainer"]
+layout_mode = 2
+text = "Index"
+flat = true
+script = SubResource("GDScript_g26pg")
+
+[node name="OPTIONS" type="Button" parent="MainMenu/ButtonContainer"]
+material = SubResource("ShaderMaterial_8jj6y")
+layout_mode = 2
+text = "Options"
+flat = true
+script = ExtResource("4_tprer")
 
 [node name="QUIT" type="Button" parent="MainMenu/ButtonContainer"]
 layout_mode = 2
@@ -497,7 +579,18 @@ focus_mode = 0
 shortcut_feedback = false
 shortcut_in_tooltip = false
 text = "Quit"
+flat = true
 script = ExtResource("4_tprer")
+
+[node name="StarTwinkles" type="GPUParticles2D" parent="MainMenu"]
+z_index = -4096
+position = Vector2(384, 376)
+amount = 512
+lifetime = 2.0
+randomness = 1.0
+fixed_fps = 144
+visibility_rect = Rect2(-100, -100, 1157.5, 643.5)
+process_material = SubResource("ParticleProcessMaterial_n6j81")
 
 [node name="Options" type="Control" parent="."]
 layout_mode = 3
@@ -512,8 +605,8 @@ grow_vertical = 2
 
 [node name="ReturnToMenuButton" type="Button" parent="Options"]
 layout_mode = 0
-offset_right = 128.0
-offset_bottom = 32.0
+offset_right = 192.0
+offset_bottom = 64.0
 theme = ExtResource("3_mm2qm")
 text = "Return"
 script = SubResource("GDScript_vca51")
@@ -526,10 +619,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = -52.0
-offset_right = 24.0
-offset_bottom = 6.0
+offset_left = -159.0
+offset_top = -156.0
+offset_right = 55.0
+offset_bottom = 85.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -566,10 +659,10 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -216.0
-offset_top = -22.0
-offset_right = -38.0
-offset_bottom = 23.0
+offset_left = -1408.0
+offset_top = -156.0
+offset_right = -1153.0
+offset_bottom = 100.0
 grow_horizontal = 0
 grow_vertical = 2
 size_flags_horizontal = 0
@@ -630,23 +723,23 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = SubResource("GDScript_g26pg")
+theme = ExtResource("3_mm2qm")
 
 [node name="Return" type="Button" parent="Skills"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 1176.0
-offset_right = 413.0
-offset_bottom = 1273.0
+offset_left = 27.0
+offset_top = 1168.0
+offset_right = 192.0
+offset_bottom = 1215.0
 text = "Return"
 script = SubResource("GDScript_8jj6y")
 
 [node name="primary" type="OptionButton" parent="Skills"]
 layout_mode = 0
-offset_left = 800.0
-offset_top = 1408.0
-offset_right = 984.0
-offset_bottom = 1472.0
+offset_left = 120.0
+offset_top = 1664.0
+offset_right = 304.0
+offset_bottom = 1728.0
 selected = 0
 allow_reselect = true
 item_count = 3
@@ -659,10 +752,10 @@ popup/item_2/id = 2
 
 [node name="secondary" type="OptionButton" parent="Skills"]
 layout_mode = 0
-offset_left = 800.0
-offset_top = 1536.0
-offset_right = 984.0
-offset_bottom = 1600.0
+offset_left = 384.0
+offset_top = 1664.0
+offset_right = 568.0
+offset_bottom = 1728.0
 selected = 0
 item_count = 1
 popup/item_0/text = "None"
@@ -670,9 +763,9 @@ popup/item_0/id = 0
 
 [node name="utility" type="OptionButton" parent="Skills"]
 layout_mode = 0
-offset_left = 800.0
+offset_left = 640.0
 offset_top = 1664.0
-offset_right = 984.0
+offset_right = 824.0
 offset_bottom = 1728.0
 selected = 0
 allow_reselect = true
@@ -684,92 +777,18 @@ popup/item_1/id = 1
 
 [node name="breaker" type="OptionButton" parent="Skills"]
 layout_mode = 0
-offset_left = 800.0
-offset_top = 1792.0
-offset_right = 984.0
-offset_bottom = 1856.0
+offset_left = 896.0
+offset_top = 1664.0
+offset_right = 1080.0
+offset_bottom = 1728.0
 selected = 0
 item_count = 1
 popup/item_0/text = "None"
 popup/item_0/id = 0
 
-[node name="TutorialPrompt" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-script = SubResource("GDScript_fs3n1")
-
-[node name="ColorRect" type="ColorRect" parent="TutorialPrompt"]
-z_index = 500
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 640.0
-offset_bottom = 360.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.0862745, 0.0862745, 0.0862745, 0.956863)
-
-[node name="Label" type="Label" parent="TutorialPrompt"]
-z_index = 505
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 280.0
-offset_top = 176.0
-offset_right = 363.0
-offset_bottom = 199.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_mm2qm")
-text = "Would you like to view a tutorial?"
-
-[node name="PromptContainter" type="BoxContainer" parent="TutorialPrompt"]
-z_index = 575
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 192.0
-offset_top = 64.0
-offset_right = 448.0
-offset_bottom = 256.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Tutorial_Yes" type="Button" parent="TutorialPrompt/PromptContainter"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-theme = ExtResource("3_mm2qm")
-text = "Proceed"
-script = ExtResource("4_tprer")
-
-[node name="Tutorial_No" type="Button" parent="TutorialPrompt/PromptContainter"]
-layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 8
-theme = ExtResource("3_mm2qm")
-text = "No!"
-script = ExtResource("4_tprer")
-
 [node name="Fade" type="Node" parent="."]
 
 [node name="Black" type="ColorRect" parent="Fade"]
-visible = false
 z_index = 10
 anchors_preset = 15
 anchor_right = 1.0
@@ -789,8 +808,8 @@ autoplay = "Fade"
 environment = SubResource("Environment_5lcc6")
 
 [connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
-[connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/SKILLS" to="MainMenu/ButtonContainer/SKILLS" method="on_pressed"]
+[connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
 [connection signal="pressed" from="MainMenu/ButtonContainer/QUIT" to="." method="quit_pressed"]
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
@@ -801,5 +820,3 @@ environment = SubResource("Environment_5lcc6")
 [connection signal="item_selected" from="Skills/secondary" to="Skills" method="_on_secondary_item_selected"]
 [connection signal="item_selected" from="Skills/utility" to="Skills" method="_on_utility_item_selected"]
 [connection signal="item_selected" from="Skills/breaker" to="Skills" method="_on_breaker_item_selected"]
-[connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_Yes" to="TutorialPrompt" method="_tutorial_yes_pressed"]
-[connection signal="pressed" from="TutorialPrompt/PromptContainter/Tutorial_No" to="TutorialPrompt" method="_tutorial_no_pressed"]

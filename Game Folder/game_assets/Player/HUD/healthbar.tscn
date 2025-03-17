@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://crg4nvhxx414j"]
+[gd_scene load_steps=11 format=3 uid="uid://crg4nvhxx414j"]
 
-[ext_resource type="Texture2D" uid="uid://uxa68rfc0hgy" path="res://Game Folder/game_assets/Player/HUD/newhealth1.png" id="1_wdb2w"]
-[ext_resource type="Texture2D" uid="uid://bskvsudoxnnbs" path="res://Game Folder/game_assets/Player/HUD/newhealth4.png" id="2_ptdjj"]
-[ext_resource type="Texture2D" uid="uid://bjbuu8666fc1r" path="res://Game Folder/game_assets/Player/HUD/newhealth3.png" id="3_nri7k"]
+[ext_resource type="Shader" uid="uid://qtemwvecpr14" path="res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader" id="1_ihja2"]
+[ext_resource type="Texture2D" uid="uid://bcc15vut0aln7" path="res://Game Folder/game_assets/Player/HUD/hudhp_under.png" id="1_poui2"]
+[ext_resource type="Texture2D" uid="uid://edjqeafbibyh" path="res://Game Folder/game_assets/Player/HUD/hudhp_over.png" id="2_ihja2"]
+[ext_resource type="Texture2D" uid="uid://byd3r2b08il3x" path="res://Game Folder/game_assets/Player/HUD/hudhp_prog.png" id="3_nvu63"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="4_y1cuq"]
 
 [sub_resource type="GDScript" id="GDScript_ulytf"]
@@ -13,93 +14,108 @@ script/source = "extends Control
 @export var healthbar_gradient = Gradient.new()
 
 # References UI elements for health text and progress bar.
-@onready var health_text: RichTextLabel = $health_progressbar/health_text
-@onready var health_progressbar: TextureProgressBar = $health_progressbar
+@onready var health_progressbar: TextureProgressBar = $ShaderGroup/health_progressbar
+@onready var health_text: RichTextLabel = $ShaderGroup/health_text
+
+
 
 func _ready() -> void:
-	if global.player:
-		# Initialize health bar with the player's maximum health.
-		update_health_text(int(global.player.health.maximum_health))
+	# Initialize health bar with the player's maximum health.
+	update_health_text()
 
-		# Connects event signals to update the health UI when the player takes damage or gets healed.
-		events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox): update_health_text(current_health), 3)
-		events.connect(\"player_death\", func(current_health, damage_taken, colliding_hitbox): update_health_text(current_health), 3)
-		events.connect(\"player_healed\", update_health_text, 1)
-
-# Updates the progress bar values based on the player's health.
-func update_health_progressbar():
-	var health_ratio = float(global.player.health.current_health) / float(global.player.health.maximum_health)
-	health_progressbar.tint_progress = healthbar_gradient.sample(health_ratio)
-	health_progressbar.max_value = global.player.health.maximum_health
-	health_progressbar.value = global.player.health.current_health
+	# Connects event signals to update the health UI when the player takes damage or gets healed.
+	events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox): update_health_text(), 3)
+	events.connect(\"player_death\", func(damage_taken, colliding_hitbox): update_health_text(), 2)
+	events.connect(\"player_healed\", update_health_text, 1)
 
 # Updates the health text display with color and shaking effect at low health.
-func update_health_text(new_health):
-	if global.player:
-		update_health_progressbar()
-		health_text.clear()  # Clears existing text.
+func update_health_text():
+	var health_ratio = float(global.player.health.current_health) / float(global.player.health.maximum_health)
+	health_progressbar.max_value = global.player.health.maximum_health
+	
+	var hp_visual_tween = create_tween().bind_node(health_progressbar).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	var hp_text_tween = create_tween().bind_node(health_text).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	
+	hp_visual_tween.tween_property(health_progressbar, \"value\", int(global.player.health.current_health), 0.05)
+	hp_text_tween.tween_property(health_text, \"text\", str(int(global.player.health.current_health)), 0.05)
+	
+	await hp_visual_tween.finished
+	hp_visual_tween.kill()
+	hp_text_tween.kill()
 
-		# Determines color based on current health using the gradient.
-		var health_ratio = float(global.player.health.current_health) / float(global.player.health.maximum_health)
-		health_text.push_color(healthbar_gradient.sample(health_ratio))
-
-		# Adds a shaking effect if health drops to 30 or below.
-		if global.player.health.current_health <= 50:
-			health_text.append_text(\"[shake rate=100.0 level=15 connected=1]\" + str(global.player.health.current_health) + \"[/shake]\")
-		else:
-			health_text.append_text(str(global.player.health.current_health))
-
-		health_text.pop_all()  # Resets text formatting.
-
-func _physics_process(delta: float) -> void:
-	update_health_text(int(global.player.health.current_health))
+	# Determines color based on current health using the gradient.
+	set_instance_shader_parameter(\"shader_parameter/line_colour\", healthbar_gradient.sample(health_ratio))
 "
 
-[sub_resource type="Gradient" id="Gradient_s5sqd"]
-interpolation_mode = 2
-interpolation_color_space = 2
-colors = PackedColorArray(1, 0, 0, 1, 0.160784, 1, 0.972549, 1)
+[sub_resource type="Gradient" id="Gradient_poui2"]
+colors = PackedColorArray(1, 0, 0, 1, 0, 1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nvu63"]
+resource_local_to_scene = true
+shader = ExtResource("1_ihja2")
+shader_parameter/line_colour = Color(0, 1, 1, 1)
+shader_parameter/line_thickness = 4
+
+[sub_resource type="GDScript" id="GDScript_ihja2"]
+script/source = "extends Area2D
+@onready var shader_group: CanvasGroup = $\"../ShaderGroup\"
+@onready var health_progressbar: TextureProgressBar = $\"../ShaderGroup/health_progressbar\"
+@onready var health_text: RichTextLabel = $\"../ShaderGroup/health_text\"
+
+func _process(delta: float) -> void:
+	if get_overlapping_areas():
+		health_progressbar.self_modulate.a = move_toward(shader_group.self_modulate.a, 0, 0.6)
+	else:
+		health_progressbar.self_modulate.a = move_toward(shader_group.self_modulate.a, 255, 0.6)
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ihja2"]
+size = Vector2(202, 102)
 
 [node name="HealthContainter" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 133.0
-offset_bottom = 48.0
+anchor_left = 0.011
+anchor_top = 0.007
+anchor_right = 0.078
+anchor_bottom = 0.052
+offset_left = 0.879999
+offset_top = 0.44
+offset_right = 0.23999
+offset_bottom = -0.16
 script = SubResource("GDScript_ulytf")
-healthbar_gradient = SubResource("Gradient_s5sqd")
+healthbar_gradient = SubResource("Gradient_poui2")
 
-[node name="health_progressbar" type="TextureProgressBar" parent="."]
-top_level = true
-z_index = 4095
-y_sort_enabled = true
-layout_mode = 2
-offset_left = 4.0
-offset_right = 135.0
-offset_bottom = 55.0
-scale = Vector2(2, 2)
+[node name="ShaderGroup" type="CanvasGroup" parent="."]
+material = SubResource("ShaderMaterial_nvu63")
+
+[node name="health_progressbar" type="TextureProgressBar" parent="ShaderGroup"]
+anchors_preset = -1
+anchor_left = 0.002
+anchor_right = 0.087
+anchor_bottom = 0.059
+offset_left = -36.0
+offset_top = -12.0
+offset_right = 128.0
+offset_bottom = 52.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-step = 10.0
 value = 100.0
 rounded = true
-texture_under = ExtResource("1_wdb2w")
-texture_over = ExtResource("2_ptdjj")
-texture_progress = ExtResource("3_nri7k")
+texture_under = ExtResource("1_poui2")
+texture_over = ExtResource("2_ihja2")
+texture_progress = ExtResource("3_nvu63")
 
-[node name="health_text" type="RichTextLabel" parent="health_progressbar"]
-top_level = true
-z_index = 4096
+[node name="health_text" type="RichTextLabel" parent="ShaderGroup"]
 clip_contents = false
 layout_direction = 1
-layout_mode = 2
-anchor_left = 0.029
-anchor_top = 0.016
-anchor_right = 0.042
-anchor_bottom = 0.03
-offset_left = 0.32
-offset_top = -0.280001
-offset_right = 24.36
-offset_bottom = 14.6
+anchors_preset = -1
+anchor_left = 0.034
+anchor_top = 0.015
+anchor_right = 0.056
+anchor_bottom = 0.044
+offset_left = 26.0
+offset_right = 112.0
+offset_bottom = 77.0
 scale = Vector2(0.5, 0.5)
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -107,12 +123,22 @@ mouse_filter = 1
 theme = ExtResource("4_y1cuq")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 0
-theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/normal_font_size = 45
 bbcode_enabled = true
 text = "100"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
-progress_bar_delay = 5
+horizontal_alignment = 1
+vertical_alignment = 1
 text_direction = 1
+
+[node name="Detection" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 31
+script = SubResource("GDScript_ihja2")
+
+[node name="Collision" type="CollisionShape2D" parent="Detection"]
+position = Vector2(46, 18)
+shape = SubResource("RectangleShape2D_ihja2")

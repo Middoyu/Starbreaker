@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://wge4fqipu3wj"
+path="res://.godot/imported/Tres2b Melody.mp3-4fa0e5ec07b76ded5e4451d47be6bb70.mp3str"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Menus/StageSelect/Music/Tres2b Melody.mp3"
+dest_files=["res://.godot/imported/Tres2b Melody.mp3-4fa0e5ec07b76ded5e4451d47be6bb70.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
