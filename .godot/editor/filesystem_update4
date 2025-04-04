@@ -1,3 +1,4 @@
 res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
 res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader
 res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
+res://Game Folder/main_manager.tscn

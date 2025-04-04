@@ -471,7 +471,10 @@ func _ready() -> void:
 	pivot_offset = size / 2
 
 func _on_pressed() -> void:
-	print(\"selected\")
+	$\"../../../Camera/FadingImage/FadeAnimation\".play(\"Fade\")
+	await $\"../../../Camera/FadingImage/FadeAnimation\".animation_finished
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	$\"../../..\".queue_free()
 "
 
 [sub_resource type="GDScript" id="GDScript_g26pg"]
@@ -892,7 +895,6 @@ text = "Skills
 "
 flat = true
 icon_alignment = 1
-script = SubResource("GDScript_ai1e2")
 
 [node name="challenges" type="Button" parent="BGTexture/MainMenuBase"]
 z_index = 1120
@@ -917,7 +919,6 @@ shortcut_in_tooltip = false
 text = "CHALLENGES"
 flat = true
 icon_alignment = 1
-script = SubResource("GDScript_ai1e2")
 
 [node name="index" type="Button" parent="BGTexture/MainMenuBase"]
 z_index = 1120
@@ -942,7 +943,6 @@ shortcut_in_tooltip = false
 text = "INDEX"
 flat = true
 icon_alignment = 1
-script = SubResource("GDScript_ai1e2")
 
 [node name="settings" type="Button" parent="BGTexture/MainMenuBase"]
 z_index = 1120
@@ -967,7 +967,6 @@ shortcut_in_tooltip = false
 text = "SETTINGS"
 flat = true
 icon_alignment = 1
-script = SubResource("GDScript_ai1e2")
 
 [node name="quit" type="Button" parent="BGTexture/MainMenuBase"]
 z_index = 1120
@@ -992,7 +991,6 @@ shortcut_in_tooltip = false
 text = "QUIT"
 flat = true
 icon_alignment = 1
-script = SubResource("GDScript_ai1e2")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("1_8jj6y")]
 parent = NodePath("..")
