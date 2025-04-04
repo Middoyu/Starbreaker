@@ -15,231 +15,231 @@ func _ready() -> void:
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ai1e2"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 0, 1280, 720)
+region = Rect2(0, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8jj6y"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 0, 1280, 720)
+region = Rect2(640, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g26pg"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 0, 1280, 720)
+region = Rect2(1280, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n6j81"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 0, 1280, 720)
+region = Rect2(1920, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fxp30"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 0, 1280, 720)
+region = Rect2(2560, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b38tb"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 0, 1280, 720)
+region = Rect2(3200, 0, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dermj"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 720, 1280, 720)
+region = Rect2(0, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cs2c2"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 720, 1280, 720)
+region = Rect2(640, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8yjfr"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 720, 1280, 720)
+region = Rect2(1280, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a4p2x"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 720, 1280, 720)
+region = Rect2(1920, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yhjke"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 720, 1280, 720)
+region = Rect2(2560, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aga7x"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 720, 1280, 720)
+region = Rect2(3200, 360, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4qvn5"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 1440, 1280, 720)
+region = Rect2(0, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ml5bq"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 1440, 1280, 720)
+region = Rect2(640, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u6hpw"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 1440, 1280, 720)
+region = Rect2(1280, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t4pye"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 1440, 1280, 720)
+region = Rect2(1920, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w5w7n"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 1440, 1280, 720)
+region = Rect2(2560, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4bbm3"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 1440, 1280, 720)
+region = Rect2(3200, 720, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o7xpp"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 2160, 1280, 720)
+region = Rect2(0, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f2b63"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 2160, 1280, 720)
+region = Rect2(640, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ekola"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 2160, 1280, 720)
+region = Rect2(1280, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gbel8"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 2160, 1280, 720)
+region = Rect2(1920, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c0p8i"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 2160, 1280, 720)
+region = Rect2(2560, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7y7o2"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 2160, 1280, 720)
+region = Rect2(3200, 1080, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ajpys"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 2880, 1280, 720)
+region = Rect2(0, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u5ynv"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 2880, 1280, 720)
+region = Rect2(640, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ohh2"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 2880, 1280, 720)
+region = Rect2(1280, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2vp66"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 2880, 1280, 720)
+region = Rect2(1920, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wtukl"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 2880, 1280, 720)
+region = Rect2(2560, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5a0ql"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 2880, 1280, 720)
+region = Rect2(3200, 1440, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lyjq5"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 3600, 1280, 720)
+region = Rect2(0, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hecj5"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 3600, 1280, 720)
+region = Rect2(640, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8f0eh"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 3600, 1280, 720)
+region = Rect2(1280, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cwf2o"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 3600, 1280, 720)
+region = Rect2(1920, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vp33o"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 3600, 1280, 720)
+region = Rect2(2560, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_psgsd"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 3600, 1280, 720)
+region = Rect2(3200, 1800, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gd1tw"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 4320, 1280, 720)
+region = Rect2(0, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3gfn7"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 4320, 1280, 720)
+region = Rect2(640, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_npbho"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 4320, 1280, 720)
+region = Rect2(1280, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_svtke"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 4320, 1280, 720)
+region = Rect2(1920, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p23nu"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 4320, 1280, 720)
+region = Rect2(2560, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_82trw"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 4320, 1280, 720)
+region = Rect2(3200, 2160, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_srmxi"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 5040, 1280, 720)
+region = Rect2(0, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ve28b"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 5040, 1280, 720)
+region = Rect2(640, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vum28"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 5040, 1280, 720)
+region = Rect2(1280, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s2ffe"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 5040, 1280, 720)
+region = Rect2(1920, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_et1ch"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 5040, 1280, 720)
+region = Rect2(2560, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mf21b"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 5040, 1280, 720)
+region = Rect2(3200, 2520, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f44fs"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 5760, 1280, 720)
+region = Rect2(0, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4wug5"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 5760, 1280, 720)
+region = Rect2(640, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iegho"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 5760, 1280, 720)
+region = Rect2(1280, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_81qal"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(3840, 5760, 1280, 720)
+region = Rect2(1920, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ttjvo"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(5120, 5760, 1280, 720)
+region = Rect2(2560, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gv27j"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(6400, 5760, 1280, 720)
+region = Rect2(3200, 2880, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_py27y"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(0, 6480, 1280, 720)
+region = Rect2(0, 3240, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_emcpn"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(1280, 6480, 1280, 720)
+region = Rect2(640, 3240, 640, 360)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8meks"]
 atlas = ExtResource("1_ai1e2")
-region = Rect2(2560, 6480, 1280, 720)
+region = Rect2(1280, 3240, 640, 360)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_166hw"]
 animations = [{
@@ -422,7 +422,7 @@ animations = [{
 
 [sub_resource type="GDScript" id="GDScript_n6j81"]
 script/source = "extends Control
-var movement_location = Vector2(192, -128)
+var movement_location = Vector2(243.9, -192)
 
 var children_index = self.get_children()
 @onready var focus_index = 0
@@ -808,34 +808,36 @@ script = SubResource("GDScript_cf4c7")
 
 [node name="BGTexture" type="AnimatedSprite2D" parent="."]
 position = Vector2(2000, 2000)
-scale = Vector2(0.775, 0.666667)
 sprite_frames = SubResource("SpriteFrames_166hw")
 autoplay = "default"
-frame_progress = 0.227927
+frame_progress = 0.352637
 speed_scale = 0.5
 
 [node name="BG" type="ColorRect" parent="BGTexture"]
-offset_left = -1605.0
-offset_top = 1266.0
-offset_right = 1878.0
-offset_bottom = 1749.0
+visible = false
+offset_left = -1566.0
+offset_top = 1305.0
+offset_right = 1917.0
+offset_bottom = 1649.0
 rotation = -0.785397
 color = Color(0, 0, 0.156863, 1)
 
 [node name="Border" type="ColorRect" parent="BGTexture"]
+visible = false
 texture_repeat = 1
-offset_left = -849.0
-offset_top = 497.0
-offset_right = 1066.0
-offset_bottom = 517.0
+offset_left = -805.161
+offset_top = 528.0
+offset_right = 1109.84
+offset_bottom = 548.0
 rotation = -0.785397
 mouse_filter = 1
 
 [node name="Border2" type="ColorRect" parent="BGTexture"]
-offset_left = -363.0
-offset_top = 691.0
-offset_right = 1440.0
-offset_bottom = 711.0
+visible = false
+offset_left = -454.194
+offset_top = 660.0
+offset_right = 1348.81
+offset_bottom = 680.0
 rotation = -0.785397
 size_flags_stretch_ratio = 5.53
 mouse_filter = 1
@@ -870,7 +872,7 @@ theme = ExtResource("3_mm2qm")
 theme_override_font_sizes/font_size = 61
 shortcut_feedback = false
 shortcut_in_tooltip = false
-text = "Play"
+text = "PLAY"
 flat = true
 icon_alignment = 1
 script = SubResource("GDScript_ai1e2")
@@ -895,7 +897,7 @@ theme = ExtResource("3_mm2qm")
 theme_override_font_sizes/font_size = 61
 shortcut_feedback = false
 shortcut_in_tooltip = false
-text = "Skills
+text = "SKILLS
 "
 flat = true
 icon_alignment = 1
@@ -909,9 +911,9 @@ anchor_left = -16.0
 anchor_top = -9.0
 anchor_right = 16.0
 anchor_bottom = 9.0
-offset_left = 247.516
+offset_left = 247.742
 offset_top = 480.0
-offset_right = -566.484
+offset_right = -702.258
 offset_bottom = -144.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -920,7 +922,7 @@ theme = ExtResource("3_mm2qm")
 theme_override_font_sizes/font_size = 61
 shortcut_feedback = false
 shortcut_in_tooltip = false
-text = "CHALLENGES"
+text = "TESTS"
 flat = true
 icon_alignment = 1
 
@@ -957,9 +959,9 @@ anchor_left = -16.0
 anchor_top = -9.0
 anchor_right = 16.0
 anchor_bottom = 9.0
-offset_left = -248.484
+offset_left = -235.613
 offset_top = 864.0
-offset_right = -1184.48
+offset_right = -1185.61
 offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -968,7 +970,7 @@ theme = ExtResource("3_mm2qm")
 theme_override_font_sizes/font_size = 61
 shortcut_feedback = false
 shortcut_in_tooltip = false
-text = "SETTINGS"
+text = "OPTIONS"
 flat = true
 icon_alignment = 1
 
