@@ -8,7 +8,6 @@ script/source = "extends RichTextLabel
 
 
 func _ready() -> void:
-	get_parent().global_position.x = 470
 	score_event.connect(\"score_update\", update_score, 1)
 
 func update_score(amount):
@@ -16,21 +15,21 @@ func update_score(amount):
 "
 
 [node name="ScoreRectTexture" type="Control"]
-custom_minimum_size = Vector2(115, 0)
 layout_direction = 1
 layout_mode = 3
-anchors_preset = 0
-offset_right = 115.0
-offset_bottom = 40.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -70.0
+offset_bottom = 14.0
+grow_horizontal = 0
 tooltip_text = "SCORE: 000000"
 
 [node name="Score" type="RichTextLabel" parent="."]
 z_index = 4095
 layout_mode = 0
-offset_left = 20.0
-offset_top = 14.0
-offset_right = 152.0
-offset_bottom = 44.0
+offset_right = 70.0
+offset_bottom = 16.0
 theme = ExtResource("1_g2dfd")
 theme_override_colors/font_outline_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
 text = "0000000"

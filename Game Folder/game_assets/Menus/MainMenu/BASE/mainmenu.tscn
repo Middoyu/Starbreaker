@@ -474,7 +474,7 @@ func _on_pressed() -> void:
 	disabled = true
 	$\"../../../Camera/FadingImage/FadeAnimation\".play(\"Fade\")
 	await $\"../../../Camera/FadingImage/FadeAnimation\".animation_finished
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
+	global.main_manager.add_child(load(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\").instantiate())
 	$\"../../..\".queue_free()
 "
 
@@ -823,12 +823,12 @@ rotation = -0.785397
 color = Color(0, 0, 0.156863, 1)
 
 [node name="Border" type="ColorRect" parent="BGTexture"]
+texture_repeat = 1
 offset_left = -849.0
 offset_top = 497.0
 offset_right = 1066.0
 offset_bottom = 517.0
 rotation = -0.785397
-size_flags_stretch_ratio = 5.53
 mouse_filter = 1
 
 [node name="Border2" type="ColorRect" parent="BGTexture"]

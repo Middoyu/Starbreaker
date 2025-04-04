@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bm1xlgxrd1oa0"]
+[gd_scene load_steps=3 format=3 uid="uid://bm1xlgxrd1oa0"]
+
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_2hdvj"]
 
 [sub_resource type="GDScript" id="GDScript_qbwcn"]
 script/source = "extends Label
@@ -18,14 +20,19 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -57.0
-offset_top = -23.0
+offset_left = -64.0
+offset_top = -16.0
+offset_right = -8.0
+offset_bottom = -5.0
 grow_horizontal = 0
 grow_vertical = 0
+theme = ExtResource("1_2hdvj")
+theme_override_font_sizes/font_size = 11
 text = "release"
+horizontal_alignment = 1
+vertical_alignment = 1
 script = SubResource("GDScript_qbwcn")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 enabled = false
-zoom = Vector2(2.5, 2.5)

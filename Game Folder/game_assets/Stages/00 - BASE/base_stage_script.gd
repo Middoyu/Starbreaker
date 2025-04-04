@@ -20,7 +20,7 @@ const PLAYER = preload("res://Game Folder/game_assets/Player/Main/Player.tscn")
 @onready var is_spawning = true
 @export var player_starting_position := Vector2(320, 290)
 
-func _ready() -> void:
+func _ready() -> void:	
 	add_child(EntityManager, true)
 	global.EntityManager = EntityManager
 	

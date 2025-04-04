@@ -60,7 +60,7 @@ func transition_to_mainmenu():
 		get_tree().quit()
 		return
 	score_event.score = 0
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	global.main_manager.add_child(load(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\").instantiate())
 	self.queue_free()
 
 func transition_to_stage():
@@ -70,7 +70,7 @@ func transition_to_stage():
 		return
 	score_event.score = 0
 	print(global.current_stage)
-	global.main_manager.switch_level_to(global.last_stage_selected)
+	global.main_manager.add_child(load(global.last_stage_selected).instantiate())
 	self.queue_free()
 "
 
@@ -240,6 +240,7 @@ text = "SCORE LOST - NULL"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
+horizontal_alignment = 1
 
 [node name="Tween_Timer" type="Timer" parent="GUI_Controller"]
 one_shot = true

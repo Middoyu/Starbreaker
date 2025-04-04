@@ -81,10 +81,10 @@ func gameover_sequence(is_true_gameover := true):
 func clear_entities():
 	for i in get_children():
 		if i != loading_handler:
-			if i != $pause_menu:
-				i.queue_free()
+			i.queue_free()
 	for i in global.get_children():
-		i.queue_free()
+		if i != $pause_menu:
+			i.queue_free()
 
 func pause(node : Node2D):
 	node.process_mode = Node.PROCESS_MODE_DISABLED
@@ -144,18 +144,16 @@ func _process(delta: float) -> void:
 [sub_resource type="GDScript" id="GDScript_o2qsh"]
 script/source = "extends Label
 
-@onready var pause_menu: Control = $\"..\"
 
 
 func _on_area_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event.is_action_pressed(\"primary\"):
-		global.is_pausable = false
-		pause_menu.hide()
+		$\"..\".paused = false
 		global.main_manager.gameover_sequence(true)
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o2qsh"]
-size = Vector2(69, 34)
+size = Vector2(130, 50)
 
 [node name="MAIN_MANAGER" type="Node"]
 script = SubResource("GDScript_essvl")
@@ -204,19 +202,18 @@ process_mode = 3
 top_level = true
 z_index = 4096
 layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 128.0
-offset_bottom = 38.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 136.0
+offset_bottom = 46.0
 mouse_filter = 1
-theme_override_font_sizes/font_size = 16
 text = "Abort."
 script = SubResource("GDScript_o2qsh")
 
 [node name="Area" type="Area2D" parent="pause_menu/Abort"]
 
 [node name="Collision" type="CollisionShape2D" parent="pause_menu/Abort/Area"]
-position = Vector2(29.5, 8)
+position = Vector2(55, 15)
 shape = SubResource("RectangleShape2D_o2qsh")
 
 [connection signal="input_event" from="pause_menu/Abort/Area" to="pause_menu/Abort" method="_on_area_input_event"]

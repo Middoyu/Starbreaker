@@ -1,7 +1,11 @@
+CollisionShape2D
+Area2D
+Label
+Button
+RichTextLabel
 Control
 Marker2D
 PointLight2D
-Button
 juicycamera_component
 DirectionalLight3D
 SubViewportContainer
@@ -9,7 +13,3 @@ Camera2D
 SubViewport
 CSGSphere3D
 OmniLight3D
-Camera3D
-Node3D
-MeshInstance2D
-ScrollContainer

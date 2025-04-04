@@ -18,8 +18,12 @@ func combo_timeout() -> void:
 
 func _process(delta: float) -> void:
 	score_event.combo_multiplier = combo_meter
-	$CanvasLayer/Label.text = str(combo_timer.time_left)
-	$CanvasLayer/Label2.text = str(combo_meter)
+	if OS.is_debug_build():
+		$CanvasLayer/Label.text = str(combo_timer.time_left)
+		$CanvasLayer/Label2.text = str(combo_meter)
+	else:
+		$CanvasLayer/Label.hide()
+		$CanvasLayer/Label2.hide()
 "
 
 [node name="ComboSystem" type="Node"]
@@ -32,17 +36,8 @@ one_shot = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="ComboTimer" type="ProgressBar" parent="CanvasLayer"]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = 10.0
-offset_right = 290.0
-offset_bottom = 20.0
-grow_vertical = 2
-show_percentage = false
-
 [node name="Label" type="Label" parent="CanvasLayer"]
+visible = false
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -54,6 +49,7 @@ size_flags_horizontal = 0
 text = "15"
 
 [node name="Label2" type="Label" parent="CanvasLayer"]
+visible = false
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5

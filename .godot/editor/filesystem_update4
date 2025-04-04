@@ -13,3 +13,9 @@ res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
 res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn
 res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
 res://Game Folder/game_assets/Player/Weapons/combo_system.tscn
+res://Game Folder/game_assets/Player/HUD/hud.tscn
+res://Game Folder/game_assets/Player/HUD/scorebar.tscn
+res://Game Folder/game_components/global_loading/loading.tscn
+res://release_ui.tscn
+res://Game Folder/game_components/entity_components/Health/HealthComponent.tscn
+res://Game Folder/game_assets/Stages/00 - BASE/base_stage_script.gd
