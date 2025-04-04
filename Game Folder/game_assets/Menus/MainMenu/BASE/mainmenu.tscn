@@ -1,43 +1,509 @@
-[gd_scene load_steps=38 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=92 format=3 uid="uid://c8cl1sli3qnjh"]
 
-[ext_resource type="AudioStream" uid="uid://erm3xbidorsi" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/starbreaker - menu (chillin).mp3" id="1_b1kbp"]
-[ext_resource type="Shader" uid="uid://qtemwvecpr14" path="res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader" id="3_8jj6y"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="1_8jj6y"]
+[ext_resource type="Texture2D" uid="uid://fs5p06uv4ecd" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Textures/bg.png" id="1_ai1e2"]
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="3_mm2qm"]
 [ext_resource type="Texture2D" uid="uid://cs6s2641cjjdq" path="res://Game Folder/game_assets/Menus/MainMenu/Sprites/title.png" id="3_wslbo"]
-[ext_resource type="Script" uid="uid://cb7ckkc703no7" path="res://Game Folder/game_components/button_component/global_button.gd" id="4_tprer"]
 
 [sub_resource type="GDScript" id="GDScript_cf4c7"]
 resource_name = "mainmenu"
 script/source = "extends Node2D
-@onready var main_menu = $MainMenu
-@onready var options_menu = $Options
-
-@onready var mm_music: AudioStreamPlayer = $MM_Music
-
-func start():
-	global.current_stage = self
-	main_menu.show()
-	mm_music.play()
-
 
 func _ready() -> void:
-	start()
+	global.current_stage = self
+"
 
-func play_pressed() -> void:
-	$MainMenu/ButtonContainer.queue_free()
-	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Menus/StageSelect/Base/stage_select.tscn\")
-	queue_free()
+[sub_resource type="AtlasTexture" id="AtlasTexture_ai1e2"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8jj6y"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g26pg"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n6j81"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxp30"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b38tb"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dermj"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cs2c2"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8yjfr"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4p2x"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yhjke"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aga7x"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4qvn5"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ml5bq"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6hpw"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t4pye"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w5w7n"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4bbm3"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 1440, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7xpp"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f2b63"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ekola"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gbel8"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c0p8i"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7y7o2"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 2160, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ajpys"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5ynv"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ohh2"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vp66"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtukl"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5a0ql"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 2880, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lyjq5"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hecj5"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8f0eh"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwf2o"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vp33o"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_psgsd"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 3600, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gd1tw"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gfn7"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npbho"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_svtke"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p23nu"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_82trw"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 4320, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_srmxi"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ve28b"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vum28"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2ffe"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_et1ch"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mf21b"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 5040, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f44fs"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4wug5"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iegho"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_81qal"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(3840, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ttjvo"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(5120, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gv27j"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(6400, 5760, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_py27y"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(0, 6480, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_emcpn"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(1280, 6480, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8meks"]
+atlas = ExtResource("1_ai1e2")
+region = Rect2(2560, 6480, 1280, 720)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_166hw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ai1e2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8jj6y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g26pg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n6j81")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxp30")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b38tb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dermj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cs2c2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8yjfr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4p2x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yhjke")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aga7x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4qvn5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ml5bq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6hpw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t4pye")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w5w7n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bbm3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7xpp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f2b63")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ekola")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gbel8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c0p8i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7y7o2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ajpys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u5ynv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ohh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vp66")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtukl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5a0ql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lyjq5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hecj5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8f0eh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwf2o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vp33o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_psgsd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gd1tw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gfn7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npbho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_svtke")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p23nu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_82trw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_srmxi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ve28b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vum28")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s2ffe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_et1ch")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mf21b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f44fs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4wug5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iegho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81qal")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ttjvo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gv27j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_py27y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emcpn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8meks")
+}],
+"loop": true,
+"name": &"default",
+"speed": 120.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_n6j81"]
+script/source = "extends Control
+var movement_location = Vector2(192, -128)
+
+var children_index = self.get_children()
+@onready var focus_index = 0
+@onready var max_child_count = self.get_child_count() - 1
+@onready var focused_node = get_child(focus_index) as Button
+var is_tween_running = false
+
+func _physics_process(delta: float) -> void:
+	focused_node = get_child(focus_index) as Button
+	move_menu()
+
+func move_menu():
+	focus_index = clamp(focus_index, 0, get_child_count())
+	if Input.is_action_just_pressed(\"ui_up\", true) and focus_index != 0 and is_tween_running == false:
+		is_tween_running = true
+		focus_index -= 1
+		for i in get_children():
+			var mm_ui_tween_up = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+			var d = i.global_position.x - movement_location.x
+			var z = i.global_position.y - movement_location.y
+			mm_ui_tween_up.tween_property(i, \"global_position:x\", d, 0.1)
+			mm_ui_tween_up.tween_property(i, \"global_position:y\", z, 0.1)
+			mm_ui_tween_up.tween_callback(func(): is_tween_running = false)
+			
+			
+	if Input.is_action_just_pressed(\"ui_down\", true) and focus_index != max_child_count and is_tween_running == false:
+		focus_index += 1
+		is_tween_running = true
+		for i in get_children():
+			var mm_ui_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_parallel(true)
+			var d = i.global_position.x + movement_location.x
+			var z = i.global_position.y + movement_location.y
+			mm_ui_tween.tween_property(i, \"global_position:x\", d, 0.1)
+			mm_ui_tween.tween_property(i, \"global_position:y\", z, 0.1)
+			mm_ui_tween.tween_callback(func(): is_tween_running = false)
+			
+			
+"
+
+[sub_resource type="GDScript" id="GDScript_ai1e2"]
+script/source = "extends Button
+
+signal custom_focus(node)
+
+func _ready() -> void:
+	pivot_offset = size / 2
+
+func _on_pressed() -> void:
+	print(\"selected\")
+"
+
+[sub_resource type="GDScript" id="GDScript_g26pg"]
+script/source = "extends State
+@onready var fade_animation: AnimationPlayer = $\"../../Camera/FadingImage/FadeAnimation\"
+
+@onready var accepts_input = true
 
 
-func options_pressed():
-	pass
+func enter():
+	fade_animation.play_backwards(\"Fade\")
 
-func quit_pressed() -> void:
-	get_tree().quit(0)
+func update(_delta):
+	if Input.is_anything_pressed() and accepts_input:
+		accepts_input = false
+		
+		fade_animation.play(\"Fade\")
+		await fade_animation.animation_finished
+		
+		Transistioned.emit(self, $\"../MainMenu\".name)
 
+func exit():
+	fade_animation.play_backwards(\"Fade\")
+"
 
-func release_focus() -> void:
-	pass # Replace with function body.
+[sub_resource type="GDScript" id="GDScript_dmoyy"]
+script/source = "extends State
+
+func enter():
+	$\"../../BGTexture/MainMenuBase\".process_mode = Node.PROCESS_MODE_ALWAYS
+	$\"../../Camera/FadingImage/FadeAnimation\".play_backwards(\"Fade\")
+	$\"../../Camera\".global_position = Vector2(2000, 2000)
 "
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e5p0j"]
@@ -47,158 +513,43 @@ emission_box_extents = Vector3(1000, 1000, 1)
 gravity = Vector3(0, 0, 0)
 color = Color(1, 1, 1, 0.00784314)
 
-[sub_resource type="Shader" id="Shader_8jj6y"]
-code = "
-shader_type canvas_item;
-
-uniform vec4 color : source_color = vec4(1.0);
-uniform float width : hint_range(0, 10) = 1.0;
-uniform int pattern : hint_range(0, 2) = 0; // diamond, circle, square
-uniform bool inside = false;
-uniform bool add_margins = true; // only useful when inside is false
-uniform vec2 number_of_images = vec2(1.0); // number of horizontal and vertical images in the sprite sheet
-
-varying flat vec4 modulate;
-
-void vertex() {
-	modulate = COLOR;
-	
-	if (add_margins) {
-		if ((UV.x <= 0.0 || UV.x >= 1.0) && (UV.y <= 0.0 || UV.y >= 1.0)) {
-			VERTEX += (UV * 2.0 - 1.0) * width;
-		} else {
-			VERTEX += sign(VERTEX) * width; // replace sign(VERTEX) by (sign(VERTEX) * 2.0 - 1.0) if your AnimatedSprite2D isn't Centered
-		}
-	}
+[sub_resource type="Animation" id="Animation_8jj6y"]
+resource_name = "Fade"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
 }
 
-bool hasContraryNeighbour(vec2 uv, vec2 texture_pixel_size, vec2 image_top_left, vec2 image_bottom_right, sampler2D texture) {
-	for (float i = -ceil(width); i <= ceil(width); i++) {
-		float x = abs(i) > width ? width * sign(i) : i;
-		float offset;
-		
-		if (pattern == 0) {
-			offset = width - abs(x);
-		} else if (pattern == 1) {
-			offset = floor(sqrt(pow(width + 0.5, 2) - x * x));
-		} else if (pattern == 2) {
-			offset = width;
-		}
-		
-		for (float j = -ceil(offset); j <= ceil(offset); j++) {
-			float y = abs(j) > offset ? offset * sign(j) : j;
-			vec2 xy = uv + texture_pixel_size * vec2(x, y);
-			
-			if ((xy != clamp(xy, image_top_left, image_bottom_right) || texture(texture, xy).a <= 0.0) == inside) {
-				return true;
-			}
-		}
-	}
-	
-	return false;
-}
-
-void fragment() {
-	vec2 uv = UV;
-	vec2 image_top_left = floor(uv * number_of_images) / number_of_images;
-	vec2 image_bottom_right = image_top_left + vec2(1.0) / number_of_images;
-	
-	if (add_margins) {
-		vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0) * number_of_images);
-		
-		uv = (uv - texture_pixel_size * width - image_top_left) * TEXTURE_PIXEL_SIZE / texture_pixel_size + image_top_left;
-		
-		if (uv != clamp(uv, image_top_left, image_bottom_right)) {
-			COLOR.a = 0.0;
-		} else {
-			COLOR = texture(TEXTURE, uv) * modulate;
-		}
-	} else {
-		COLOR = texture(TEXTURE, uv) * modulate;
-	}
-	
-	if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, image_top_left, image_bottom_right, TEXTURE)) {
-		COLOR.rgb = inside ? mix(COLOR.rgb, color.rgb * modulate.rgb, color.a * modulate.a) : color.rgb * modulate.rgb;
-		COLOR.a += (1.0 - COLOR.a) * color.a * modulate.a;
-	}
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g26pg"]
-shader = SubResource("Shader_8jj6y")
-shader_parameter/color = Color(1, 1, 1, 1)
-shader_parameter/width = 1.0
-shader_parameter/pattern = 0
-shader_parameter/inside = false
-shader_parameter/add_margins = true
-shader_parameter/number_of_images = Vector2(1, 1)
-
-[sub_resource type="Animation" id="Animation_mg2qj"]
+[sub_resource type="Animation" id="Animation_g26pg"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
+tracks/0/path = NodePath(".:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, -140)]
+"values": [Color(0, 0, 0, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_c6u7e"]
-resource_name = "bob"
-length = 4.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, -325), Vector2(0, -300)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_0bqiu"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_n6j81"]
 _data = {
-&"RESET": SubResource("Animation_mg2qj"),
-&"bob": SubResource("Animation_c6u7e")
+&"Fade": SubResource("Animation_8jj6y"),
+&"RESET": SubResource("Animation_g26pg")
 }
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_n6j81"]
-shader = ExtResource("3_8jj6y")
-shader_parameter/color = Color(1, 1, 1, 1)
-shader_parameter/width = 1.0
-shader_parameter/pattern = 0
-shader_parameter/inside = false
-shader_parameter/add_margins = true
-shader_parameter/number_of_images = Vector2(1, 1)
-
-[sub_resource type="GDScript" id="GDScript_ai1e2"]
-script/source = "extends CustomButton
-@onready var main_camera: Camera2D = $\"../../../MainCamera\"
-@onready var skills_camera: Camera2D = $\"../../../SkillsCamera\"
-
-
-func on_pressed() -> void:
-	main_camera.enabled = false
-	skills_camera.enabled = true
-"
-
-[sub_resource type="GDScript" id="GDScript_g26pg"]
-script/source = "extends CustomButton
-"
-
-[sub_resource type="Shader" id="Shader_ai1e2"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8jj6y"]
-render_priority = 0
-shader = SubResource("Shader_ai1e2")
 
 [sub_resource type="Curve" id="Curve_g26pg"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -385,25 +736,13 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
-tracks/1/type = "value"
+tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../MM_Music:playing")
+tracks/1/path = NodePath("Black")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Black")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
 "times": PackedFloat32Array(0.00999999, 0.55),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
@@ -429,25 +768,13 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
-tracks/1/type = "value"
+tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../MM_Music:playing")
+tracks/1/path = NodePath("Black")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Black")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -466,9 +793,221 @@ _data = {
 background_mode = 3
 glow_enabled = true
 glow_bloom = 0.25
+adjustment_enabled = true
+adjustment_saturation = 1.1
 
 [node name="MainMenu" type="Node2D"]
 script = SubResource("GDScript_cf4c7")
+
+[node name="BGTexture" type="AnimatedSprite2D" parent="."]
+position = Vector2(2000, 2000)
+scale = Vector2(0.775, 0.666667)
+sprite_frames = SubResource("SpriteFrames_166hw")
+autoplay = "default"
+frame_progress = 0.227927
+speed_scale = 0.5
+
+[node name="BG" type="ColorRect" parent="BGTexture"]
+offset_left = -1605.0
+offset_top = 1266.0
+offset_right = 1878.0
+offset_bottom = 1749.0
+rotation = -0.785397
+color = Color(0, 0, 0.156863, 1)
+
+[node name="Border" type="ColorRect" parent="BGTexture"]
+offset_left = -849.0
+offset_top = 497.0
+offset_right = 1066.0
+offset_bottom = 517.0
+rotation = -0.785397
+size_flags_stretch_ratio = 5.53
+mouse_filter = 1
+
+[node name="Border2" type="ColorRect" parent="BGTexture"]
+offset_left = -363.0
+offset_top = 691.0
+offset_right = 1440.0
+offset_bottom = 711.0
+rotation = -0.785397
+size_flags_stretch_ratio = 5.53
+mouse_filter = 1
+
+[node name="MainMenuBase" type="Control" parent="BGTexture"]
+process_mode = 4
+layout_mode = 3
+anchors_preset = 0
+offset_left = -268.387
+offset_top = 216.0
+offset_right = -228.387
+offset_bottom = 256.0
+script = SubResource("GDScript_n6j81")
+
+[node name="play" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -9.548
+anchor_top = -13.8
+anchor_right = 22.194
+anchor_bottom = 4.2
+offset_left = 484.436
+offset_top = 288.0
+offset_right = -454.244
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "Play"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="skills" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -16.0
+anchor_top = -9.0
+anchor_right = 16.0
+anchor_bottom = 9.0
+offset_left = 495.516
+offset_top = 288.0
+offset_right = -454.484
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "Skills
+"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="challenges" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -16.0
+anchor_top = -9.0
+anchor_right = 16.0
+anchor_bottom = 9.0
+offset_left = 247.516
+offset_top = 480.0
+offset_right = -566.484
+offset_bottom = -144.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "CHALLENGES"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="index" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -16.0
+anchor_top = -9.0
+anchor_right = 16.0
+anchor_bottom = 9.0
+offset_left = -0.484009
+offset_top = 672.0
+offset_right = -950.484
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "INDEX"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="settings" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -16.0
+anchor_top = -9.0
+anchor_right = 16.0
+anchor_bottom = 9.0
+offset_left = -248.484
+offset_top = 864.0
+offset_right = -1184.48
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "SETTINGS"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="quit" type="Button" parent="BGTexture/MainMenuBase"]
+z_index = 1120
+custom_minimum_size = Vector2(330, 96)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -16.0
+anchor_top = -9.0
+anchor_right = 16.0
+anchor_bottom = 9.0
+offset_left = -495.484
+offset_top = 1056.0
+offset_right = -1445.48
+offset_bottom = 432.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("3_mm2qm")
+theme_override_font_sizes/font_size = 61
+shortcut_feedback = false
+shortcut_in_tooltip = false
+text = "QUIT"
+flat = true
+icon_alignment = 1
+script = SubResource("GDScript_ai1e2")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("1_8jj6y")]
+parent = NodePath("..")
+intial_state = NodePath("SplashScreen")
+
+[node name="SplashScreen" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_g26pg")
+parent = NodePath("../..")
+is_state_cancelable = false
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="MainMenu" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_dmoyy")
+is_state_cancelable = false
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
 
 [node name="VisualEffects" type="Node2D" parent="."]
 
@@ -482,115 +1021,91 @@ interpolate = false
 visibility_rect = Rect2(-348, -25, 686.5, 387)
 process_material = SubResource("ParticleProcessMaterial_e5p0j")
 
-[node name="MainCamera" type="Camera2D" parent="."]
-anchor_mode = 0
+[node name="Camera" type="Camera2D" parent="."]
 ignore_rotation = false
 process_callback = 0
 
-[node name="OptionsCamera" type="Camera2D" parent="."]
-position = Vector2(1984, 0)
-anchor_mode = 0
-ignore_rotation = false
-enabled = false
-
-[node name="SkillsCamera" type="Camera2D" parent="."]
-position = Vector2(0, 1152)
-anchor_mode = 0
-ignore_rotation = false
-enabled = false
-process_callback = 0
-
-[node name="MM_Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_b1kbp")
-bus = &"Music"
-
-[node name="MainMenu" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
-
-[node name="Title" type="TextureRect" parent="MainMenu"]
-material = SubResource("ShaderMaterial_g26pg")
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -960.0
-offset_top = -324.57
-offset_right = 960.0
-offset_bottom = 1283.43
+[node name="FadingImage" type="ColorRect" parent="Camera"]
+z_index = 4096
+anchors_preset = -1
+anchor_left = -0.562
+anchor_top = -0.578
+anchor_right = 0.525
+anchor_bottom = 0.556
+offset_left = -520.0
+offset_top = -312.0
+offset_right = 504.0
+offset_bottom = 312.0
 grow_horizontal = 2
-texture = ExtResource("3_wslbo")
+grow_vertical = 2
+pivot_offset = Vector2(348.5, 213.5)
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
 
-[node name="Animation" type="AnimationPlayer" parent="MainMenu/Title"]
+[node name="FadeAnimation" type="AnimationPlayer" parent="Camera/FadingImage"]
 libraries = {
-&"": SubResource("AnimationLibrary_0bqiu")
+&"": SubResource("AnimationLibrary_n6j81")
 }
-autoplay = "bob"
-playback_default_blend_time = 1.0
 
-[node name="ButtonContainer" type="VBoxContainer" parent="MainMenu"]
-material = SubResource("ShaderMaterial_n6j81")
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -768.0
-offset_top = 228.0
-offset_right = -256.0
-offset_bottom = 484.0
+[node name="SplashMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_mm2qm")
-alignment = 1
 
-[node name="PLAY" type="Button" parent="MainMenu/ButtonContainer"]
-layout_mode = 2
-text = "Play"
-flat = true
-text_overrun_behavior = 1
-script = ExtResource("4_tprer")
+[node name="Title" type="TextureRect" parent="SplashMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -296.0
+offset_top = -240.0
+offset_right = 296.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_wslbo")
 
-[node name="SKILLS" type="Button" parent="MainMenu/ButtonContainer"]
-layout_mode = 2
-text = "Skills"
-flat = true
-script = SubResource("GDScript_ai1e2")
-
-[node name="INDEX" type="Button" parent="MainMenu/ButtonContainer"]
-layout_mode = 2
-text = "Index"
-flat = true
-script = SubResource("GDScript_g26pg")
-
-[node name="OPTIONS" type="Button" parent="MainMenu/ButtonContainer"]
-material = SubResource("ShaderMaterial_8jj6y")
-layout_mode = 2
-text = "Options"
-flat = true
-script = ExtResource("4_tprer")
-
-[node name="QUIT" type="Button" parent="MainMenu/ButtonContainer"]
-layout_mode = 2
-focus_mode = 0
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "Quit"
-flat = true
-script = ExtResource("4_tprer")
-
-[node name="StarTwinkles" type="GPUParticles2D" parent="MainMenu"]
+[node name="StarTwinkles" type="GPUParticles2D" parent="SplashMenu"]
 z_index = -4096
-position = Vector2(384, 376)
+position = Vector2(0, -8)
 amount = 512
 lifetime = 2.0
 randomness = 1.0
 fixed_fps = 144
 visibility_rect = Rect2(-100, -100, 1157.5, 643.5)
 process_material = SubResource("ParticleProcessMaterial_n6j81")
+
+[node name="Container" type="Control" parent="SplashMenu"]
+anchors_preset = 0
+offset_left = -20.0
+offset_top = 72.0
+offset_right = 20.0
+offset_bottom = 112.0
+
+[node name="Label" type="RichTextLabel" parent="SplashMenu/Container"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[i]Press any button."
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Options" type="Control" parent="."]
 layout_mode = 3
@@ -789,6 +1304,7 @@ popup/item_0/id = 0
 [node name="Fade" type="Node" parent="."]
 
 [node name="Black" type="ColorRect" parent="Fade"]
+visible = false
 z_index = 10
 anchors_preset = 15
 anchor_right = 1.0
@@ -807,10 +1323,7 @@ autoplay = "Fade"
 [node name="Environment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5lcc6")
 
-[connection signal="pressed" from="MainMenu/ButtonContainer/PLAY" to="." method="play_pressed"]
-[connection signal="pressed" from="MainMenu/ButtonContainer/SKILLS" to="MainMenu/ButtonContainer/SKILLS" method="on_pressed"]
-[connection signal="pressed" from="MainMenu/ButtonContainer/OPTIONS" to="." method="options_pressed"]
-[connection signal="pressed" from="MainMenu/ButtonContainer/QUIT" to="." method="quit_pressed"]
+[connection signal="pressed" from="BGTexture/MainMenuBase/play" to="BGTexture/MainMenuBase/play" method="_on_pressed"]
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/Music Vol" to="Options/Container/Music Vol" method="_on_value_changed"]

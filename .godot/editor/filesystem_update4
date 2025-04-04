@@ -1,8 +1,3 @@
-res://z_Export/default_bus_layout.tres
 res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
 res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader
 res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
-res://Game Folder/game_assets/Menus/IntroCine/intro_cine.tscn
-res://Game Folder/game_components/button_component/global_button.gd
-res://Game Folder/game_assets/Menus/StageSelect/Base/stage_select.tscn
-res://Game Folder/game_components/global_loading/loading.tscn

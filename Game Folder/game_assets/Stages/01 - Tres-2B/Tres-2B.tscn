@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=19 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="AudioStream" uid="uid://dfcd14lp8fxca" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tres2b.mp3" id="1_n8ym8"]
 [ext_resource type="PackedScene" uid="uid://dfepk5fmqyutd" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn" id="3_uolb2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bf6somwj76fiy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid_belt.tscn" id="6_phsey"]
 [ext_resource type="PackedScene" uid="uid://d2k6dxwe5v7l1" path="res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn" id="7_5fmbx"]
 [ext_resource type="PackedScene" uid="uid://dy2lu7u6xhhkf" path="res://Game Folder/game_assets/Enemies/Tres-2B/SpiralTurret/spiral_turret.tscn" id="8_ketdh"]
+[ext_resource type="Script" uid="uid://cs4mtsd6tqfmw" path="res://Game Folder/game_components/camera_component/Camera/camera_base.gd" id="9_hfr6q"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
@@ -218,10 +219,7 @@ stream = ExtResource("1_n8ym8")
 bus = &"Music"
 
 [node name="CameraPreview" type="Camera2D" parent="."]
-visible = false
 anchor_mode = 0
-enabled = false
-zoom = Vector2(3, 3)
 
 [node name="Navigation Space" parent="." instance=ExtResource("4_nkdvc")]
 visible = false
@@ -1036,6 +1034,13 @@ spawn_time = 169.0
 libraries = {
 &"": SubResource("AnimationLibrary_h17f2")
 }
+
+[node name="juicycamera_component" type="Camera2D" parent="."]
+anchor_mode = 0
+script = ExtResource("9_hfr6q")
+initial_zoom_value = 1.0
+anchor = 0
+metadata/_custom_type_script = "uid://cs4mtsd6tqfmw"
 
 [connection signal="timeout" from="lazer_despawn" to="lazer_despawn" method="_on_timeout"]
 [connection signal="visibility_changed" from="SpiralTurret" to="SpiralTurret" method="_on_visibility_changed"]
