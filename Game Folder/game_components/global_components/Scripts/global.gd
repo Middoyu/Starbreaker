@@ -11,6 +11,7 @@ var boss_healthbar = null
 
 var current_stage = null
 var current_stage_score := 0
+var last_stage_selected = null
 var EntityManager = null
 
 var music_player = null
@@ -27,9 +28,6 @@ var mouse_state_before = null
 var quit_value = 0
 
 var projectile_z_index = 4000
-
-var primary_selection = "Slash"
-var utility_selection = "Zip-Dash"
 
 
 const RELEASE_UI = preload("res://release_ui.tscn")

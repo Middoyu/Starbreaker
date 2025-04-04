@@ -2,3 +2,14 @@ res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn
 res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader
 res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
 res://Game Folder/main_manager.tscn
+res://Game Folder/game_assets/Player/Main/Player.tscn
+res://Game Folder/game_components/shaders/hitflash.tres
+res://Game Folder/game_components/global_components/Scripts/global.gd
+res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn
+res://Game Folder/game_assets/Player/HUD/healthbar.tscn
+res://Game Folder/game_components/camera_component/Camera/camera_base.tscn
+res://Game Folder/game_components/camera_component/Camera/camera_base.gd
+res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn
+res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/GameOver.tscn
+res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
+res://Game Folder/game_assets/Player/Weapons/combo_system.tscn

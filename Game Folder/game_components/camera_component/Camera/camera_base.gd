@@ -16,8 +16,6 @@ func _ready() -> void:
 	events.camera_shake.connect(shake, 1)
 	events.camera_zoom.connect(impact_zoom, 3)
 	events.camera_freezeframe.connect(freezeframe, 2)
-	events.camera_flash.connect(flash, 0)
-	
 	
 	# Sets the global camera to itself.
 	global.camera = self
@@ -83,12 +81,6 @@ func freezeframe(amount, duration):
 	Engine.time_scale = amount
 	await get_tree().create_timer(duration * amount).timeout
 	Engine.time_scale = 1.0
-#endregion
-
-#region Flash
-func flash():
-	if options.screen_flash:
-		$Flash/Flash_Event.play("Flash")
 #endregion
 
 func true_freeze(amount):

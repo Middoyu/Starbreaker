@@ -471,6 +471,7 @@ func _ready() -> void:
 	pivot_offset = size / 2
 
 func _on_pressed() -> void:
+	disabled = true
 	$\"../../../Camera/FadingImage/FadeAnimation\".play(\"Fade\")
 	await $\"../../../Camera/FadingImage/FadeAnimation\".animation_finished
 	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\")
@@ -481,16 +482,19 @@ func _on_pressed() -> void:
 script/source = "extends State
 @onready var fade_animation: AnimationPlayer = $\"../../Camera/FadingImage/FadeAnimation\"
 
-@onready var accepts_input = true
+@onready var accepts_input = false
 
 
 func enter():
 	fade_animation.play_backwards(\"Fade\")
 
 func update(_delta):
-	if Input.is_anything_pressed() and accepts_input:
+	if fade_animation.is_playing():
 		accepts_input = false
-		
+	else:
+		accepts_input = true
+	
+	if Input.is_anything_pressed() and accepts_input:
 		fade_animation.play(\"Fade\")
 		await fade_animation.animation_finished
 		

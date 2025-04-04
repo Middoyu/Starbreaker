@@ -25,7 +25,7 @@ const ENVIORMENT = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/E
 @onready var audio_time = music.get_playback_position()
 
 func _ready() -> void:
-	
+	global.last_stage_selected = \"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\"
 	for x in get_children():
 		if x is Enemy:
 			x.reparent(EntityManager)

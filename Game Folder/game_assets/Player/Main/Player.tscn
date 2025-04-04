@@ -1389,8 +1389,6 @@ const ZIP_DASH = preload(\"res://Game Folder/game_assets/Player/Weapons/utility/
 const SHINE = preload(\"res://Game Folder/game_assets/Player/Weapons/utility/Shine/Shine.tscn\")
 
 func _ready() -> void:
-	primary_firingmode_selection = global.primary_selection
-	utility_selection = global.utility_selection
 	firingmode_selector(primary_firingmode_selection)
 	firingmode_selector(secondary_firingmode_selection)
 	utilitymode_selector()
@@ -1584,6 +1582,9 @@ friction = 127500.0
 
 [node name="Weapon Manager" type="Node" parent="."]
 script = SubResource("GDScript_xpxrt")
+primary_firingmode_selection = "Spray"
+secondary_firingmode_selection = "Shotgun"
+utility_selection = "Zip-Dash"
 
 [node name="ComboSystem" parent="Weapon Manager" instance=ExtResource("10_5ayyr")]
 

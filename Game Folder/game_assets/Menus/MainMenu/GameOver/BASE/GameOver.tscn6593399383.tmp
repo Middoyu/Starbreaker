@@ -1,0 +1,252 @@
+[gd_scene load_steps=14 format=3 uid="uid://c26v2faggef5y"]
+
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_ns363"]
+[ext_resource type="AudioStream" uid="uid://cem4aaklv0lae" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over.mp3" id="1_xouxq"]
+[ext_resource type="Script" uid="uid://cf6o2g72ifmy3" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/final_score.gd" id="2_16vph"]
+[ext_resource type="AudioStream" uid="uid://djpcqt67fwitc" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/Starbreaker - Stage Clear.wav" id="2_xv7wk"]
+[ext_resource type="FontFile" uid="uid://cpqwt7n2r0v1m" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/Pixeloid/ImpactFont.ttf" id="4_hmhld"]
+
+[sub_resource type="GDScript" id="GDScript_83bpk"]
+script/source = "extends Node2D
+@onready var gameover_camera: Camera2D = $GameOver_Camera
+@onready var music = null
+
+@onready var gameover_music: AudioStreamPlayer = $Gameover_Music
+@onready var victory_music: AudioStreamPlayer = $Victory_music
+
+
+@onready var lost_rank_display: RichTextLabel = $GUI_Controller/LostRank_Display
+@onready var lost_score_display: RichTextLabel = $GUI_Controller/LostScore_Display
+
+@onready var tween_timer: Timer = $GUI_Controller/Tween_Timer
+@onready var return_to_mainmenu_button: CustomButton = $GUI_Controller/Return_Button
+@onready var retry_button: Button = $GUI_Controller/Retry_Button
+
+
+func _ready() -> void:
+	events.connect(\"GameOver\", update_display_values, 1)
+	tween_timer.connect(\"timeout\", transition_to_mainmenu)
+	return_to_mainmenu_button.connect(\"pressed\", end_gameover_sequence)
+	retry_button.connect(\"pressed\", retry_sequence)
+	begin_gameover_sequence()
+
+func update_display_values(final_score : int):
+	lost_rank_display.set_text(\"RANK LOST - \" + str(lost_rank_display.update_rank_display(final_score)))
+	lost_score_display.set_text(\"SCORE LOST - \" + str(final_score))
+
+func begin_gameover_sequence():
+	gameover_camera.call(\"tween_camera_upwards\")
+
+func end_gameover_sequence():
+	retry_button.queue_free()
+	return_to_mainmenu_button.queue_free()
+	music.fade()
+	gameover_camera.call(\"tween_camera_downwards\")
+	tween_timer.start(1.0)
+
+func retry_sequence():
+	retry_button.queue_free()
+	return_to_mainmenu_button.queue_free()
+	music.fade()
+	gameover_camera.call(\"tween_camera_downwards\")
+	tween_timer.start(1.0)
+
+func transition_to_mainmenu():
+	if !global.main_manager:
+		printerr(\"Main Manager is not setup, are you playing the scene isolated?\")
+		get_tree().quit()
+		return
+	score_event.score = 0
+	global.main_manager.switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")
+	self.queue_free()
+"
+
+[sub_resource type="GDScript" id="GDScript_jdbvu"]
+script/source = "extends AudioStreamPlayer
+
+func fade():
+	var volume_tween = create_tween().bind_node(self).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	volume_tween.tween_property(self, \"volume_db\", -60.0, 1.0)
+"
+
+[sub_resource type="GDScript" id="GDScript_85053"]
+script/source = "extends AudioStreamPlayer
+
+func fade():
+	var volume_tween = create_tween().bind_node(self).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	volume_tween.tween_property(self, \"volume_db\", -60.0, 1.0)
+"
+
+[sub_resource type="GDScript" id="GDScript_d3b08"]
+script/source = "extends Camera2D
+signal tween_finished
+
+func tween_camera_upwards():
+	var offset_tween = create_tween().bind_node(self).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	offset_tween.tween_property(self, \"offset:y\", 0, 1.0).from(390)
+
+func tween_camera_downwards():
+	var offset_tween = create_tween().bind_node(self).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	offset_tween.tween_property(self, \"offset:y\", 390, 1.0).from(0)
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_lkqe1"]
+font = ExtResource("4_hmhld")
+font_size = 50
+
+[sub_resource type="GDScript" id="GDScript_2sjya"]
+script/source = "extends CustomButton
+"
+
+[sub_resource type="Curve" id="Curve_8tcqj"]
+_limits = [0.0, 1.5, 0.0, 1.0]
+_data = [Vector2(0, 1.5), 0.0, 0.0, 0, 0, Vector2(0.0490798, 1.00303), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Environment" id="Environment_nuskc"]
+background_mode = 3
+ambient_light_source = 1
+reflected_light_source = 1
+glow_enabled = true
+glow_intensity = 0.25
+glow_bloom = 0.05
+glow_blend_mode = 0
+adjustment_enabled = true
+adjustment_saturation = 8.0
+
+[node name="GameOver" type="Node2D"]
+script = SubResource("GDScript_83bpk")
+
+[node name="Gameover_Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_xouxq")
+volume_db = -16.0
+bus = &"Music"
+script = SubResource("GDScript_jdbvu")
+
+[node name="Victory_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_xv7wk")
+volume_db = -16.0
+script = SubResource("GDScript_85053")
+
+[node name="GameOver_Camera" type="Camera2D" parent="."]
+offset = Vector2(0, 390)
+script = SubResource("GDScript_d3b08")
+
+[node name="GUI_Controller" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+theme = ExtResource("1_ns363")
+
+[node name="Text" type="Label" parent="GUI_Controller"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -172.0
+offset_top = -100.0
+offset_right = 172.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(172, 32)
+mouse_filter = 1
+theme_override_font_sizes/font_size = 86
+text = "Game Over"
+label_settings = SubResource("LabelSettings_lkqe1")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Retry_Button" type="Button" parent="GUI_Controller"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -105.0
+offset_top = 95.0
+offset_right = 105.0
+offset_bottom = 126.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "Return To Main Menu"
+script = SubResource("GDScript_2sjya")
+
+[node name="Return_Button" type="Button" parent="GUI_Controller"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -103.5
+offset_top = 95.0
+offset_right = 103.5
+offset_bottom = 126.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "Return To Main Menu"
+script = SubResource("GDScript_2sjya")
+
+[node name="LostRank_Display" type="RichTextLabel" parent="GUI_Controller"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+bbcode_enabled = true
+text = "RANK LOST - NULL"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("2_16vph")
+
+[node name="LostScore_Display" type="RichTextLabel" parent="GUI_Controller"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -114.0
+offset_top = 12.0
+offset_right = 115.0
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+bbcode_enabled = true
+text = "SCORE LOST - NULL"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="Tween_Timer" type="Timer" parent="GUI_Controller"]
+one_shot = true
+
+[node name="Particles" type="CPUParticles2D" parent="GUI_Controller"]
+z_index = -4096
+amount = 618
+lifetime = 15.0
+preprocess = 20.0
+randomness = 1.0
+lifetime_randomness = 1.0
+fixed_fps = 28
+fract_delta = false
+emission_shape = 3
+emission_rect_extents = Vector2(1000, 1000)
+gravity = Vector2(0, 0)
+scale_amount_curve = SubResource("Curve_8tcqj")
+color = Color(0.901961, 1, 0.941176, 0.0235294)
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[node name="Visual Effects" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_nuskc")

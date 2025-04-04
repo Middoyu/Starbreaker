@@ -72,5 +72,5 @@ script = SubResource("GDScript_pam7k")
 
 [node name="Flash_Event" type="AnimationPlayer" parent="Flash"]
 libraries = {
-"": SubResource("AnimationLibrary_erxvi")
+&"": SubResource("AnimationLibrary_erxvi")
 }

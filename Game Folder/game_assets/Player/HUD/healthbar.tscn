@@ -1,6 +1,5 @@
-[gd_scene load_steps=11 format=3 uid="uid://crg4nvhxx414j"]
+[gd_scene load_steps=7 format=3 uid="uid://crg4nvhxx414j"]
 
-[ext_resource type="Shader" uid="uid://qtemwvecpr14" path="res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader" id="1_ihja2"]
 [ext_resource type="Texture2D" uid="uid://bcc15vut0aln7" path="res://Game Folder/game_assets/Player/HUD/hudhp_under.png" id="1_poui2"]
 [ext_resource type="Texture2D" uid="uid://edjqeafbibyh" path="res://Game Folder/game_assets/Player/HUD/hudhp_over.png" id="2_ihja2"]
 [ext_resource type="Texture2D" uid="uid://byd3r2b08il3x" path="res://Game Folder/game_assets/Player/HUD/hudhp_prog.png" id="3_nvu63"]
@@ -14,8 +13,8 @@ script/source = "extends Control
 @export var healthbar_gradient = Gradient.new()
 
 # References UI elements for health text and progress bar.
-@onready var health_progressbar: TextureProgressBar = $ShaderGroup/health_progressbar
-@onready var health_text: RichTextLabel = $ShaderGroup/health_text
+@onready var health_progressbar: TextureProgressBar = $health_progressbar
+@onready var health_text: RichTextLabel = $health_text
 
 
 
@@ -50,28 +49,6 @@ func update_health_text():
 [sub_resource type="Gradient" id="Gradient_poui2"]
 colors = PackedColorArray(1, 0, 0, 1, 0, 1, 1, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nvu63"]
-resource_local_to_scene = true
-shader = ExtResource("1_ihja2")
-shader_parameter/line_colour = Color(0, 1, 1, 1)
-shader_parameter/line_thickness = 4
-
-[sub_resource type="GDScript" id="GDScript_ihja2"]
-script/source = "extends Area2D
-@onready var shader_group: CanvasGroup = $\"../ShaderGroup\"
-@onready var health_progressbar: TextureProgressBar = $\"../ShaderGroup/health_progressbar\"
-@onready var health_text: RichTextLabel = $\"../ShaderGroup/health_text\"
-
-func _process(delta: float) -> void:
-	if get_overlapping_areas():
-		health_progressbar.self_modulate.a = move_toward(shader_group.self_modulate.a, 0, 0.6)
-	else:
-		health_progressbar.self_modulate.a = move_toward(shader_group.self_modulate.a, 255, 0.6)
-"
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ihja2"]
-size = Vector2(202, 102)
-
 [node name="HealthContainter" type="Control"]
 layout_mode = 3
 anchor_left = 0.011
@@ -85,18 +62,15 @@ offset_bottom = -0.16
 script = SubResource("GDScript_ulytf")
 healthbar_gradient = SubResource("Gradient_poui2")
 
-[node name="ShaderGroup" type="CanvasGroup" parent="."]
-material = SubResource("ShaderMaterial_nvu63")
-
-[node name="health_progressbar" type="TextureProgressBar" parent="ShaderGroup"]
+[node name="health_progressbar" type="TextureProgressBar" parent="."]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.002
 anchor_right = 0.087
 anchor_bottom = 0.059
-offset_left = -36.0
-offset_top = -12.0
-offset_right = 128.0
-offset_bottom = 52.0
+offset_left = -0.08448
+offset_right = 160.325
+offset_bottom = 63.0796
 size_flags_horizontal = 0
 size_flags_vertical = 0
 value = 100.0
@@ -105,17 +79,19 @@ texture_under = ExtResource("1_poui2")
 texture_over = ExtResource("2_ihja2")
 texture_progress = ExtResource("3_nvu63")
 
-[node name="health_text" type="RichTextLabel" parent="ShaderGroup"]
+[node name="health_text" type="RichTextLabel" parent="."]
 clip_contents = false
 layout_direction = 1
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.034
 anchor_top = 0.015
 anchor_right = 0.056
 anchor_bottom = 0.044
-offset_left = 26.0
-offset_right = 112.0
-offset_bottom = 77.0
+offset_left = 60.6438
+offset_top = 12.806
+offset_right = 146.644
+offset_bottom = 89.806
 scale = Vector2(0.5, 0.5)
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -133,12 +109,3 @@ shortcut_keys_enabled = false
 horizontal_alignment = 1
 vertical_alignment = 1
 text_direction = 1
-
-[node name="Detection" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 31
-script = SubResource("GDScript_ihja2")
-
-[node name="Collision" type="CollisionShape2D" parent="Detection"]
-position = Vector2(46, 18)
-shape = SubResource("RectangleShape2D_ihja2")
