@@ -17,13 +17,15 @@ func _exit_tree() -> void:
 	global.player_gui = null
 "
 
-[sub_resource type="GDScript" id="GDScript_jyrkl"]
-script/source = "extends Label
+[sub_resource type="GDScript" id="GDScript_i0dof"]
+script/source = "extends ProgressBar
+
 
 
 func _process(delta: float) -> void:
 	if global.player.weapons:
-		text = str(int(global.player.weapons.current_energy))
+		max_value = int(global.player.weapons.max_energy)
+		value = int(global.player.weapons.current_energy)
 "
 
 [node name="HUD" type="CanvasLayer"]
@@ -58,13 +60,14 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
 
-[node name="Energy" type="Label" parent="."]
+[node name="Energybar" type="ProgressBar" parent="."]
+texture_filter = 1
 offset_left = -8.0
-offset_top = 27.0
+offset_top = 28.0
 offset_right = 121.0
-offset_bottom = 37.0
+offset_bottom = 42.0
+mouse_filter = 1
 theme = ExtResource("4_i0dof")
 theme_override_font_sizes/font_size = 10
-text = "100.0"
-horizontal_alignment = 1
-script = SubResource("GDScript_jyrkl")
+value = 50.0
+script = SubResource("GDScript_i0dof")

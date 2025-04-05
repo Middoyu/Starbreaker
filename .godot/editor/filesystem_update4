@@ -8,3 +8,4 @@ res://Game Folder/game_components/entity_components/State Machine/stagemachine_p
 res://Game Folder/game_assets/Player/HUD/hud.tscn
 res://Game Folder/game_assets/Player/HUD/healthbar.tscn
 res://Game Folder/game_assets/Player/Weapons/utility/Shine/Shine.tscn
+res://Game Folder/game_assets/Player/Weapons/combo_system.tscn

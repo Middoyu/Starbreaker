@@ -111,6 +111,7 @@ func exit():
 
 [node name="Zipdash_Manager" type="Node"]
 script = SubResource("GDScript_k1en3")
+energy_cost = 65.0
 
 [node name="ZipDash_Base" type="Node2D" parent="."]
 script = SubResource("GDScript_1vu3n")

@@ -1379,6 +1379,9 @@ var is_all_weapons_actionable = true  # Exported boolean to control whether acti
 @export var max_energy := 100.0
 @onready var current_energy := max_energy
 @export var energy_gain_persecond := 15 / 1.0
+@export var energy_perdamage := 5
+@export var energy_perkill := 10
+
 
 @onready var active_primary_firingmode
 @onready var active_secondary_firingmode
@@ -1400,6 +1403,8 @@ func _ready() -> void:
 	
 	events.connect(\"enemy_damaged\", update_consecutive_hits_counter, 1)
 	events.connect(\"enemy_killed\", update_consecutive_hits_counter, 1)
+	events.connect(\"enemy_damaged\", func(enemy): call(\"update_energy\", energy_perdamage), 1)
+	events.connect(\"enemy_killed\", func(enemy): call(\"update_energy\", energy_perkill), 1)
 	events.connect(\"player_death\", func(damage, hb): is_all_weapons_actionable = false, 2)
 
 func firingmode_selector(firingmode : String):

@@ -1,10 +1,24 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://b1rbffoke0vnr"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://b1rbffoke0vnr"]
 
 [ext_resource type="FontFile" uid="uid://tqmtgudiu7pk" path="res://Game Folder/game_assets/Menus/Themes/TutorialDialogue/Pixeloid/UIFont.ttf" id="1_335fd"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_byjkf"]
+bg_color = Color(0, 0, 0, 0)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x3xe1"]
+bg_color = Color(0, 1, 1, 0.784314)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+anti_aliasing = false
+
 [resource]
 default_font = ExtResource("1_335fd")
-default_font_size = 15
+default_font_size = 10
 Button/colors/font_color = Color(0.875, 0.875, 0.875, 1)
 Button/colors/font_disabled_color = Color(0.875, 0.875, 0.875, 0.5)
 Button/colors/font_focus_color = Color(0.95, 0.95, 0.95, 1)
@@ -25,3 +39,5 @@ Button/constants/outline_size = 0
 Label/colors/font_outline_color = Color(0, 0, 0, 0)
 Label/constants/outline_size = 0
 Label/font_sizes/font_size = 30
+ProgressBar/styles/background = SubResource("StyleBoxFlat_byjkf")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_x3xe1")
