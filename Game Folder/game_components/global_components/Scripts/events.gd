@@ -3,7 +3,7 @@ extends Node
 
 
 #region Player Action/Reaction Signals
-signal charge_updated(new_value)
+signal energy_updated(new_value)
 signal player_damaged(current_health, damage_taken, colliding_hitbox)
 signal player_death(damage_taken, colliding_hitbox)
 signal player_healed(new_value)

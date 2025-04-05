@@ -79,6 +79,7 @@ rounded = true
 texture_under = ExtResource("1_poui2")
 texture_over = ExtResource("2_ihja2")
 texture_progress = ExtResource("3_nvu63")
+texture_progress_offset = Vector2(0, 0.5)
 
 [node name="health_text" type="RichTextLabel" parent="."]
 clip_contents = false

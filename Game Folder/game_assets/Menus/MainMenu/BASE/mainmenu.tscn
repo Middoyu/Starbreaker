@@ -810,7 +810,7 @@ script = SubResource("GDScript_cf4c7")
 position = Vector2(2000, 2000)
 sprite_frames = SubResource("SpriteFrames_166hw")
 autoplay = "default"
-frame_progress = 0.352637
+frame_progress = 0.359092
 speed_scale = 0.5
 
 [node name="BG" type="ColorRect" parent="BGTexture"]

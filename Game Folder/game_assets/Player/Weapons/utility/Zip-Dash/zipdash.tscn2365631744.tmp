@@ -106,6 +106,7 @@ func enter():
 
 
 func exit():
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/utility/Shine/use.mp3\", -12.0, false)
 	parent.is_weapon_actionable = true
 "
 

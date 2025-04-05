@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://5lh8eipbj0c6"]
+[gd_scene load_steps=7 format=3 uid="uid://5lh8eipbj0c6"]
 
 [ext_resource type="PackedScene" uid="uid://bm1xlgxrd1oa0" path="res://release_ui.tscn" id="1_m4w8a"]
 [ext_resource type="PackedScene" uid="uid://crg4nvhxx414j" path="res://Game Folder/game_assets/Player/HUD/healthbar.tscn" id="2_5s35i"]
 [ext_resource type="PackedScene" uid="uid://d4fy5lnqtae8j" path="res://Game Folder/game_assets/Player/HUD/scorebar.tscn" id="2_gjam0"]
+[ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="4_i0dof"]
 
 [sub_resource type="GDScript" id="GDScript_qbaeb"]
 script/source = "extends CanvasLayer
@@ -14,6 +15,15 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	global.player_gui = null
+"
+
+[sub_resource type="GDScript" id="GDScript_jyrkl"]
+script/source = "extends Label
+
+
+func _process(delta: float) -> void:
+	if global.player.weapons:
+		text = str(int(global.player.weapons.current_energy))
 "
 
 [node name="HUD" type="CanvasLayer"]
@@ -47,3 +57,14 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
+
+[node name="Energy" type="Label" parent="."]
+offset_left = -8.0
+offset_top = 27.0
+offset_right = 121.0
+offset_bottom = 37.0
+theme = ExtResource("4_i0dof")
+theme_override_font_sizes/font_size = 10
+text = "100.0"
+horizontal_alignment = 1
+script = SubResource("GDScript_jyrkl")

@@ -1447,8 +1447,9 @@ func utilitymode_selector():
 
 func _physics_process(delta: float) -> void:
 	input_code(delta)
+	
 	update_energy(15 * delta)
-
+	
 
 ## Charge Mechanics
 func update_energy(new_value : float):

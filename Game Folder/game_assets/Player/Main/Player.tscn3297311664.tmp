@@ -1378,7 +1378,7 @@ var is_all_weapons_actionable = true  # Exported boolean to control whether acti
 
 @export var max_energy := 100.0
 @onready var current_energy := max_energy
-@export var energy_gain_persecond := 15 / 1.0
+@export var energy_gain_persecond := 15
 
 @onready var active_primary_firingmode
 @onready var active_secondary_firingmode
@@ -1447,8 +1447,9 @@ func utilitymode_selector():
 
 func _physics_process(delta: float) -> void:
 	input_code(delta)
+	
 	update_energy(15 * delta)
-
+	
 
 ## Charge Mechanics
 func update_energy(new_value : float):

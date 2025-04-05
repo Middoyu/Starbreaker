@@ -1,6 +1,7 @@
+Label
+Timer
 CollisionShape2D
 Area2D
-Label
 Button
 RichTextLabel
 Control
@@ -11,5 +12,3 @@ DirectionalLight3D
 SubViewportContainer
 Camera2D
 SubViewport
-CSGSphere3D
-OmniLight3D

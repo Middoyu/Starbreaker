@@ -20,7 +20,6 @@ script/source = "extends Weapon
 
 func action():
 	if global.player.weapons.current_energy >= energy_cost:
-		global.player.weapons.update_energy(-energy_cost)
 		is_weapon_actionable = false
 		idle.action()
 "
@@ -106,6 +105,7 @@ func enter():
 
 
 func exit():
+	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/utility/Shine/use.mp3\", -12.0, false)
 	parent.is_weapon_actionable = true
 "
 

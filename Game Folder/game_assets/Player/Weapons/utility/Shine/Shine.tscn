@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dqvkw1ec1myhv"]
+[gd_scene load_steps=8 format=3 uid="uid://dqvkw1ec1myhv"]
 
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="1_dsjbk"]
 
@@ -10,14 +10,15 @@ script/source = "extends Weapon
 @onready var hitbox: Area2D = $Shine_Base/HitboxComponent
 @onready var shine_base: Node2D = $Shine_Base
 
-@export_range(1, 15) var tier = 0
-@onready var defeats_for_refund = 0
-
 @export var shine_multiplier = 0
 
+@export var energy_cost = 25.0
+
 func action():
-	is_weapon_actionable = false
-	idle.action()
+	if global.player.weapons.current_energy >= energy_cost:
+		global.player.weapons.update_energy(-energy_cost)
+		is_weapon_actionable = false
+		idle.action()
 
 func hitbox_areaentered(area: Area2D) -> void:
 	if area is HitboxComponent and area.get_parent() is Projectile:
@@ -82,29 +83,13 @@ func enter():
 	
 	
 	await get_tree().create_timer(0.50, false, true, false).timeout
-	Transistioned.emit(self, \"COOLDOWN\")
+	Transistioned.emit(self, \"IDLE\")
 
 func exit():
 	$\"../../Shine_Base/PH_Rect\".hide()
 	parent.hitbox.is_disabled = true
 	global.player.i_frames.invincibility_override = false
 	global.player.i_frames.invincibility_timer.start(0.15)
-"
-
-[sub_resource type="GDScript" id="GDScript_dsjbk"]
-script/source = "extends State
-
-func enter():
-	events.connect(\"enemy_killed\", refund, 1)
-
-func refund(_enemy):
-	parent.defeats_for_refund += 1
-	if parent.defeats_for_refund >= parent.tier:
-		parent.defeats_for_refund = 0
-		Transistioned.emit(self, \"IDLE\")
-
-func exit():
-	events.disconnect(\"enemy_killed\", refund)
 	parent.is_weapon_actionable = true
 "
 
@@ -143,11 +128,6 @@ metadata/_custom_type_script = "uid://dmgbhcexe6fw"
 
 [node name="ACTIVE" type="Node" parent="Shine_StateMachine" node_paths=PackedStringArray("parent")]
 script = SubResource("GDScript_vuw3n")
-parent = NodePath("../..")
-metadata/_custom_type_script = "uid://dmgbhcexe6fw"
-
-[node name="COOLDOWN" type="Node" parent="Shine_StateMachine" node_paths=PackedStringArray("parent")]
-script = SubResource("GDScript_dsjbk")
 parent = NodePath("../..")
 metadata/_custom_type_script = "uid://dmgbhcexe6fw"
 
