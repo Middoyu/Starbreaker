@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://j8na7wf2jjuj"]
+
+[sub_resource type="Curve2D" id="Curve2D_31y6v"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 640, 360, -571.661, 116.252, 571.661, -116.252, 320, 192, 0, 0, 0, 0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="GDScript" id="GDScript_mw0be"]
+script/source = "extends Path2D
+const ASETROID = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/asetroid.tscn\")
+@export var spawn_time = 0.0
+@export var amount := 0
+@export var speed_multiplier := 0.0
+
+
+func appear(audio_time):
+	audio_time = snappedf(audio_time, 0.1)
+	if audio_time == spawn_time:
+		show()
+		process_mode = ProcessMode.PROCESS_MODE_INHERIT
+
+func _ready() -> void:
+	hide()
+	process_mode = ProcessMode.PROCESS_MODE_DISABLED
+	events.connect(\"stage_time\", appear, 1)
+	
+	for c in range(amount):
+		
+		var x = PathFollow2D.new()
+		
+		var i = ASETROID.instantiate()
+		i.global_position = self.global_position
+		
+		await get_tree().create_timer(randf_range(0.2 * speed_multiplier, 0.55 * speed_multiplier), false, true).timeout
+		self.add_child(x)
+		x.add_child(i, true)
+"
+
+[node name="pathed_asetroid_belt" type="Path2D"]
+curve = SubResource("Curve2D_31y6v")
+script = SubResource("GDScript_mw0be")
+
+[node name="Line" type="Line2D" parent="."]

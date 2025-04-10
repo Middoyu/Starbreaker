@@ -25,7 +25,7 @@ func _ready() -> void:
 	# Connects event signals to update the health UI when the player takes damage or gets healed.
 	events.connect(\"player_damaged\", func(current_health, damage_taken, colliding_hitbox): update_health_text(), 3)
 	events.connect(\"player_death\", func(damage_taken, colliding_hitbox): update_health_text(), 2)
-	events.connect(\"player_healed\", update_health_text, 1)
+	events.connect(\"player_healed\", func(new_value): update_health_text(), 1)
 
 # Updates the health text display with color and shaking effect at low health.
 func update_health_text():

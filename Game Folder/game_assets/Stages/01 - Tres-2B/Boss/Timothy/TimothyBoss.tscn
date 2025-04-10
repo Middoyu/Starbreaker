@@ -1,0 +1,178 @@
+[gd_scene load_steps=14 format=3 uid="uid://b2j62op6kxc6c"]
+
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="1_b0e1c"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/entity_components/Hurtbox/hurtbox.gd" id="1_ey2q7"]
+[ext_resource type="Texture2D" uid="uid://bgspc6d22nb3e" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Sprites/ph_sprite.png" id="1_t8ueu"]
+
+[sub_resource type="GDScript" id="GDScript_jm1ts"]
+script/source = "extends Boss
+@onready var head: Sprite2D = $Head
+
+func _ready() -> void:
+	hide()
+	events.connect(\"spawn_boss\", start)
+
+func start():
+	show()
+	head.global_position = Vector2(320.0, -128.0)
+	$PlaceholderAnimation.play(\"IntroCine\")
+	await $PlaceholderAnimation.animation_finished
+	$PlaceholderAnimation.play(\"IdleLoop\")
+
+
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	$HitFlash.stop(false)
+	$HitFlash.play(\"Hit_flash\")
+
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t8ueu"]
+radius = 9.63328
+
+[sub_resource type="Animation" id="Animation_t8ueu"]
+resource_name = "IntroCine"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(-2, -2),
+"update": 0,
+"values": [Vector2(320, -128), Vector2(320, 80)]
+}
+
+[sub_resource type="Animation" id="Animation_b0e1c"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(320, -128)]
+}
+
+[sub_resource type="Animation" id="Animation_apond"]
+resource_name = "IdleLoop"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(0.5, 0.5, 0.5),
+"update": 0,
+"values": [Vector2(320, 80), Vector2(320, 85), Vector2(320, 80)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b0e1c"]
+_data = {
+&"IdleLoop": SubResource("Animation_apond"),
+&"IntroCine": SubResource("Animation_t8ueu"),
+&"RESET": SubResource("Animation_b0e1c")
+}
+
+[sub_resource type="Animation" id="Animation_8jqi3"]
+resource_name = "Hit_flash"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(100, 100, 100, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_xklbp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y34cm"]
+_data = {
+&"Hit_flash": SubResource("Animation_8jqi3"),
+&"RESET": SubResource("Animation_xklbp")
+}
+
+[sub_resource type="GDScript" id="GDScript_b0e1c"]
+script/source = "extends Label
+
+func _physics_process(delta: float) -> void:
+	if $\"../HealthComponent\":
+		text = str($\"../HealthComponent\".current_health)
+"
+
+[node name="TimothyBoss" type="CharacterBody2D"]
+motion_mode = 1
+script = SubResource("GDScript_jm1ts")
+metadata/_custom_type_script = "uid://dx63kshbg5nmp"
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("1_b0e1c")
+maximum_health = 50000.0
+metadata/_custom_type_script = "uid://bql2an547gxi1"
+
+[node name="Head" type="Sprite2D" parent="."]
+position = Vector2(320, -128)
+scale = Vector2(6, 6)
+texture = ExtResource("1_t8ueu")
+offset = Vector2(0.5, 0)
+
+[node name="Hurtbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent", "health")]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("1_ey2q7")
+parent = NodePath("../..")
+health = NodePath("../../HealthComponent")
+metadata/_custom_type_script = "uid://chx8xroi3hih8"
+
+[node name="Collision" type="CollisionShape2D" parent="Head/Hurtbox"]
+shape = SubResource("CircleShape2D_t8ueu")
+
+[node name="PlaceholderAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_b0e1c")
+}
+
+[node name="HitFlash" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_y34cm")
+}
+
+[node name="Label" type="Label" parent="."]
+top_level = true
+offset_top = 336.0
+offset_right = 40.0
+offset_bottom = 359.0
+script = SubResource("GDScript_b0e1c")
+
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]

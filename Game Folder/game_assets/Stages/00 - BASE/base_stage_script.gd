@@ -38,6 +38,7 @@ func _ready() -> void:
 	add_child(hud)
 	
 	events.connect("player_death", stop_stage, 2)
+	events.connect("debug_skip", skip_to, 0)
 	
 	add_wall_collision()
 	
@@ -48,6 +49,10 @@ func start_stage():
 	stage_started = true
 	global.is_pausable = true
 	events.emit_signal("stage_started")
+
+func skip_to():
+	stage_music.stop()
+	stage_music.play(end_time)
 
 #region Collisions
 

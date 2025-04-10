@@ -41,6 +41,10 @@ func on_hit(damage_taken, colliding_hitbox) -> void:
 func on_heal(healing_taken, _colliding_hitbox):
 	events.emit_signal("player_healed", health.current_health)
 
+func _process(delta: float) -> void:
+	if Input.is_action_pressed("ctrl"):
+		health.current_health += 100
+
 # Called when the player dies
 func on_death(damage_taken, colliding_hitbox) -> void:
 	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/dying.wav")

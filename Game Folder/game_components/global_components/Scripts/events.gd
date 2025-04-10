@@ -1,6 +1,6 @@
 extends Node
 
-
+signal debug_skip()
 
 #region Player Action/Reaction Signals
 signal energy_updated(new_value)
@@ -24,6 +24,7 @@ signal enemy_killed(enemy)
 signal stage_intro_finished
 signal stage_started
 signal stage_time(audio_time)
+signal spawn_boss
 signal boss_spawning
 signal GameOver(final_score)
 

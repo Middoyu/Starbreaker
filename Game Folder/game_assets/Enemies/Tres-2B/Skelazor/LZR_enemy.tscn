@@ -54,6 +54,16 @@ func _ready() -> void:
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_g3l1p"]
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yxefw"]
+offset = Vector3(88.24, 0, 0)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ae8fw"]
+width = 1
+height = 1
+seamless = true
+seamless_blend_skirt = 0.0
+noise = SubResource("FastNoiseLite_yxefw")
+
 [sub_resource type="Curve" id="Curve_ukf7m"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
@@ -89,16 +99,6 @@ alpha_curve = SubResource("CurveTexture_2syoo")
 hue_variation_min = -0.01
 hue_variation_max = 0.00999998
 turbulence_enabled = true
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_yxefw"]
-offset = Vector3(88.24, 0, 0)
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ae8fw"]
-width = 1
-height = 1
-seamless = true
-seamless_blend_skirt = 0.0
-noise = SubResource("FastNoiseLite_yxefw")
 
 [sub_resource type="GDScript" id="GDScript_i8l3u"]
 script/source = "extends GPUParticles2D
@@ -2428,9 +2428,9 @@ disabled = true
 material = SubResource("CanvasItemMaterial_g3l1p")
 emitting = false
 amount = 250
-process_material = SubResource("ParticleProcessMaterial_7nxwg")
 texture = SubResource("NoiseTexture2D_ae8fw")
 trail_lifetime = 0.1
+process_material = SubResource("ParticleProcessMaterial_7nxwg")
 script = SubResource("GDScript_i8l3u")
 
 [node name="HurtboxComponent" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"] instance=ExtResource("2_1smco")]
@@ -2492,7 +2492,7 @@ sprite = NodePath("../../spr")
 
 [node name="spin_animation" type="AnimationPlayer" parent="StateMachine/hit"]
 libraries = {
-"": SubResource("AnimationLibrary_rc546")
+&"": SubResource("AnimationLibrary_rc546")
 }
 playback_auto_capture_transition_type = 6
 playback_auto_capture_ease_type = 2

@@ -1,7 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://k0rog1tlg78y"]
+[gd_scene load_steps=27 format=3 uid="uid://k0rog1tlg78y"]
 
 [ext_resource type="AudioStream" uid="uid://dfcd14lp8fxca" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Music/tres2b.mp3" id="1_n8ym8"]
+[ext_resource type="PackedScene" uid="uid://j8na7wf2jjuj" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/pathed_asetroid_belt.tscn" id="3_m84e1"]
 [ext_resource type="PackedScene" uid="uid://dfepk5fmqyutd" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn" id="3_uolb2"]
+[ext_resource type="PackedScene" uid="uid://bpcrg0v37qi1y" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Obstacles/pathed_asetroid_belt_sect2.tscn" id="4_m0mlg"]
 [ext_resource type="PackedScene" uid="uid://ccyfgaostrrk4" path="res://Game Folder/game_assets/Stages/00 - BASE/navigation_space.tscn" id="4_nkdvc"]
 [ext_resource type="PackedScene" uid="uid://bmehsjqlfnqij" path="res://Game Folder/game_assets/Enemies/Tres-2B/Trishooter/trishooter.tscn" id="4_t7q6j"]
 [ext_resource type="PackedScene" uid="uid://2kuv342uj1hh" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn" id="5_hpkel"]
@@ -9,11 +11,11 @@
 [ext_resource type="PackedScene" uid="uid://d2k6dxwe5v7l1" path="res://Game Folder/game_assets/Enemies/Tres-2B/Cosma-Turret/cosmaturret.tscn" id="7_5fmbx"]
 [ext_resource type="PackedScene" uid="uid://dy2lu7u6xhhkf" path="res://Game Folder/game_assets/Enemies/Tres-2B/SpiralTurret/spiral_turret.tscn" id="8_ketdh"]
 [ext_resource type="Script" uid="uid://cs4mtsd6tqfmw" path="res://Game Folder/game_components/camera_component/Camera/camera_base.gd" id="9_hfr6q"]
+[ext_resource type="PackedScene" uid="uid://cx7cxq8yx4ssa" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Items/HealthBox.tscn" id="12_m22cc"]
+[ext_resource type="PackedScene" uid="uid://b2j62op6kxc6c" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/TimothyBoss.tscn" id="13_mx8f8"]
 
 [sub_resource type="GDScript" id="GDScript_sy80a"]
 script/source = "extends StageBase
-
-
 
 # Stage-specific Additions #
 const TUTORIAL_SKELESHOT = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/TutorialEnemy/Tutorial_Skeleshot.tscn\")
@@ -81,14 +83,95 @@ func _process(delta: float) -> void:
 	events.emit_signal(\"stage_time\", audio_time)
 	if snappedf(audio_time, 0.1) == 192.0:
 		global.clear_enemies()
-	if snappedf(audio_time, 0.1) == end_time:
-		global.main_manager.gameover_sequence(false)
+	if snappedf(audio_time, 0.1) == end_time and $BossIntroSequence.is_playing() == false:
+		$BossIntroSequence.play(\"intro\")
+		await $BossIntroSequence.animation_finished
+		$BossIntroSequence.play(\"loop\")
 
 func enter_nullspace():
 	# Play Nullspace music.
 	# Spawn Blackhole with debre 
 	pass
 "
+
+[sub_resource type="Animation" id="Animation_m0mlg"]
+resource_name = "intro"
+length = 3.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HealthBox:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3.5),
+"transitions": PackedFloat32Array(1, -2),
+"update": 0,
+"values": [Vector2(319.966, -128.085), Vector2(320, 90)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HealthBox:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_m22cc"]
+resource_name = "loop"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HealthBox:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(320, 90), Vector2(320, 95), Vector2(320, 90), Vector2(320, 85)]
+}
+
+[sub_resource type="Animation" id="Animation_mx8f8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HealthBox:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(319.966, -128.085)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HealthBox:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m22cc"]
+_data = {
+&"RESET": SubResource("Animation_mx8f8"),
+&"intro": SubResource("Animation_m0mlg"),
+&"loop": SubResource("Animation_m22cc")
+}
 
 [sub_resource type="GDScript" id="GDScript_ckhcj"]
 script/source = "extends Label
@@ -206,6 +289,16 @@ script = SubResource("GDScript_sy80a")
 end_time = 196.0
 stage_music = NodePath("Music")
 
+[node name="HealthBox" parent="." instance=ExtResource("12_m22cc")]
+visible = false
+position = Vector2(319.966, -128.085)
+
+[node name="BossIntroSequence" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_m22cc")
+}
+autoplay = "RESET"
+
 [node name="TimeDisplay" type="Label" parent="."]
 visible = false
 offset_left = 600.028
@@ -223,6 +316,19 @@ anchor_mode = 0
 
 [node name="Navigation Space" parent="." instance=ExtResource("4_nkdvc")]
 visible = false
+
+[node name="pathed_asetroid_belt" parent="." instance=ExtResource("3_m84e1")]
+visible = false
+spawn_time = 41.0
+amount = 15
+speed_multiplier = 1.0
+
+[node name="pathed_asetroid_belt2" parent="." instance=ExtResource("4_m0mlg")]
+visible = false
+position = Vector2(-1.52588e-05, 0)
+spawn_time = 170.0
+amount = 100
+spawning_interval = 0.2
 
 [node name="Enemy" parent="." instance=ExtResource("3_uolb2")]
 visible = false
@@ -1041,6 +1147,8 @@ script = ExtResource("9_hfr6q")
 initial_zoom_value = 1.0
 anchor = 0
 metadata/_custom_type_script = "uid://cs4mtsd6tqfmw"
+
+[node name="TimothyBoss" parent="." instance=ExtResource("13_mx8f8")]
 
 [connection signal="timeout" from="lazer_despawn" to="lazer_despawn" method="_on_timeout"]
 [connection signal="visibility_changed" from="SpiralTurret" to="SpiralTurret" method="_on_visibility_changed"]

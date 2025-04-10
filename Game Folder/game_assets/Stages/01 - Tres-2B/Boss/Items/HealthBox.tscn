@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://cx7cxq8yx4ssa"]
+
+[ext_resource type="Texture2D" uid="uid://dwysrbybeu02u" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Items/placeholder_medkit.png" id="1_pkx7f"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="2_pkx7f"]
+
+[sub_resource type="GDScript" id="GDScript_bvu8h"]
+script/source = "extends Entity
+
+
+func area_entered(area: Area2D) -> void:
+	if area.get_parent() is Player:
+		global.player.health.modify_health(100)
+		events.emit_signal(\"spawn_boss\")
+		queue_free()
+"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bvu8h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_pkx7f")
+}],
+"loop": true,
+"name": &"default",
+"speed": 60.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pkx7f"]
+radius = 24.0
+
+[node name="HealthBox" type="CharacterBody2D"]
+motion_mode = 1
+script = SubResource("GDScript_bvu8h")
+metadata/_custom_type_script = "uid://dmakga811ff2w"
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_bvu8h")
+autoplay = "default"
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("2_pkx7f")
+parent = NodePath("..")
+metadata/_custom_type_script = "uid://ucfty02weqo2"
+
+[node name="Collision" type="CollisionShape2D" parent="HitboxComponent"]
+process_priority = 5
+shape = SubResource("CircleShape2D_pkx7f")
+
+[connection signal="area_entered" from="HitboxComponent" to="." method="area_entered"]
