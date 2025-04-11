@@ -1,23 +1,30 @@
-[gd_scene load_steps=14 format=3 uid="uid://b2j62op6kxc6c"]
+[gd_scene load_steps=16 format=3 uid="uid://b2j62op6kxc6c"]
 
 [ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="1_b0e1c"]
 [ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/entity_components/Hurtbox/hurtbox.gd" id="1_ey2q7"]
 [ext_resource type="Texture2D" uid="uid://bgspc6d22nb3e" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Sprites/ph_sprite.png" id="1_t8ueu"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_8jqi3"]
 
 [sub_resource type="GDScript" id="GDScript_jm1ts"]
 script/source = "extends Boss
 @onready var head: Sprite2D = $Head
+@onready var hurtbox_list = [$Head/Hurtbox]
+
 
 func _ready() -> void:
 	hide()
+	for i in hurtbox_list:
+		i.is_disabled = true
 	events.connect(\"spawn_boss\", start)
 
 func start():
 	show()
-	head.global_position = Vector2(320.0, -128.0)
+	global_position = Vector2(320.0, -128.0)
 	$PlaceholderAnimation.play(\"IntroCine\")
+	$StateMachine/intro.start()
 	await $PlaceholderAnimation.animation_finished
-	$PlaceholderAnimation.play(\"IdleLoop\")
+	for i in hurtbox_list:
+		i.is_disabled = false
 
 
 func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
@@ -29,61 +36,7 @@ func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 "
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t8ueu"]
-radius = 9.63328
-
-[sub_resource type="Animation" id="Animation_t8ueu"]
-resource_name = "IntroCine"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Head:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(-2, -2),
-"update": 0,
-"values": [Vector2(320, -128), Vector2(320, 80)]
-}
-
-[sub_resource type="Animation" id="Animation_b0e1c"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Head:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(320, -128)]
-}
-
-[sub_resource type="Animation" id="Animation_apond"]
-resource_name = "IdleLoop"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Head:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 2),
-"transitions": PackedFloat32Array(0.5, 0.5, 0.5),
-"update": 0,
-"values": [Vector2(320, 80), Vector2(320, 85), Vector2(320, 80)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_b0e1c"]
-_data = {
-&"IdleLoop": SubResource("Animation_apond"),
-&"IntroCine": SubResource("Animation_t8ueu"),
-&"RESET": SubResource("Animation_b0e1c")
-}
+radius = 8.0
 
 [sub_resource type="Animation" id="Animation_8jqi3"]
 resource_name = "Hit_flash"
@@ -130,6 +83,65 @@ func _physics_process(delta: float) -> void:
 		text = str($\"../HealthComponent\".current_health)
 "
 
+[sub_resource type="GDScript" id="GDScript_f4y6k"]
+script/source = "extends State
+
+
+func start():
+	await get_tree().create_timer(1.0).timeout
+	Transistioned.emit(self, $\"../Idle\".name)
+"
+
+[sub_resource type="GDScript" id="GDScript_y34cm"]
+script/source = "extends State
+@export var min_movement_interval := 2.5
+@export var max_movement_interval := 3.5
+
+@onready var attack_list = [$\"../chase\"]
+var previous_attack = null
+
+func enter():
+	$\"../../PlaceholderAnimation\".play(\"IdleLoop\")
+	var selected_attack = attack_list.pick_random()
+	if selected_attack == previous_attack:
+		selected_attack = attack_list.pick_random()
+	var movement_interval = randf_range(min_movement_interval, max_movement_interval)
+	await get_tree().create_timer(movement_interval).timeout
+	Transistioned.emit(self, selected_attack.name)
+	selected_attack = previous_attack
+
+func exit():
+	$\"../../PlaceholderAnimation\".stop()
+"
+
+[sub_resource type="GDScript" id="GDScript_apond"]
+script/source = "extends State
+
+@export var movement_speed = 100.0
+
+func enter():
+	print(\"chase\")
+
+func physics_update(_delta):
+	var head_parent = $\"../..\" as Boss
+	head_parent.velocity = head_parent.get_player_vector() * movement_speed
+	head_parent.move_and_slide()
+"
+
+[sub_resource type="GDScript" id="GDScript_8jqi3"]
+script/source = "extends State
+
+func enter():
+	print(\"dash\")
+"
+
+[sub_resource type="GDScript" id="GDScript_xklbp"]
+script/source = "extends State
+
+func enter():
+	print(\"hand_shoot\")
+"
+
 [node name="TimothyBoss" type="CharacterBody2D"]
 motion_mode = 1
 script = SubResource("GDScript_jm1ts")
@@ -141,7 +153,6 @@ maximum_health = 50000.0
 metadata/_custom_type_script = "uid://bql2an547gxi1"
 
 [node name="Head" type="Sprite2D" parent="."]
-position = Vector2(320, -128)
 scale = Vector2(6, 6)
 texture = ExtResource("1_t8ueu")
 offset = Vector2(0.5, 0)
@@ -157,11 +168,6 @@ metadata/_custom_type_script = "uid://chx8xroi3hih8"
 [node name="Collision" type="CollisionShape2D" parent="Head/Hurtbox"]
 shape = SubResource("CircleShape2D_t8ueu")
 
-[node name="PlaceholderAnimation" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_b0e1c")
-}
-
 [node name="HitFlash" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_y34cm")
@@ -173,6 +179,32 @@ offset_top = 336.0
 offset_right = 40.0
 offset_bottom = 359.0
 script = SubResource("GDScript_b0e1c")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("4_8jqi3")]
+parent = NodePath("..")
+intial_state = NodePath("intro")
+
+[node name="intro" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_f4y6k")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_y34cm")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_apond")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="dash" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_8jqi3")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="hand_shoot" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_xklbp")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
 
 [connection signal="death" from="HealthComponent" to="." method="on_death"]
 [connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]
