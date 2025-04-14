@@ -61,6 +61,7 @@ folder_colors={
 "res://Game Folder/game_assets/Menus/SFX/": "blue",
 "res://Game Folder/game_assets/Menus/Themes/": "purple",
 "res://Game Folder/game_assets/Player/": "blue",
+"res://Game Folder/game_assets/Shaders/": "purple",
 "res://Game Folder/game_assets/Stages/": "green",
 "res://z_Export/": "gray"
 }

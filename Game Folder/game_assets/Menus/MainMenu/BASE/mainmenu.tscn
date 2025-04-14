@@ -1327,6 +1327,8 @@ autoplay = "Fade"
 [node name="Environment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5lcc6")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
 [connection signal="pressed" from="BGTexture/MainMenuBase/play" to="BGTexture/MainMenuBase/play" method="_on_pressed"]
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]

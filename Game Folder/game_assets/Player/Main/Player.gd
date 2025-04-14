@@ -27,6 +27,8 @@ func setup_player():
 func on_hit(damage_taken, colliding_hitbox) -> void:
 	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav")
 	
+	print(colliding_hitbox.parent)
+	
 	events.emit_signal("player_damaged", health.current_health, damage_taken, colliding_hitbox)
 	# Emit a signal for player damage, passing current health, damage taken, and the hitbox that caused the damage
 	

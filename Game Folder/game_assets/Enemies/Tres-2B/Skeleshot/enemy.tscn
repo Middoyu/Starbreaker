@@ -1,15 +1,25 @@
-[gd_scene load_steps=219 format=3 uid="uid://dfepk5fmqyutd"]
+[gd_scene load_steps=223 format=3 uid="uid://dfepk5fmqyutd"]
 
+[ext_resource type="Shader" uid="uid://cjm05nxttppew" path="res://Game Folder/game_assets/Shaders/shockwave.gdshader" id="1_hygbs"]
 [ext_resource type="Script" uid="uid://bpf2md5esgawm" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.gd" id="1_t7cul"]
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/death.png" id="2_3ivxn"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_lgqps"]
 [ext_resource type="Texture2D" uid="uid://0giwyh1og78x" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/hit.png" id="2_vrino"]
+[ext_resource type="Script" uid="uid://8a1bfnc6r587" path="res://Game Folder/game_components/shader_components/hitflash_component.gd" id="3_ehvip"]
 [ext_resource type="Texture2D" uid="uid://cipnnf6ne6or4" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/spawn.png" id="3_kvhsi"]
+[ext_resource type="Script" uid="uid://dnnwhodvhbhrg" path="res://Game Folder/game_components/shader_components/shockwave_component.gd" id="4_mgxmf"]
 [ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/entity_components/Hurtbox/hurtbox.gd" id="5_alwm2"]
 [ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="6_w1j0l"]
 [ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="8_ueg8n"]
 [ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/entity_components/Knockback/knockback.gd" id="9_sjgo5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f1ahw"]
+shader = ExtResource("1_hygbs")
+shader_parameter/center = Vector2(0.5, 0.5)
+shader_parameter/force = 0.0
+shader_parameter/size = -3.2
+shader_parameter/thickness = 1.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 
@@ -1541,12 +1551,22 @@ func physics_update(_delta):
 "
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
+material = SubResource("ShaderMaterial_f1ahw")
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_t7cul")
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_ueg8n")
+
+[node name="HitFlashComponent" type="Node" parent="." node_paths=PackedStringArray("target", "health_component")]
+script = ExtResource("3_ehvip")
+target = NodePath("..")
+health_component = NodePath("../HealthComponent")
+metadata/_custom_type_script = "uid://8a1bfnc6r587"
+
+[node name="ShockwaveComponent" type="Node" parent="."]
+script = ExtResource("4_mgxmf")
 
 [node name="KnockbackComponent" type="Node2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("9_sjgo5")
@@ -1558,6 +1578,7 @@ shape = SubResource("CircleShape2D_3n1ei")
 disabled = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+use_parent_material = true
 sprite_frames = SubResource("SpriteFrames_bk3gu")
 animation = &"spawn"
 autoplay = "chase"

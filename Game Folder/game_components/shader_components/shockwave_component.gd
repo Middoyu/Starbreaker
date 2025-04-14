@@ -1,0 +1,2 @@
+extends Node
+class_name shockwave_component
