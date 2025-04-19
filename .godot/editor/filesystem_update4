@@ -3,9 +3,4 @@ res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres
 res://Game Folder/game_assets/Player/HUD/outlinecanvaslayer.gdshader
 res://Game Folder/game_assets/Shaders/flashshader.gdshader
 res://Game Folder/game_assets/Shaders/shockwave.gdshader
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/TimothyBoss.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Items/HealthBox.tscn
-res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn
-res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Bullet/tim_bullet.tscn
-res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn
 res://Game Folder/game_assets/Player/Main/Player.tscn

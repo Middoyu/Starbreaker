@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c26v2faggef5y"]
+[gd_scene load_steps=15 format=3 uid="uid://c26v2faggef5y"]
 
 [ext_resource type="Theme" uid="uid://b1rbffoke0vnr" path="res://Game Folder/game_assets/Menus/Themes/MenuUI_Theme.tres" id="1_ns363"]
 [ext_resource type="AudioStream" uid="uid://cem4aaklv0lae" path="res://Game Folder/game_assets/Menus/MainMenu/GameOver/BASE/starbreaker - game over.mp3" id="1_xouxq"]
@@ -103,6 +103,16 @@ func tween_camera_downwards():
 	offset_tween.tween_property(self, \"offset:y\", 390, 1.0).from(0)
 "
 
+[sub_resource type="GDScript" id="GDScript_l4yif"]
+script/source = "extends Label
+
+func _process(delta: float) -> void:
+	if global.main_manager.is_no_hit:
+		show()
+	else:
+		hide()
+"
+
 [sub_resource type="LabelSettings" id="LabelSettings_lkqe1"]
 font = ExtResource("4_hmhld")
 font_size = 50
@@ -149,6 +159,15 @@ script = SubResource("GDScript_d3b08")
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("1_ns363")
+
+[node name="Label" type="Label" parent="GUI_Controller"]
+layout_mode = 0
+offset_left = -105.0
+offset_top = -130.0
+offset_right = 95.0
+offset_bottom = -90.0
+text = " ☆ NO HIT! ☆"
+script = SubResource("GDScript_l4yif")
 
 [node name="Text" type="Label" parent="GUI_Controller"]
 layout_mode = 1

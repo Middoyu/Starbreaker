@@ -12,6 +12,17 @@
 [ext_resource type="Script" uid="uid://cnrlid6cwjxj6" path="res://Game Folder/game_assets/Player/Crosshair/Crosshair.gd" id="8_oo2xt"]
 [ext_resource type="PackedScene" uid="uid://deqlsf3ha0ly2" path="res://Game Folder/game_assets/Player/Weapons/combo_system.tscn" id="10_5ayyr"]
 
+[sub_resource type="GDScript" id="GDScript_u1yyx"]
+script/source = "extends HurtboxComponent
+
+func _ready() -> void:
+	super()
+	events.connect(\"player_death\", func(damage_taken, colliding_hitbox): is_disabled = true, 2)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
+radius = 1.0
+
 [sub_resource type="Animation" id="Animation_k4rei"]
 length = 0.001
 tracks/0/type = "value"
@@ -1302,17 +1313,6 @@ turbulence_enabled = true
 [sub_resource type="CircleShape2D" id="CircleShape2D_23pmm"]
 radius = 12.0
 
-[sub_resource type="GDScript" id="GDScript_u1yyx"]
-script/source = "extends HurtboxComponent
-
-func _ready() -> void:
-	super()
-	events.connect(\"player_death\", func(damage_taken, colliding_hitbox): is_disabled = true, 2)
-"
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_rq3p4"]
-radius = 1.0
-
 [sub_resource type="GDScript" id="GDScript_itgeb"]
 script/source = "extends Node  # Inherit from the base Node class
 @onready var player: Player = $\"..\"
@@ -1352,17 +1352,15 @@ func movement_handler(delta):
 		
 		# Apply acceleration if there is a direction
 		if direction:
-			movement_speed += acceleration * delta
-		
+			movement_speed += acceleration
 		# Apply friction if there is no input direction
-		if not direction:
-			movement_speed -= friction * delta
+		else:
+			movement_speed -= friction
 		
-		# Clamp the movement speed to be within the allowed range
-		movement_speed = clamp(movement_speed, 0.0, max_movement_speed)
+		movement_speed = clampf(movement_speed, 0.0, max_movement_speed)
 		
 		# Apply the velocity to move the player
-		owner.velocity = direction * movement_speed * delta
+		owner.velocity = lerp(owner.velocity, direction * movement_speed, delta * acceleration)
 		
 	owner.move_and_slide()  # Ensure physics-based movement
 "
@@ -1533,6 +1531,17 @@ collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_5vafy")
 
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["player"]]
+collision_layer = 2
+collision_mask = 16
+script = SubResource("GDScript_u1yyx")
+parent = NodePath("..")
+health = NodePath("../Health Manager")
+knockback = NodePath("../KnockbackComponent")
+
+[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_rq3p4")
+
 [node name="TrueCrosshair" type="Sprite2D" parent="."]
 z_index = 4096
 scale = Vector2(1.125, 1)
@@ -1579,17 +1588,6 @@ process_material = SubResource("ParticleProcessMaterial_rjiyg")
 [node name="PhysicsCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_23pmm")
 
-[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["player"]]
-collision_layer = 2
-collision_mask = 16
-script = SubResource("GDScript_u1yyx")
-parent = NodePath("..")
-health = NodePath("../Health Manager")
-knockback = NodePath("../KnockbackComponent")
-
-[node name="Collision" type="CollisionShape2D" parent="HurtboxComponent"]
-shape = SubResource("CircleShape2D_rq3p4")
-
 [node name="Health Manager" type="Node" parent="."]
 script = ExtResource("2_shqxk")
 
@@ -1597,13 +1595,13 @@ script = ExtResource("2_shqxk")
 script = SubResource("GDScript_itgeb")
 allows_input = true
 is_movement_disabled = true
-max_movement_speed = 12250.0
-acceleration = 127500.0
-friction = 127500.0
+max_movement_speed = 235.0
+acceleration = 50.0
+friction = 250.0
 
 [node name="Weapon Manager" type="Node" parent="."]
 script = SubResource("GDScript_xpxrt")
-primary_firingmode_selection = "Spray"
+primary_firingmode_selection = "Slash"
 secondary_firingmode_selection = "Shotgun"
 utility_selection = "Zip-Dash"
 

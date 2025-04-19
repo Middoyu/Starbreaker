@@ -1,5 +1,6 @@
 extends Node2D
 class_name StageBase
+
 const HUD = preload("res://Game Folder/game_assets/Player/HUD/hud.tscn")
 const CAMERA_BASE = preload("res://Game Folder/game_components/camera_component/Camera/camera_base.tscn")
 const NAVIGATION_SPACE = preload("res://Game Folder/game_assets/Stages/00 - BASE/navigation_space.tscn")
@@ -9,6 +10,8 @@ const PLAYER = preload("res://Game Folder/game_assets/Player/Main/Player.tscn")
 
 @onready var stage_started = false
 @onready var is_boss_active = false
+
+@onready var is_nohit_run := true
 
 @onready var EntityManager = Node.new()
 
@@ -20,7 +23,7 @@ const PLAYER = preload("res://Game Folder/game_assets/Player/Main/Player.tscn")
 @onready var is_spawning = true
 @export var player_starting_position := Vector2(320, 290)
 
-func _ready() -> void:	
+func _ready() -> void:
 	add_child(EntityManager, true)
 	global.EntityManager = EntityManager
 	

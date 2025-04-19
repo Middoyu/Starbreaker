@@ -1,0 +1,524 @@
+[gd_scene load_steps=22 format=3 uid="uid://b2j62op6kxc6c"]
+
+[ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="1_b0e1c"]
+[ext_resource type="Script" uid="uid://chx8xroi3hih8" path="res://Game Folder/game_components/entity_components/Hurtbox/hurtbox.gd" id="1_ey2q7"]
+[ext_resource type="Texture2D" uid="uid://bgspc6d22nb3e" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Sprites/ph_sprite.png" id="1_t8ueu"]
+[ext_resource type="Script" uid="uid://8a1bfnc6r587" path="res://Game Folder/game_components/shader_components/hitflash_component.gd" id="2_8jqi3"]
+[ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="4_8jqi3"]
+[ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="4_y34cm"]
+[ext_resource type="Texture2D" uid="uid://bec7dyabqg5qy" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Sprites/mono_fingergun.png" id="6_f4y6k"]
+[ext_resource type="AudioStream" uid="uid://8c11pb2aymuv" path="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Music/starbreaker_boss.wav" id="7_y34cm"]
+
+[sub_resource type="GDScript" id="GDScript_jm1ts"]
+script/source = "extends Boss
+@onready var head: Sprite2D = $Head
+@onready var hurtbox_list = [$Head/Hurtbox]
+@export var difficulty_curve : Curve
+@onready var health_component: HealthComponent = $HealthComponent
+@export var phase2_health := 25000
+
+const skeleshot_file = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.tscn\")
+const lzr_file = preload(\"res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/LZR_enemy.tscn\")
+
+func _ready() -> void:
+	hide()
+	for i in hurtbox_list:
+		i.is_disabled = true
+	events.connect(\"spawn_boss\", start)
+
+func start():
+	for i in hurtbox_list:
+		i.is_disabled = false
+	$StateMachine/intro.start()
+
+func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	events.emit_signal(\"enemy_damaged\", self)
+
+func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	events.emit_signal(\"boss_death\")
+"
+
+[sub_resource type="Curve" id="Curve_f4y6k"]
+_data = [Vector2(0, 0), 0.0, 1.51982, 0, 1, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y34cm"]
+radius = 10.7497
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t8ueu"]
+resource_local_to_scene = true
+radius = 56.5685
+
+[sub_resource type="GDScript" id="GDScript_d6gxk"]
+script/source = "extends Sprite2D
+
+const TIM_BULLET = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Bullet/tim_bullet.tscn\")
+@onready var muzzle: Marker2D = $muzzle
+
+func shoot():
+	var i = TIM_BULLET.instantiate()
+	i.global_position = muzzle.global_position
+	i.direction = Vector2.RIGHT
+	
+	global.EntityManager.add_child(i, true)
+	var fire_animation = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	fire_animation.tween_property(self, \"rotation_degrees\", -80, 0.25)
+	fire_animation.tween_property(self, \"rotation_degrees\", 0, 0.25)
+"
+
+[sub_resource type="GDScript" id="GDScript_8ulq0"]
+script/source = "extends Sprite2D
+signal finished_firing
+
+const TIM_BULLET = preload(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Bullet/tim_bullet.tscn\")
+@onready var muzzle: Marker2D = $muzzle
+
+func shoot():
+	var i = TIM_BULLET.instantiate()
+	i.global_position = muzzle.global_position
+	i.direction = Vector2.LEFT
+	
+	global.EntityManager.add_child(i, true)
+	var fire_animation = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	fire_animation.tween_property(self, \"rotation_degrees\", 80, 0.25)
+	fire_animation.tween_property(self, \"rotation_degrees\", 0, 0.25)
+	fire_animation.tween_callback(func(): finished_firing.emit())
+"
+
+[sub_resource type="GDScript" id="GDScript_b0e1c"]
+script/source = "extends Label
+
+func _physics_process(delta: float) -> void:
+	if $\"../HealthComponent\":
+		text = str($\"../HealthComponent\".current_health)
+"
+
+[sub_resource type="GDScript" id="GDScript_f4y6k"]
+script/source = "extends State
+
+
+func start():
+	$\"../../Warning Signal\".show()
+	starting_animation()
+
+func starting_animation():
+	var warning_animation = create_tween().set_trans(Tween.TRANS_CIRC).set_loops(4)
+	warning_animation.tween_property($\"../../Warning Signal\", \"color\", Color(\"ff000000\"), 0.2).from(Color(\"ff000032\"))
+	await warning_animation.finished
+	$\"../../Warning Signal\".color = Color.TRANSPARENT
+	movement_animation()
+
+func movement_animation():
+	var position_action = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	parent.show()
+	position_action.tween_property($\"../../Head\", \"global_position\", Vector2(320, 64), 0.2).from(Vector2(320, -64))
+	position_action.tween_callback(func(): $\"../../BossMusic\".play(); Transistioned.emit(self, $\"../idle\".name); $\"../../Warning Signal\".hide())
+"
+
+[sub_resource type="GDScript" id="GDScript_y34cm"]
+script/source = "extends State
+@export var min_movement_interval := 2.5
+@export var max_movement_interval := 3.5
+
+@onready var attack_list = [$\"../chase\"]
+@onready var next_attack = null
+
+func enter():
+	next_attack = attack_list.pick_random()
+	var movement_interval = randf_range(min_movement_interval, max_movement_interval)
+	await get_tree().create_timer(movement_interval).timeout
+	Transistioned.emit(self, next_attack.name)
+
+func exit():
+	pass
+"
+
+[sub_resource type="GDScript" id="GDScript_apond"]
+script/source = "extends State
+
+@export var movement_speed = 100.0
+@export var duration = 6.5
+@onready var timer = Timer.new()
+@onready var hands_timer = Timer.new()
+@onready var l_hand: Sprite2D = $\"../../L_Hand\"
+@onready var r_hand: Sprite2D = $\"../../R_Hand\"
+@onready var hand_list = [$\"../../L_Hand\", $\"../../R_Hand\"]
+var is_using_hands = false
+
+func _ready() -> void:
+	movement_speed = 0.0
+	timer.autostart = false
+	timer.one_shot = true
+	add_child(timer, true)
+	timer.connect(\"timeout\", func(): Transistioned.emit(self, $\"../recover\".name), 0)
+
+func enter():
+	timer.start(duration)
+	if $\"../../HealthComponent\".current_health <= $\"../..\".phase2_health:
+		hands()
+
+func hands():
+	is_using_hands = true
+	var hand_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	hand_tween.tween_property(l_hand, \"global_position:x\", l_hand.global_position.x + 256, 0.2)
+	hand_tween.tween_property(r_hand, \"global_position:x\", r_hand.global_position.x - 256, 0.2)
+	r_hand.flip_h = false
+	r_hand.flip_v = true
+	await hand_tween.finished
+
+func exit():
+	if is_using_hands:
+		var hand_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+		hand_tween.tween_property(l_hand, \"global_position:x\", l_hand.global_position.x - 256, 0.5)
+		hand_tween.tween_property(r_hand, \"global_position:x\", r_hand.global_position.x + 256, 0.5)
+		await hand_tween.finished
+		r_hand.flip_h = true
+		r_hand.flip_v = false
+		is_using_hands = false
+
+func warn():
+	var warn_flash = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	warn_flash.tween_property($\"../../L_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000032\"), 0.1).from(Color(\"ff000000\"))
+	warn_flash.tween_property($\"../../R_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000032\"), 0.1).from(Color(\"ff000000\"))
+	await warn_flash.finished
+	var fadeout_warn_flash = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	fadeout_warn_flash.tween_property($\"../../L_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000000\"), 0.1).from(Color(\"ff000032\"))
+	fadeout_warn_flash.tween_property($\"../../R_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000000\"), 0.1).from(Color(\"ff000032\"))
+	await fadeout_warn_flash.finished
+	fire()
+
+func fire():
+	events.emit_signal(\"camera_shake\", 55)
+	for i in hand_list:
+		i.shoot()
+
+func physics_update(_delta):
+	movement_speed += 45 * _delta
+	movement_speed = clampf(movement_speed, 0.0, 155.0)
+	var head_parent = $\"../../Head\" as Sprite2D
+	head_parent.global_position += head_parent.global_position.direction_to(global.player.global_position).normalized() * movement_speed * _delta
+	if is_using_hands:
+		for i in hand_list:
+			match i:
+				l_hand: i.look_at(global.player.global_position)
+				r_hand: i.look_at(global.player.global_position)
+ 
+"
+
+[sub_resource type="GDScript" id="GDScript_8jqi3"]
+script/source = "extends State
+
+@onready var dash_warning: ColorRect = $\"../../Dash-Warning\"
+@onready var timer = Timer.new()
+@export var wait_interval = 1.5
+@onready var current_dash_amount = max_dash_amount
+@export var max_dash_amount = 2
+@onready var is_dashing = false
+
+func _ready() -> void:
+	timer.autostart = false
+	timer.one_shot = true
+	add_child(timer, true)
+	timer.connect(\"timeout\", action, 0)
+
+func enter():
+	if $\"../../HealthComponent\".current_health <= $\"../..\".phase2_health:
+		timer.connect(\"timeout\", spawn_enemies)
+	
+	is_dashing = true
+	current_dash_amount = 0
+	var head_up = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	head_up.tween_property($\"../../Head\", \"global_position:y\", -65, 0.5)
+	head_up.tween_callback(func(): wait(); head_up.kill())
+
+
+
+
+
+
+
+func spawn_enemies():
+	for i in range(3):
+		var enemy = $\"../..\".skeleshot_file.instantiate()
+		enemy.auto_activate = true
+		match i:
+			1:
+				enemy.global_position = Vector2(64, 192)
+		match i:
+			2:
+				enemy.global_position = Vector2(576, 192)
+		match i:
+			0:
+				enemy.global_position = Vector2(320, 320)
+		global.current_stage.add_child(enemy)
+
+
+func wait():
+	dash_warning.show()
+	is_dashing = false
+	timer.start(wait_interval)
+	var warning_flash_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC).set_loops(3)
+	warning_flash_tween.tween_property($\"../../Dash-Warning\", \"color\", Color(\"ff000032\"), 0.25).from(Color(\"ff000000\"))
+	warning_flash_tween.tween_property($\"../../Dash-Warning\", \"color\", Color(\"ff000000\"), 0.25).from(Color(\"ff000032\"))
+
+func action():
+	dash_warning.hide()
+	is_dashing = true
+	var head_dash = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	head_dash.tween_property($\"../../Head\", \"global_position:y\", 465, 0.65).from(-65)
+	if current_dash_amount >= max_dash_amount:
+		head_dash.tween_callback(func(): Transistioned.emit(self, $\"../recover\".name))
+	elif current_dash_amount <= max_dash_amount:
+		current_dash_amount += 1
+		await get_tree().create_timer(0.85).timeout
+		wait()
+
+func exit():
+	is_dashing = false
+
+func physics_update(_delta):
+	if !is_dashing:
+		$\"../../Head\".global_position.x = global.player.global_position.x
+		dash_warning.global_position.x = $\"../../Head\".global_position.x - 72
+"
+
+[sub_resource type="GDScript" id="GDScript_xklbp"]
+script/source = "extends State
+@export var max_wait_interval = 1.5
+@export var min_wait_interval = 1.0
+@onready var timer = Timer.new()
+@onready var l_hand: Sprite2D = $\"../../L_Hand\"
+@onready var r_hand: Sprite2D = $\"../../R_Hand\"
+@onready var hand_list = [$\"../../L_Hand\", $\"../../R_Hand\"]
+@onready var is_tracking = false
+@export var max_loop = 2
+@onready var current_loop = 0
+
+func _ready() -> void:
+	timer.autostart = false
+	timer.one_shot = true
+	add_child(timer)
+	timer.connect(\"timeout\", warn, 0)
+	for i in hand_list:
+		i.connect(\"finished_firing\", check_loop, 0)
+
+func enter():
+	current_loop = 0
+	is_tracking = false
+	var hand_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	hand_tween.tween_property(l_hand, \"global_position:x\", l_hand.global_position.x + 256, 0.5)
+	hand_tween.tween_property(r_hand, \"global_position:x\", r_hand.global_position.x - 256, 0.5)
+	await hand_tween.finished
+	track()
+
+func track():
+	timer.start(randf_range(min_wait_interval, max_wait_interval))
+	is_tracking = true
+
+func physics_update(_delta):
+	if is_tracking:
+		r_hand.global_position.y = lerp(r_hand.global_position.y, global.player.global_position.y, 25.0 * _delta)
+		l_hand.global_position.y = lerp(l_hand.global_position.y, global.player.global_position.y, 25.0 * _delta)
+
+func warn():
+	is_tracking = false
+	var warn_flash = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	warn_flash.tween_property($\"../../L_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000032\"), 0.1).from(Color(\"ff000000\"))
+	warn_flash.tween_property($\"../../R_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000032\"), 0.1).from(Color(\"ff000000\"))
+	await warn_flash.finished
+	var fadeout_warn_flash = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	fadeout_warn_flash.tween_property($\"../../L_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000000\"), 0.1).from(Color(\"ff000032\"))
+	fadeout_warn_flash.tween_property($\"../../R_Hand/muzzle/warn_flash\", \"color\", Color(\"ff000000\"), 0.1).from(Color(\"ff000032\"))
+	await fadeout_warn_flash.finished
+	fire()
+
+func fire():
+	events.emit_signal(\"camera_shake\", 55)
+	for i in hand_list:
+		i.shoot()
+
+func check_loop():
+	if current_loop >= max_loop:
+		Transistioned.emit(self, $\"../recover\".name)
+	else:
+		current_loop += 1
+		track()
+
+func exit():
+	is_tracking = false
+	var hand_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	hand_tween.tween_property(l_hand, \"global_position:x\", l_hand.global_position.x - 256, 0.5)
+	hand_tween.tween_property(r_hand, \"global_position:x\", r_hand.global_position.x + 256, 0.5)
+	await hand_tween.finished
+"
+
+[sub_resource type="GDScript" id="GDScript_mugeq"]
+script/source = "extends State
+
+func enter():
+	for i in parent.hurtbox_list:
+		i.is_disabled = true
+		print(str(i) + \" is disabled.\")
+	movement_animation()
+
+func exit():
+	for i in parent.hurtbox_list:
+		i.is_disabled = false
+		print(str(i) + \" is not disabled.\")
+
+func movement_animation():
+	var position_action = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_BACK)
+	position_action.tween_property($\"../../Head\", \"global_position\", Vector2(320, 64), 0.5).from_current()
+	position_action.tween_callback(func(): Transistioned.emit(self, $\"../idle\".name))
+"
+
+[node name="TimothyBoss" type="CharacterBody2D"]
+motion_mode = 1
+script = SubResource("GDScript_jm1ts")
+difficulty_curve = SubResource("Curve_f4y6k")
+phase2_health = 131515315
+metadata/_custom_type_script = "uid://dx63kshbg5nmp"
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("1_b0e1c")
+maximum_health = 50000.0
+metadata/_custom_type_script = "uid://bql2an547gxi1"
+
+[node name="HitFlashComponent" type="Node" parent="." node_paths=PackedStringArray("target", "health_component")]
+script = ExtResource("2_8jqi3")
+target = NodePath("..")
+health_component = NodePath("../HealthComponent")
+
+[node name="Head" type="Sprite2D" parent="."]
+use_parent_material = true
+position = Vector2(0, -138)
+scale = Vector2(6, 6)
+texture = ExtResource("1_t8ueu")
+offset = Vector2(0.5, 0)
+
+[node name="Hitbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent")]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("4_y34cm")
+parent = NodePath("../..")
+damage = -15.0
+metadata/_custom_type_script = "uid://ucfty02weqo2"
+
+[node name="Collision" type="CollisionShape2D" parent="Head/Hitbox"]
+shape = SubResource("CircleShape2D_y34cm")
+
+[node name="Hurtbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent", "health")]
+scale = Vector2(0.166667, 0.166667)
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("1_ey2q7")
+parent = NodePath("../..")
+health = NodePath("../../HealthComponent")
+metadata/_custom_type_script = "uid://chx8xroi3hih8"
+
+[node name="Collision" type="CollisionShape2D" parent="Head/Hurtbox"]
+shape = SubResource("CircleShape2D_t8ueu")
+
+[node name="L_Hand" type="Sprite2D" parent="."]
+position = Vector2(-192, 64)
+texture = ExtResource("6_f4y6k")
+script = SubResource("GDScript_d6gxk")
+
+[node name="muzzle" type="Marker2D" parent="L_Hand"]
+show_behind_parent = true
+position = Vector2(48, 0)
+
+[node name="warn_flash" type="ColorRect" parent="L_Hand/muzzle"]
+show_behind_parent = true
+offset_top = -8.0
+offset_right = 1096.0
+offset_bottom = 8.0
+color = Color(1, 0, 0, 0)
+
+[node name="R_Hand" type="Sprite2D" parent="."]
+position = Vector2(832, 64)
+texture = ExtResource("6_f4y6k")
+flip_v = true
+script = SubResource("GDScript_8ulq0")
+
+[node name="muzzle" type="Marker2D" parent="R_Hand"]
+show_behind_parent = true
+position = Vector2(-48, 0)
+
+[node name="warn_flash" type="ColorRect" parent="R_Hand/muzzle"]
+show_behind_parent = true
+offset_left = -1064.0
+offset_top = -8.0
+offset_right = 32.0
+offset_bottom = 8.0
+color = Color(1, 0, 0, 0)
+
+[node name="HP_Placeholder" type="Label" parent="."]
+top_level = true
+offset_top = 336.0
+offset_right = 40.0
+offset_bottom = 359.0
+script = SubResource("GDScript_b0e1c")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("4_8jqi3")]
+parent = NodePath("..")
+intial_state = NodePath("intro")
+
+[node name="intro" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_f4y6k")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="idle" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_y34cm")
+min_movement_interval = 1.5
+max_movement_interval = 2.0
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_apond")
+movement_speed = 155.0
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="dash" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_8jqi3")
+wait_interval = 1.0
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="hand_shoot" type="Node" parent="StateMachine"]
+script = SubResource("GDScript_xklbp")
+max_wait_interval = 0.7
+min_wait_interval = 0.5
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="recover" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent")]
+script = SubResource("GDScript_mugeq")
+parent = NodePath("../..")
+metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="Warning Signal" type="ColorRect" parent="."]
+top_level = true
+texture_filter = 1
+offset_left = 240.0
+offset_top = -16.0
+offset_right = 400.0
+offset_bottom = 144.0
+pivot_offset = Vector2(12.5, 12.5)
+color = Color(1, 0, 0, 0.196078)
+
+[node name="Dash-Warning" type="ColorRect" parent="."]
+texture_filter = 1
+offset_left = -64.0
+offset_top = -168.0
+offset_right = 64.0
+offset_bottom = 568.0
+pivot_offset = Vector2(12, 0)
+color = Color(1, 0, 0, 0)
+
+[node name="BossMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_y34cm")
+volume_db = -12.0
+
+[connection signal="death" from="HealthComponent" to="." method="on_death"]
+[connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]

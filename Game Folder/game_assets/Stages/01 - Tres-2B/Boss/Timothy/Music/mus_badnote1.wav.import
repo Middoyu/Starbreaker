@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://0kio0wlrhq54"
+path="res://.godot/imported/mus_badnote1.wav-a59f1c9913202f8036ec52020d2872a0.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Music/mus_badnote1.wav"
+dest_files=["res://.godot/imported/mus_badnote1.wav-a59f1c9913202f8036ec52020d2872a0.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

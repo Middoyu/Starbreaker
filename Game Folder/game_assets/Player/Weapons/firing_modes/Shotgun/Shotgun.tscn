@@ -7,7 +7,7 @@ script/source = "extends Weapon
 
 const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Shotgun/ShotgunBullet.tscn\")
 
-@export var firerate := 0.5
+@export var firerate := 0.7
 @export var arc = 30
 
 @onready var sfx_firing: AudioStreamPlayer2D = $sfx_Firing
@@ -15,6 +15,7 @@ const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/fir
 var firing_effects = func(): sfx_firing.global_position = global.player.global_position; sfx_firing.play(); if global.camera: global.camera.shake(35.0)
 
 func action():
+	global.player.velocity = lerp(global.player.velocity, global.player.global_position + -Vector2.DOWN.from_angle(global.player.global_rotation) * 18000, 0.5)
 	cooldown_timer.start(firerate)
 	spawn_projectile()
 

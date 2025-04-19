@@ -1,6 +1,5 @@
-[gd_scene load_steps=223 format=3 uid="uid://dfepk5fmqyutd"]
+[gd_scene load_steps=221 format=3 uid="uid://dfepk5fmqyutd"]
 
-[ext_resource type="Shader" uid="uid://cjm05nxttppew" path="res://Game Folder/game_assets/Shaders/shockwave.gdshader" id="1_hygbs"]
 [ext_resource type="Script" uid="uid://bpf2md5esgawm" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/enemy.gd" id="1_t7cul"]
 [ext_resource type="Texture2D" uid="uid://d03ccb6618p5d" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/shoot.png" id="1_vsosa"]
 [ext_resource type="Texture2D" uid="uid://cwwn34618nmuy" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skeleshot/Sprites/death.png" id="2_3ivxn"]
@@ -13,13 +12,6 @@
 [ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="6_w1j0l"]
 [ext_resource type="Script" uid="uid://bql2an547gxi1" path="res://Game Folder/game_components/entity_components/Health/health_component.gd" id="8_ueg8n"]
 [ext_resource type="Script" uid="uid://3eh6xveo61nc" path="res://Game Folder/game_components/entity_components/Knockback/knockback.gd" id="9_sjgo5"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_f1ahw"]
-shader = ExtResource("1_hygbs")
-shader_parameter/center = Vector2(0.5, 0.5)
-shader_parameter/force = 0.0
-shader_parameter/size = -3.2
-shader_parameter/thickness = 1.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3n1ei"]
 
@@ -1472,10 +1464,11 @@ func enter():
 	sprite.play(\"spawn\")
 	await sprite.animation_finished
 	
+	Transistioned.emit(self, \"chase\")
+
+func exit():
 	parent.hurtbox.is_disabled = false
 	parent.hitbox.is_disabled = false
-	
-	Transistioned.emit(self, \"chase\")
 "
 
 [sub_resource type="GDScript" id="GDScript_5wiu6"]
@@ -1551,7 +1544,6 @@ func physics_update(_delta):
 "
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
-material = SubResource("ShaderMaterial_f1ahw")
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_t7cul")
@@ -1580,10 +1572,8 @@ disabled = true
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 use_parent_material = true
 sprite_frames = SubResource("SpriteFrames_bk3gu")
-animation = &"spawn"
+animation = &"chase"
 autoplay = "chase"
-frame = 57
-frame_progress = 1.0
 
 [node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent", "health", "knockback") groups=["enemy"]]
 collision_layer = 4

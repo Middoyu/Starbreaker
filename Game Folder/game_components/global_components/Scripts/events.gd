@@ -7,6 +7,8 @@ signal energy_updated(new_value)
 signal player_damaged(current_health, damage_taken, colliding_hitbox)
 signal player_death(damage_taken, colliding_hitbox)
 signal player_healed(new_value)
+signal no_hit(nohit_status)
+
 
 #Firing Modes
 signal shotgun_fired(projectile)
@@ -25,6 +27,7 @@ signal stage_intro_finished
 signal stage_started
 signal stage_time(audio_time)
 signal spawn_boss
+signal boss_death
 signal boss_spawning
 signal GameOver(final_score)
 

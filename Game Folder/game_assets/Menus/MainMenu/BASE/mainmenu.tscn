@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=3 uid="uid://c8cl1sli3qnjh"]
+[gd_scene load_steps=93 format=3 uid="uid://c8cl1sli3qnjh"]
 
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="1_8jj6y"]
 [ext_resource type="Texture2D" uid="uid://fs5p06uv4ecd" path="res://Game Folder/game_assets/Menus/MainMenu/BASE/Textures/bg.png" id="1_ai1e2"]
@@ -422,7 +422,7 @@ animations = [{
 
 [sub_resource type="GDScript" id="GDScript_n6j81"]
 script/source = "extends Control
-var movement_location = Vector2(243.9, -192)
+var movement_location = Vector2(128, -128)
 
 var children_index = self.get_children()
 @onready var focus_index = 0
@@ -476,6 +476,18 @@ func _on_pressed() -> void:
 	await $\"../../../Camera/FadingImage/FadeAnimation\".animation_finished
 	global.main_manager.add_child(load(\"res://Game Folder/game_assets/Stages/01 - Tres-2B/Tres-2B.tscn\").instantiate())
 	$\"../../..\".queue_free()
+"
+
+[sub_resource type="GDScript" id="GDScript_fxp30"]
+script/source = "extends Button
+signal custom_focus(node)
+
+func _ready() -> void:
+	pivot_offset = size / 2
+
+func _on_pressed() -> void:
+	$\"../../../Camera\".enabled = false
+	$\"../../../Options/Camera2D\".enabled = true
 "
 
 [sub_resource type="GDScript" id="GDScript_g26pg"]
@@ -608,8 +620,8 @@ func _ready() -> void:
 	self.connect(\"pressed\", pressed)
 
 func pressed():
-	main_camera.enabled = true
-	options_camera.enabled = false
+	$\"../../Camera\".enabled = true
+	$\"../Camera2D\".enabled = false
 "
 
 [sub_resource type="GDScript" id="GDScript_a4pt7"]
@@ -877,79 +889,6 @@ flat = true
 icon_alignment = 1
 script = SubResource("GDScript_ai1e2")
 
-[node name="skills" type="Button" parent="BGTexture/MainMenuBase"]
-z_index = 1120
-custom_minimum_size = Vector2(330, 96)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -16.0
-anchor_top = -9.0
-anchor_right = 16.0
-anchor_bottom = 9.0
-offset_left = 495.516
-offset_top = 288.0
-offset_right = -454.484
-offset_bottom = -336.0
-grow_horizontal = 2
-grow_vertical = 2
-focus_mode = 0
-theme = ExtResource("3_mm2qm")
-theme_override_font_sizes/font_size = 45
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "SKILLS
-"
-flat = true
-icon_alignment = 1
-
-[node name="challenges" type="Button" parent="BGTexture/MainMenuBase"]
-z_index = 1120
-custom_minimum_size = Vector2(330, 96)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -16.0
-anchor_top = -9.0
-anchor_right = 16.0
-anchor_bottom = 9.0
-offset_left = 247.742
-offset_top = 480.0
-offset_right = -702.258
-offset_bottom = -144.0
-grow_horizontal = 2
-grow_vertical = 2
-focus_mode = 0
-theme = ExtResource("3_mm2qm")
-theme_override_font_sizes/font_size = 45
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "TESTS"
-flat = true
-icon_alignment = 1
-
-[node name="index" type="Button" parent="BGTexture/MainMenuBase"]
-z_index = 1120
-custom_minimum_size = Vector2(330, 96)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -16.0
-anchor_top = -9.0
-anchor_right = 16.0
-anchor_bottom = 9.0
-offset_left = -0.484009
-offset_top = 672.0
-offset_right = -950.484
-offset_bottom = 48.0
-grow_horizontal = 2
-grow_vertical = 2
-focus_mode = 0
-theme = ExtResource("3_mm2qm")
-theme_override_font_sizes/font_size = 45
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "INDEX"
-flat = true
-icon_alignment = 1
-
 [node name="settings" type="Button" parent="BGTexture/MainMenuBase"]
 z_index = 1120
 custom_minimum_size = Vector2(330, 96)
@@ -959,10 +898,10 @@ anchor_left = -16.0
 anchor_top = -9.0
 anchor_right = 16.0
 anchor_bottom = 9.0
-offset_left = -235.613
-offset_top = 864.0
-offset_right = -1185.61
-offset_bottom = 240.0
+offset_left = 612.387
+offset_top = 224.0
+offset_right = -337.613
+offset_bottom = -400.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
@@ -973,30 +912,7 @@ shortcut_in_tooltip = false
 text = "OPTIONS"
 flat = true
 icon_alignment = 1
-
-[node name="quit" type="Button" parent="BGTexture/MainMenuBase"]
-z_index = 1120
-custom_minimum_size = Vector2(330, 96)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -16.0
-anchor_top = -9.0
-anchor_right = 16.0
-anchor_bottom = 9.0
-offset_left = -495.484
-offset_top = 1056.0
-offset_right = -1445.48
-offset_bottom = 432.0
-grow_horizontal = 2
-grow_vertical = 2
-focus_mode = 0
-theme = ExtResource("3_mm2qm")
-theme_override_font_sizes/font_size = 45
-shortcut_feedback = false
-shortcut_in_tooltip = false
-text = "QUIT"
-flat = true
-icon_alignment = 1
+script = SubResource("GDScript_fxp30")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state") instance=ExtResource("1_8jj6y")]
 parent = NodePath("..")
@@ -1122,6 +1038,11 @@ offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Camera2D" type="Camera2D" parent="Options"]
+position = Vector2(416, 280)
+enabled = false
+zoom = Vector2(0.5, 0.5)
+
 [node name="ReturnToMenuButton" type="Button" parent="Options"]
 layout_mode = 0
 offset_right = 192.0
@@ -1138,12 +1059,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -159.0
-offset_top = -156.0
-offset_right = 55.0
-offset_bottom = 85.0
+offset_left = -680.0
+offset_top = -364.0
+offset_right = -466.0
+offset_bottom = -123.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(3.5, 3.5)
 
 [node name="Screenshake" type="Button" parent="Options/OptionsContainer"]
 layout_mode = 2
@@ -1178,10 +1100,10 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -1408.0
-offset_top = -156.0
-offset_right = -1153.0
-offset_bottom = 100.0
+offset_left = -1936.0
+offset_top = -372.0
+offset_right = -1681.0
+offset_bottom = -116.0
 grow_horizontal = 0
 grow_vertical = 2
 size_flags_horizontal = 0
@@ -1330,6 +1252,7 @@ environment = SubResource("Environment_5lcc6")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [connection signal="pressed" from="BGTexture/MainMenuBase/play" to="BGTexture/MainMenuBase/play" method="_on_pressed"]
+[connection signal="pressed" from="BGTexture/MainMenuBase/settings" to="BGTexture/MainMenuBase/settings" method="_on_pressed"]
 [connection signal="value_changed" from="Options/Container/Master Vol" to="Options/Container/Master Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/SFX Vol" to="Options/Container/SFX Vol" method="_on_value_changed"]
 [connection signal="value_changed" from="Options/Container/Music Vol" to="Options/Container/Music Vol" method="_on_value_changed"]

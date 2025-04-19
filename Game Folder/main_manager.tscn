@@ -8,7 +8,10 @@ resource_name = "mainscene_manager"
 script/source = "extends Node
 @onready var pause_menu: Control = $pause_menu
 
+var is_no_hit = true
+
 func _ready():
+	events.connect(\"no_hit\", func(status:bool): is_no_hit = status, 1)
 	global.is_pausable = false
 	global.main_manager = self
 	switch_level_to(\"res://Game Folder/game_assets/Menus/MainMenu/BASE/mainmenu.tscn\")

@@ -65,6 +65,7 @@ func intro():
 func start_stage():
 	stage_started = true
 	global.is_pausable = true
+	global.main_manager.is_no_hit = true
 	
 	if global.has_viewed_tutorial == false: # If Player hasn't seen the tutorial.
 		stage_music.play()
@@ -74,16 +75,13 @@ func start_stage():
 		stage_music.play()
 		events.emit_signal(\"stage_started\")
 
-
-
-
-
 func _process(delta: float) -> void:
 	audio_time = music.get_playback_position()
 	events.emit_signal(\"stage_time\", audio_time)
 	if snappedf(audio_time, 0.1) == 192.0:
 		global.clear_enemies()
 	if snappedf(audio_time, 0.1) == end_time and $BossIntroSequence.is_playing() == false:
+		stage_started = false
 		$BossIntroSequence.play(\"intro\")
 		await $BossIntroSequence.animation_finished
 		$BossIntroSequence.play(\"loop\")
@@ -1150,6 +1148,26 @@ metadata/_custom_type_script = "uid://cs4mtsd6tqfmw"
 
 [node name="TimothyBoss" parent="." instance=ExtResource("13_mx8f8")]
 
+[connection signal="on_hit" from="LzrEnemy/HealthComponent" to="LzrEnemy" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy/spr" to="LzrEnemy/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy/StateMachine/firing/firing_timer" to="LzrEnemy/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy2/HealthComponent" to="LzrEnemy2" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy2/spr" to="LzrEnemy2/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy2/StateMachine/firing/firing_timer" to="LzrEnemy2/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy3/HealthComponent" to="LzrEnemy3" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy3/spr" to="LzrEnemy3/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy3/StateMachine/firing/firing_timer" to="LzrEnemy3/StateMachine/firing" method="timeout"]
+[connection signal="on_hit" from="LzrEnemy4/HealthComponent" to="LzrEnemy4" method="on_hit"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/spawn" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/hit" method="animation_finished"]
+[connection signal="animation_finished" from="LzrEnemy4/spr" to="LzrEnemy4/StateMachine/death" method="animation_finished"]
+[connection signal="timeout" from="LzrEnemy4/StateMachine/firing/firing_timer" to="LzrEnemy4/StateMachine/firing" method="timeout"]
 [connection signal="timeout" from="lazer_despawn" to="lazer_despawn" method="_on_timeout"]
 [connection signal="visibility_changed" from="SpiralTurret" to="SpiralTurret" method="_on_visibility_changed"]
 

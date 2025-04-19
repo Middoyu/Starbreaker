@@ -24,6 +24,7 @@ func knockback_setup() -> void:
 
 # Function to calculate knockback when a collision occurs
 func calculate_knockback(colliding_hitbox : HitboxComponent) -> void:
+	print("knockback")
 	# Set the knockback amount and direction from the hitbox
 	latest_knockback_amount = colliding_hitbox.knockback_amount
 	knockback_direction = colliding_hitbox.global_position.direction_to(parent.global_position)
