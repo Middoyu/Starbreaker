@@ -1,4 +1,4 @@
-[gd_scene load_steps=333 format=3 uid="uid://2kuv342uj1hh"]
+[gd_scene load_steps=326 format=3 uid="uid://2kuv342uj1hh"]
 
 [ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="1_bqkrg"]
 [ext_resource type="PackedScene" uid="uid://cadhurax76sxf" path="res://Game Folder/game_components/entity_components/Hurtbox/HurtboxComponent.tscn" id="2_1smco"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://c0nvr66o40bkf" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/LZR_hit.png" id="5_rw84u"]
 [ext_resource type="Texture2D" uid="uid://cr238a06lh5v0" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/idle.png" id="5_t1yn4"]
 [ext_resource type="Texture2D" uid="uid://fan0fvghtn0x" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sprites/appear_anim.png" id="6_gefv3"]
+[ext_resource type="AudioStream" uid="uid://b5jbn44bu2n5s" path="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sounds/bone_charge.ogg" id="11_j488y"]
 
 [sub_resource type="GDScript" id="GDScript_iesie"]
 script/source = "extends Enemy
@@ -26,6 +27,7 @@ script/source = "extends Enemy
 @export var spawn_rotation = 0.0
 @export var rotation_speed = 0.3
 @export var charging_time = 1.5
+@export var is_mute = false
 #region Interaction Handlers
 
 
@@ -34,6 +36,8 @@ func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.hit_state.name)
 
 func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
+	utility.play_isolated_audio(death_sfx_path, -3.0, true, \"SFX\")
+	events.emit_signal(\"camera_shake\", 35.0)
 	events.enemy_killed.emit(self)
 	state_machine.current_state.Transistioned.emit(state_machine.current_state, state_machine.death_state.name)
 "
@@ -50,64 +54,6 @@ func tween():
 func _ready() -> void:
 	hide()
 	tween()
-"
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_g3l1p"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_yxefw"]
-offset = Vector3(88.24, 0, 0)
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ae8fw"]
-width = 1
-height = 1
-seamless = true
-seamless_blend_skirt = 0.0
-noise = SubResource("FastNoiseLite_yxefw")
-
-[sub_resource type="Curve" id="Curve_ukf7m"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_2syoo"]
-curve = SubResource("Curve_ukf7m")
-
-[sub_resource type="Gradient" id="Gradient_i0s3t"]
-offsets = PackedFloat32Array(0, 0.462025, 1)
-colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ho8p6"]
-gradient = SubResource("Gradient_i0s3t")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7nxwg"]
-particle_flag_disable_z = true
-emission_shape_offset = Vector3(0, 450, 0)
-emission_shape = 3
-emission_box_extents = Vector3(1, 450, 1)
-angle_min = -90.0
-angle_max = 90.0
-direction = Vector3(0, 0, 0)
-spread = 180.0
-gravity = Vector3(0, 0, 0)
-linear_accel_min = -10.0
-linear_accel_max = 10.0
-radial_accel_min = -10.0
-radial_accel_max = 10.0
-tangential_accel_min = -10.0
-tangential_accel_max = 10.0
-color_ramp = SubResource("GradientTexture1D_ho8p6")
-alpha_curve = SubResource("CurveTexture_2syoo")
-hue_variation_min = -0.01
-hue_variation_max = 0.00999998
-turbulence_enabled = true
-
-[sub_resource type="GDScript" id="GDScript_i8l3u"]
-script/source = "extends GPUParticles2D
-
-func _ready() -> void:
-	if options.extra_vfx:
-		pass
-	else:
-		queue_free()
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_63qk6"]
@@ -2274,9 +2220,20 @@ script/source = "extends State
 func enter():
 	sprite.play(\"Charging\")
 	charging_timer.start(parent.charging_time)
+	if !parent.is_mute:
+		$\"../../Charge\".play()
+	warn()
+
+
+func warn():
+	var warn_tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	warn_tween.tween_property($\"../../HitboxComponent/warning\", \"color\", Color(\"ff000046\"), parent.charging_time)
+	warn_tween.tween_property($\"../../HitboxComponent/warning\", \"color\", Color(\"ff000000\"), 0.07)
+	warn_tween.tween_callback(func(): warn_tween.kill())
 
 func exit():
 	charging_timer.stop()
+	$\"../../Charge\".stop()
 
 func charging_timer_timeout() -> void:
 	Transistioned.emit(self, \"firing\")
@@ -2297,16 +2254,12 @@ func physics_update(_delta):
 func fire():
 	sprite.play(\"Firing\")
 	parent.lzr_spr.show()
-	if options.extra_vfx:
-		parent.particles.show()
-		parent.particles.emitting = true
 	parent.hitbox.is_disabled = false
 
 func exit():
 	parent.lzr_spr.hide()
-	if options.extra_vfx:
-		parent.particles.emitting = false
 	parent.hitbox.is_disabled = true
+	$\"../../HitboxComponent/warning\".hide()
 
 
 func timeout() -> void:
@@ -2381,20 +2334,26 @@ _data = {
 script/source = "extends State
 
 func enter():
+	$\"../../HitboxComponent/warning\".queue_free()
 	sprite.stop()
 	sprite.play(\"Death\")
 	parent.hurtbox.queue_free()
-	utility.play_isolated_audio(\"res://Game Folder/game_assets/Player/Weapons/1. Primary/Audio/sfx_death.ogg\", -12, true)
 
 func animation_finished() -> void:
 	if sprite.get_animation() == \"Death\":
 		parent.queue_free()
 "
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_i0cys"]
+random_pitch = 1.1
+streams_count = 1
+stream_0/stream = ExtResource("11_j488y")
+
 [node name="LzrEnemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 0
 motion_mode = 1
 script = SubResource("GDScript_iesie")
+death_sfx_path = "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sounds/bone_shatter.ogg"
 
 [node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
 collision_layer = 16
@@ -2405,6 +2364,14 @@ is_disabled = true
 damage = -35.0
 knockback_amount = 1115.0
 knockback_stun_duration = 0.3
+
+[node name="warning" type="Polygon2D" parent="HitboxComponent"]
+show_behind_parent = true
+z_index = 4096
+position = Vector2(0, -2.22222)
+scale = Vector2(1.11111, 1.11111)
+color = Color(1, 0, 0, 0)
+polygon = PackedVector2Array(0, 8, -8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 
 [node name="lzr_Spr" type="Polygon2D" parent="HitboxComponent"]
 z_index = 1
@@ -2424,15 +2391,6 @@ position = Vector2(0, 1)
 polygon = PackedVector2Array(-8, 8, -16, 16, -16, 696, 16, 696, 16, 16, 8, 8)
 disabled = true
 
-[node name="Particles" type="GPUParticles2D" parent="HitboxComponent"]
-material = SubResource("CanvasItemMaterial_g3l1p")
-emitting = false
-amount = 250
-texture = SubResource("NoiseTexture2D_ae8fw")
-trail_lifetime = 0.1
-process_material = SubResource("ParticleProcessMaterial_7nxwg")
-script = SubResource("GDScript_i8l3u")
-
 [node name="HurtboxComponent" parent="." node_paths=PackedStringArray("parent", "health") groups=["enemy"] instance=ExtResource("2_1smco")]
 collision_layer = 4
 collision_mask = 8
@@ -2448,9 +2406,7 @@ maximum_health = 25.0
 
 [node name="spr" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_32irs")
-animation = &"Spawn"
-frame = 59
-frame_progress = 1.0
+animation = &"Charging"
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("parent", "intial_state", "hit_state", "death_state") instance=ExtResource("3_kxo5a")]
 parent = NodePath("..")
@@ -2503,6 +2459,11 @@ script = SubResource("GDScript_gp50k")
 parent = NodePath("../..")
 is_state_cancelable = false
 sprite = NodePath("../../spr")
+
+[node name="Charge" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_i0cys")
+volume_db = -3.0
+bus = &"SFX"
 
 [connection signal="death" from="HealthComponent" to="." method="on_death"]
 [connection signal="on_hit" from="HealthComponent" to="." method="on_hit"]

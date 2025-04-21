@@ -7,6 +7,10 @@ class_name Enemy
 @export var OnHit_score = 10
 @export var OnDeath_score = 10
 
+@export var hurt_sfx_path = "String"
+@export var death_sfx_path = "String"
+
+
 
 func _ready() -> void:
 	if !auto_activate:

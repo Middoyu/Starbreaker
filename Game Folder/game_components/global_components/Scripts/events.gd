@@ -19,6 +19,7 @@ signal shotgun_fired(projectile)
 
 signal enemy_damaged(enemy)
 signal enemy_killed(enemy)
+signal boss_damaged(boss)
 
 #endregion
 

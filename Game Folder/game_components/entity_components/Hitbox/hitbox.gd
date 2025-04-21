@@ -18,6 +18,7 @@ func _physics_process(delta: float) -> void:
 
 func _ready() -> void:
 	change_debug_color(Color.RED)  # Set the debug color of collision shapes
+	check_disable_mode_process()
 
 ## Changes the debug color of the hitbox collision shapes.
 func change_debug_color(color):
@@ -30,9 +31,11 @@ func change_debug_color(color):
 
 ## Checks the disable mode and applies it to collision shapes as needed.
 func check_disable_mode_process():
+	self.monitorable = !is_disabled
+	self.monitoring = !is_disabled
 	for child in get_children():
 		if child is CollisionShape2D:
-			child.disabled = is_disabled  # Enable/disable based on is_disabled flag
+			child.disabled = is_disabled  # Enable/disable based on is_disabled flags
 		if child is CollisionPolygon2D:
 			child.disabled = is_disabled  # Enable/disable based on is_disabled flag
 

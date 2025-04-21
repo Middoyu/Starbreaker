@@ -1145,6 +1145,7 @@ layout_mode = 2
 max_value = 2.0
 step = 0.1
 script = SubResource("GDScript_n2lrk")
+audio_bus_name = "Music"
 
 [node name="Bloom_Text" type="Label" parent="Options/Container"]
 layout_mode = 2

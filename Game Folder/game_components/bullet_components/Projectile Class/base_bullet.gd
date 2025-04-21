@@ -5,13 +5,17 @@ extends CharacterBody2D
 @export var speed = 0.0
 @export var hitbox : HitboxComponent
 @onready var view_detector : VisibleOnScreenNotifier2D = VisibleOnScreenNotifier2D.new()
+@onready var deletion_timer = Timer.new()
 
 func _ready():
 	setup_screen_notifier()
 	#self.add_to_group("Projectile")
 	z_index = global.projectile_z_index
-	await get_tree().create_timer(15.0, false, true, false).timeout
-	queue_free()
+	deletion_timer.wait_time = 15.0
+	deletion_timer.autostart = false
+	deletion_timer.one_shot = true
+	add_child(deletion_timer)
+	deletion_timer.connect("timeout", func(): queue_free(), 0)
 
 func setup_screen_notifier():
 	self.add_child(view_detector)

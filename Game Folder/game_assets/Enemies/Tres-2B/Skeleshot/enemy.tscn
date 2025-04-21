@@ -1457,10 +1457,6 @@ radius = 9.0
 script/source = "extends State
 
 func enter():
-	await get_tree().create_timer(0.07, false, true, false).timeout
-	parent.hurtbox.is_disabled = true
-	parent.hitbox.is_disabled = true
-	
 	sprite.play(\"spawn\")
 	await sprite.animation_finished
 	
@@ -1547,6 +1543,7 @@ func physics_update(_delta):
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_t7cul")
+death_sfx_path = "res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sounds/bone_shatter.ogg"
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_ueg8n")
@@ -1613,6 +1610,7 @@ death_state = NodePath("death")
 [node name="spawn" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]
 script = SubResource("GDScript_rrcrv")
 parent = NodePath("../..")
+is_state_cancelable = false
 sprite = NodePath("../../Sprite")
 
 [node name="chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("parent", "sprite")]

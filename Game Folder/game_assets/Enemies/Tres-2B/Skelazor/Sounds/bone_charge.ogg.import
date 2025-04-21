@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b5jbn44bu2n5s"
+path="res://.godot/imported/bone_charge.ogg-3cc635f60c70b8964c350ee016ba3ded.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sounds/bone_charge.ogg"
+dest_files=["res://.godot/imported/bone_charge.ogg-3cc635f60c70b8964c350ee016ba3ded.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -7,6 +7,7 @@ script/source = "extends Enemy
 @onready var duration: Timer = $Duration
 @export var stop_time = 0.0
 @export var move_time = 0.0
+@onready var default_ss_option = options.screenshake_enabled
 
 func stop(audio_time):
 	audio_time = snappedf(audio_time, 0.1)
@@ -15,6 +16,7 @@ func stop(audio_time):
 	if audio_time == stop_time:
 		events.camera_flash.emit()
 		global.clear_enemies()
+		options.screenshake_enabled = default_ss_option
 
 
 
@@ -23,6 +25,7 @@ func appear(audio_time):
 	if audio_time == spawn_time:
 		process_mode = ProcessMode.PROCESS_MODE_INHERIT
 		events.camera_flash.emit()
+		options.screenshake_enabled = false
 		global.clear_enemies()
 		show()
 		await get_tree().create_timer(0.5, false, true, false).timeout

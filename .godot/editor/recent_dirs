@@ -1,4 +1,5 @@
 C:/Users/bkrbe/Desktop
+res://Game Folder/game_assets/Player/Sprites
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Sprites
 res://Game Folder/game_assets/Stages/01 - Tres-2B/Boss/Timothy/Bullet
 res://Game Folder/game_assets/Shaders
@@ -6,7 +7,6 @@ res://Game Folder/game_components/shader_components
 res://Game Folder/game_assets/Menus/MainMenu/BASE/Textures
 res://Game Folder/game_assets/Menus/StageSelect/Base
 res://Game Folder/game_assets/Player/HUD
-res://Game Folder/game_assets/Player/Sprites
 res://Game Folder/game_assets/Player/Weapons/firing_modes
 res://
 res://Game Folder/game_assets/Enemies/Tres-2B/SpiralTurret

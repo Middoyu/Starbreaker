@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://c5vwj3adqm7vf"
+path="res://.godot/imported/bone_shatter.ogg-2f4f97f17e5ed991041a6d8230e237e4.oggvorbisstr"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Enemies/Tres-2B/Skelazor/Sounds/bone_shatter.ogg"
+dest_files=["res://.godot/imported/bone_shatter.ogg-2f4f97f17e5ed991041a6d8230e237e4.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

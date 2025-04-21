@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvn1yj5f1jcfr"]
+[gd_scene load_steps=8 format=3 uid="uid://cvn1yj5f1jcfr"]
 
 [ext_resource type="Texture2D" uid="uid://cb4ed35sin5rx" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Sprites/bullet_trails.png" id="1_r6isx"]
 [ext_resource type="Texture2D" uid="uid://baa1mmpigaqjc" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Sprites/AttackConnect.png" id="2_5srov"]
-[ext_resource type="AudioStream" uid="uid://brao2bap7hjx" path="res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Audio/sp_hit.ogg" id="3_f1rc0"]
 
 [sub_resource type="GDScript" id="GDScript_v7kgb"]
 script/source = "extends Node2D
@@ -10,8 +9,6 @@ script/source = "extends Node2D
 
 
 func _ready() -> void:
-	$SFX.pitch_scale = clampf($SFX.pitch_scale, $SFX.pitch_scale + global.player.weapons.consecutive_hits / 10.0, 3.0)
-	$SFX.play()
 	$HitParticles.emitting = true
 	$HitParticles_2.emitting = true
 	await get_tree().create_timer(1.5, false, true, false).timeout
@@ -80,9 +77,3 @@ fixed_fps = 28
 interpolate = false
 fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_q1fnc")
-
-[node name="SFX" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_f1rc0")
-volume_db = -4.5
-mix_target = 2
-bus = &"Player-SFX"

@@ -40,7 +40,7 @@ func start():
 	$StateMachine/intro.start()
 
 func on_hit(damage_taken: Variant, colliding_hitbox: Variant) -> void:
-	events.emit_signal(\"enemy_damaged\", self)
+	events.emit_signal(\"boss_damaged\", self)
 	score_event.update_score(15)
 
 func on_death(damage_taken: Variant, colliding_hitbox: Variant) -> void:
@@ -496,16 +496,16 @@ func enter():
 	global.main_manager.gameover_sequence(false)
 "
 
-[node name="TimothyBoss" type="CharacterBody2D"]
+[node name="TimothyBoss" type="CharacterBody2D" groups=["enemy"]]
 motion_mode = 1
 script = SubResource("GDScript_jm1ts")
 difficulty_curve = SubResource("Curve_f4y6k")
-phase2_health = 35000
+phase2_health = 20000
 metadata/_custom_type_script = "uid://dx63kshbg5nmp"
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("1_b0e1c")
-maximum_health = 45000.0
+maximum_health = 35000.0
 metadata/_custom_type_script = "uid://bql2an547gxi1"
 
 [node name="HitFlashComponent" type="Node" parent="." node_paths=PackedStringArray("target", "health_component")]
@@ -520,7 +520,7 @@ scale = Vector2(6, 6)
 texture = ExtResource("1_t8ueu")
 offset = Vector2(0.5, 0)
 
-[node name="Hitbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent")]
+[node name="Hitbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent") groups=["enemy"]]
 collision_layer = 16
 collision_mask = 2
 script = ExtResource("4_y34cm")
@@ -533,7 +533,7 @@ metadata/_custom_type_script = "uid://ucfty02weqo2"
 [node name="Collision" type="CollisionShape2D" parent="Head/Hitbox"]
 shape = SubResource("CircleShape2D_y34cm")
 
-[node name="Hurtbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent", "health")]
+[node name="Hurtbox" type="Area2D" parent="Head" node_paths=PackedStringArray("parent", "health") groups=["enemy"]]
 scale = Vector2(0.166667, 0.166667)
 collision_layer = 4
 collision_mask = 8
@@ -562,7 +562,6 @@ libraries = {
 [node name="boomsfx" type="AudioStreamPlayer" parent="Head"]
 stream = ExtResource("7_50xss")
 volume_db = -3.4
-bus = &"SFX"
 
 [node name="L_Hand" type="Sprite2D" parent="."]
 position = Vector2(-192, 64)

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cm8qj5rk6jeit"
+path="res://.godot/imported/refunded.wav-f20cc3faae824c8d684db1b34839aa9c.sample"
+
+[deps]
+
+source_file="res://Game Folder/game_assets/Player/SFX/Hits/refunded.wav"
+dest_files=["res://.godot/imported/refunded.wav-f20cc3faae824c8d684db1b34839aa9c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

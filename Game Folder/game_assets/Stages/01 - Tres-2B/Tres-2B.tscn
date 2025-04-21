@@ -42,11 +42,11 @@ func _ready() -> void:
 	add_child(FADE_BLACK)
 	
 	
-	
-	var c = ENVIORMENT.instantiate()
-	add_child(c)
-	var i = BACKGROUNDS.instantiate()
-	add_child(i)
+	if options.extra_vfx:
+		var c = ENVIORMENT.instantiate()
+		add_child(c)
+		var i = BACKGROUNDS.instantiate()
+		add_child(i)
 	
 	#events.connect(\"tutorial_completed\", func(): start_stage(); global.has_viewed_tutorial = true)
 	
@@ -299,10 +299,10 @@ autoplay = "RESET"
 
 [node name="TimeDisplay" type="Label" parent="."]
 visible = false
-offset_left = 600.028
-offset_top = 103.841
-offset_right = 640.028
-offset_bottom = 126.841
+offset_left = 552.0
+offset_top = 16.0
+offset_right = 640.0
+offset_bottom = 39.0
 script = SubResource("GDScript_ckhcj")
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
@@ -317,7 +317,7 @@ visible = false
 
 [node name="pathed_asetroid_belt" parent="." instance=ExtResource("3_m84e1")]
 visible = false
-spawn_time = 41.0
+spawn_time = 128.0
 amount = 15
 speed_multiplier = 1.0
 
@@ -353,6 +353,7 @@ visible = false
 z_index = 5
 position = Vector2(-0.0169615, -64)
 rotation_speed = 0.0
+is_mute = true
 spawn_time = 26.5
 
 [node name="HurtboxComponent" parent="LzrEnemy" index="1"]
@@ -366,6 +367,7 @@ visible = false
 position = Vector2(704, -0.186577)
 spawn_rotation = 90.0
 rotation_speed = 0.0
+is_mute = true
 spawn_time = 26.5
 
 [node name="HurtboxComponent" parent="LzrEnemy2" index="1"]
@@ -379,6 +381,7 @@ visible = false
 position = Vector2(-63.9046, 360.017)
 spawn_rotation = -90.0
 rotation_speed = 0.0
+is_mute = true
 spawn_time = 26.5
 
 [node name="HurtboxComponent" parent="LzrEnemy3" index="1"]
@@ -537,9 +540,9 @@ spawn_time = 27.0
 [node name="AsetroidBelt" parent="." instance=ExtResource("6_phsey")]
 visible = false
 position = Vector2(320, -0.0848077)
-amount = 125
-range = 180
-spawn_time = 27.5
+amount = 100
+range = 200
+spawn_time = 41.0
 
 [node name="Enemy22" parent="." instance=ExtResource("3_uolb2")]
 visible = false

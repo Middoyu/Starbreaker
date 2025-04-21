@@ -1,0 +1,111 @@
+[gd_scene load_steps=4 format=3 uid="uid://fual85xipl34"]
+
+[sub_resource type="GDScript" id="GDScript_4ckef"]
+resource_name = "primaryweaponscript"
+script/source = "extends Node
+
+@export var primary_enabled := true
+@export var firerate := 0.085
+@export var secondary_enabled := true
+@export var secondary_max_damage := 125.0
+@export var secondary_min_damage := 40.0
+@export var secondary_charge_persecond := 100
+@export var secondary_firerate := 3.0
+@export var secondary_decreases_charge := true
+@export var secondary_decreaserate_energy = secondary_charge_persecond / 5 as float
+@export var secondary_decreases_speed := false
+"
+
+[sub_resource type="GDScript" id="GDScript_ukyu0"]
+script/source = "extends Weapon
+const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/player_bullet.tscn\")
+
+@onready var firerate : float = get_parent().firerate
+
+@onready var bullet_pos = 1
+@onready var right_pos = Vector2(5.5, -0.6)
+@onready var left_pos = Vector2(-5.5, -0.6)
+
+var switch_bullet_position = func(_proj_int): match(bullet_pos):
+		1:
+			_proj_int.global_position += right_pos
+			bullet_pos = 2
+		2:
+			_proj_int.global_position += left_pos
+			bullet_pos = 1
+
+func _physics_process(delta: float) -> void:
+	if Input.is_action_pressed(\"primary\") and is_weapon_actionable and cooldown_timer.time_left <= 0 and get_parent().primary_enabled:
+		action()
+
+func action():
+	cooldown_timer.start(firerate)
+	spawn_projectile()
+	emit_signal(\"player_onprimaryfired\")
+
+func spawn_projectile():
+	var proj_int = PLAYER_BULLET.instantiate()
+	proj_int.global_position = global.player.global_position
+	switch_bullet_position.call(proj_int)
+	global.EntityManager.add_child(proj_int)
+"
+
+[sub_resource type="GDScript" id="GDScript_m72t4"]
+script/source = "extends Weapon
+const PLAYER_BULLET = preload(\"res://Game Folder/game_assets/Player/Weapons/firing_modes/Spray/Base/secondary_projectile.tscn\")
+
+@onready var min_damage = get_parent().secondary_min_damage
+@onready var max_damage = get_parent().secondary_max_damage
+@onready var damage_chargerate = get_parent().secondary_charge_persecond
+@onready var movement_reduction_rate = damage_chargerate * 2
+@onready var charged_damage = min_damage
+
+func _physics_process(delta: float) -> void:
+	if Input.is_action_pressed(\"secondary\") and is_weapon_actionable and cooldown_timer.time_left <= 0 and get_parent().secondary_enabled:
+		charge(delta)
+	if Input.is_action_just_released(\"secondary\") and is_weapon_actionable and cooldown_timer.time_left <= 0 and get_parent().secondary_enabled:
+		release(charged_damage)
+
+func charge(delta):
+	get_parent().primary_enabled = false
+	charged_damage += damage_chargerate * delta
+	if get_parent().secondary_decreases_charge:
+		global.player.weapons.current_energy -= get_parent().secondary_decreaserate_energy * delta
+	if get_parent().secondary_decreases_speed:
+		global.player.physics.max_movement_speed -= movement_reduction_rate * delta
+	charged_damage = ceili(clampi(charged_damage, min_damage, max_damage))
+	if charged_damage >= max_damage:
+		release(charged_damage)
+
+func release(damage : float):
+	charged_damage = clampf(charged_damage, min_damage, max_damage)
+	global.player.physics.max_movement_speed = global.player.physics.default_movement_speed
+	var proj_int = PLAYER_BULLET.instantiate()
+	proj_int.global_rotation_degrees = global.player.global_rotation_degrees + 90
+	proj_int.global_position = global.player.global_position
+	proj_int.hitbox.damage = -ceili(damage)
+	$\"../Control/Label\".text = str(proj_int.hitbox.damage)
+	global.EntityManager.add_child(proj_int)
+	cooldown_timer.start(get_parent().secondary_firerate)
+	charged_damage = min_damage
+	get_parent().primary_enabled = true
+"
+
+[node name="Ol\' Reliable" type="Node"]
+script = SubResource("GDScript_4ckef")
+secondary_charge_persecond = 125
+secondary_firerate = 0.6
+
+[node name="PrimaryAction" type="Node" parent="."]
+script = SubResource("GDScript_ukyu0")
+
+[node name="SecondaryAction" type="Node" parent="."]
+script = SubResource("GDScript_m72t4")
+
+[node name="Control" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="Control"]
+offset_left = 448.0
+offset_top = 104.0
+offset_right = 488.0
+offset_bottom = 127.0

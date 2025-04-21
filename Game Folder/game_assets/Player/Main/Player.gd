@@ -1,7 +1,5 @@
-extends Entity  # Extend the base Entity class
-class_name Player  # Set the class name as Player
-signal PlayerHit  # Signal emitted when the player gets hit
-signal PlayerDeath  # Signal emitted when the player dies
+extends Entity
+class_name Player
 
 @onready var player_sprite: AnimatedSprite2D = $Sprite  # Reference to the player sprite
 
@@ -27,14 +25,14 @@ func setup_player():
 func on_hit(damage_taken, colliding_hitbox) -> void:
 	events.emit_signal("no_hit", false)
 	
-	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/normal_hit.wav")
+	$Hit_SFX.play()
 	
 	events.emit_signal("player_damaged", health.current_health, damage_taken, colliding_hitbox)
 	# Emit a signal for player damage, passing current health, damage taken, and the hitbox that caused the damage
 	
-	events.emit_signal("camera_shake", 25.0)
+	events.emit_signal("camera_shake", 65.0)
 	# Trigger a camera shake effect
-	events.emit_signal("camera_freezeframe", 0.01, 0.5)
+	events.emit_signal("camera_freezeframe", 0.5, 0.5)
 	# Trigger a camera freeze effect (time, duration)
 	events.emit_signal("camera_flash")
 	# Trigger a camera flash effect
@@ -48,17 +46,17 @@ func _process(delta: float) -> void:
 
 # Called when the player dies
 func on_death(damage_taken, colliding_hitbox) -> void:
-	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/dying.wav")
-	utility.play_isolated_audio("res://Game Folder/game_assets/Player/SFX/Hits/final_hit.wav")
+	$Death_SFX.play()
 	events.camera_flash.emit()
 	global.clear_enemies()
-	$Sprite/DeathEffects.emitting = true
-	crosshair.queue_free()
+	crosshair.hide()
 	
 	events.emit_signal("player_death", damage_taken, colliding_hitbox)
 	
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	# Hide the mouse when the player dies
-	# Emit a signal for player death, passing the damage taken and the hitbox that caused it
-	await player_sprite.animation_finished
-	global.main_manager.gameover_sequence(true)
+
+
+
+func animation_finished() -> void:
+	if player_sprite.get_animation() == "death":
+		global.main_manager.gameover_sequence(true)

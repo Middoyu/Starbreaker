@@ -1,16 +1,20 @@
-[gd_scene load_steps=10 format=3 uid="uid://by5k7qr0hhh78"]
+[gd_scene load_steps=11 format=3 uid="uid://by5k7qr0hhh78"]
 
 [ext_resource type="Script" uid="uid://ucfty02weqo2" path="res://Game Folder/game_components/entity_components/Hitbox/hitbox.gd" id="1_7yi2p"]
 [ext_resource type="PackedScene" uid="uid://c0qsib2m70nmv" path="res://Game Folder/game_components/entity_components/State Machine/stagemachine_parent.tscn" id="2_fdxl6"]
+[ext_resource type="AudioStream" uid="uid://cm8qj5rk6jeit" path="res://Game Folder/game_assets/Player/SFX/Hits/refunded.wav" id="3_fdxl6"]
 
 [sub_resource type="GDScript" id="GDScript_k1en3"]
 script/source = "extends Weapon
 @onready var zipdash_base: Node2D = $ZipDash_Base
 @onready var zipdash_statemachine: Node = $ZipDash_StateMachine
 @onready var hitbox: HitboxComponent = $ZipDash_Base/Hitbox
+@onready var refunded: AudioStreamPlayer = $Refunded
 
 @onready var velocity_vector = Vector2.ZERO
 @onready var release_vector = Vector2.ZERO
+
+@onready var is_refunded := true
 
 @onready var idle: Node = $ZipDash_StateMachine/IDLE
 @onready var focus: State = $ZipDash_StateMachine/FOCUS
@@ -22,7 +26,15 @@ func action():
 	if global.player.weapons.current_energy >= energy_cost:
 		global.player.weapons.update_energy(-energy_cost)
 		is_weapon_actionable = false
+		is_refunded = false
 		idle.action()
+
+func _physics_process(delta: float) -> void:
+	if global.player.weapons.current_energy >= energy_cost and !is_refunded:
+		is_refunded = true
+		refunded.play()
+		if global.player and !global.player.player_sprite.is_playing():
+			global.player.player_sprite.play(\"refunded\")
 "
 
 [sub_resource type="GDScript" id="GDScript_1vu3n"]
@@ -153,3 +165,7 @@ metadata/_custom_type_script = "uid://dmgbhcexe6fw"
 script = SubResource("GDScript_ovtgw")
 parent = NodePath("../..")
 metadata/_custom_type_script = "uid://dmgbhcexe6fw"
+
+[node name="Refunded" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_fdxl6")
+volume_db = -12.0
